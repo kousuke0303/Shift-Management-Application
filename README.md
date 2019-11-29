@@ -1,1 +1,1 @@
-fin SSH
+fin develop
