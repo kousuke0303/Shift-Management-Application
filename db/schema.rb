@@ -17,7 +17,6 @@ ActiveRecord::Schema.define(version: 20191129155216) do
     t.datetime "work_start_time"
     t.datetime "work_end_time"
     t.string "salary"
-    t.string "integer"
     t.integer "hourly_wage"
     t.integer "user_id"
     t.datetime "created_at", null: false

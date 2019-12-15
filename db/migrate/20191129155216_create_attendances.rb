@@ -5,7 +5,6 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.datetime :work_start_time
       t.datetime :work_end_time
       t.string :salary
-      t.string :integer
       t.integer :hourly_wage
       t.references :user, foreign_key: true
 
