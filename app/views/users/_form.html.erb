@@ -7,12 +7,26 @@
   <%= f.label :email, class: "label-#{yield(:class_text)}" %>
   <%= f.email_field :email, class: "form-control" %>
   
-  <%= f.label :admin, "権限", class: "label-#{yield(:class_text)}" %>
-  <% if @user.admin? %>
-    <%= f.select :admin, options_for_select({"一般": false, "管理者": true}, true), {}, class: "form-control" %>
-  <% else %>
-    <%= f.select :admin, options_for_select({"一般": false, "管理者": true}), {}, class: "form-control" %>
-  <% end %>
+  <h3 class="skill-check-title">スキルチェック</h3>
+  
+  <div class="row skill-check-area">
+    <div class="col-xs-6 skill-check-item">
+      <%= f.label :admin, class: "label-#{yield(:class_text)}" %>&emsp;
+      <%= f.check_box :admin, class: "skill-check" %>
+    </div>
+    <div class="col-xs-6 skill-check-item">
+      <%= f.label :leader, class: "label-#{yield(:class_text)}" %>
+      <%= f.check_box :leader, class: "skill-check" %>
+    </div>
+    <div class="col-xs-6 skill-check-item">
+      <%= f.label :kitchen, class: "label-#{yield(:class_text)}" %>
+      <%= f.check_box :kitchen, class: "skill-check" %>
+    </div>
+    <div class="col-xs-6 skill-check-item">
+      <%= f.label :hole, class: "label-#{yield(:class_text)}" %>&emsp;
+      <%= f.check_box :hole, class: "skill-check" %>
+    </div>
+  </div>
 
   <%= f.label :password, class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>
