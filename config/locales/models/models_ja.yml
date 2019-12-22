@@ -8,8 +8,10 @@ ja:
           id: ID
           name: 名前
           email: メールアドレス
-          staff_type: スタッフ種別
           admin: 管理者
+          leader: リーダー
+          kitchen: キッチン
+          hole: ホール
           password: パスワード
           password_confirmation: パスワード再入力
           created_at: 登録日
