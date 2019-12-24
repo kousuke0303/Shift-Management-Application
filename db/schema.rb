@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20191129155216) do
     t.boolean "leader", default: false
     t.boolean "kitchen", default: false
     t.boolean "hole", default: false
+    t.boolean "wash", default: false
     t.string "remember_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

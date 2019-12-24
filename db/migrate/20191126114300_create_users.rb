@@ -7,6 +7,7 @@ class CreateUsers < ActiveRecord::Migration[5.1]
       t.boolean :leader, default: false
       t.boolean :kitchen, default: false
       t.boolean :hole, default: false
+      t.boolean :wash, default: false
       t.string :remember_digest
 
       t.timestamps
