@@ -28,8 +28,10 @@ ActiveRecord::Schema.define(version: 20191129155216) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.string "staff_type"
     t.boolean "admin", default: false
+    t.boolean "leader", default: false
+    t.boolean "kitchen", default: false
+    t.boolean "hole", default: false
     t.string "remember_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

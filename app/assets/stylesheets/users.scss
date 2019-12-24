@@ -11,7 +11,7 @@
   }
 }
 
-/* ユーザー登録フォーム */
+/* ユーザーフォーム */
 
 .label-signup {
   margin-top: 5px;
@@ -21,7 +21,25 @@
   margin-top: 10px;
 }
 
-/* ユーザー編集フォーム */
+.skill-check-title {
+  text-align: center;
+}
+
+.skill-check-area {
+  border: solid 1px gainsboro;
+  border-radius: 5px;
+  margin: 0;
+  padding: 10px;
+}
+
+.skill-check-item {
+  text-align: center;
+}
+
+input[type=checkbox].skill-check {
+  margin-left: 10px;
+  transform: scale(1.5);
+}
 
 .label-user--edit {
   margin-top: 5px;
