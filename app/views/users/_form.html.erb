@@ -15,16 +15,16 @@
       <%= f.check_box :admin, class: "skill-check" %>
     </div>
     <div class="col-xs-6 skill-check-item">
-      <%= f.label :leader, class: "label-#{yield(:class_text)}" %>
-      <%= f.check_box :leader, class: "skill-check" %>
-    </div>
-    <div class="col-xs-6 skill-check-item">
       <%= f.label :kitchen, class: "label-#{yield(:class_text)}" %>
       <%= f.check_box :kitchen, class: "skill-check" %>
     </div>
     <div class="col-xs-6 skill-check-item">
-      <%= f.label :hole, class: "label-#{yield(:class_text)}" %>&emsp;
+      <%= f.label :hole, class: "label-#{yield(:class_text)}" %>
       <%= f.check_box :hole, class: "skill-check" %>
+    </div>
+    <div class="col-xs-6 skill-check-item">
+      <%= f.label :wash, class: "label-#{yield(:class_text)}" %>&emsp;
+      <%= f.check_box :wash, class: "skill-check" %>
     </div>
   </div>
 

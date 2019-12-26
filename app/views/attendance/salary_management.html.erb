@@ -32,8 +32,6 @@
           <td rowspan="3"><%= at.name %></td>
           <td rowspan="3"><%= at.work_start_time.floor_to(15.minutes) %></td>
           <td colspan="8"><%= at.work_end_time.floor_to(15.minutes) %></td>
-          <!-- 15分を引く方法模索中-->
-          <td colspan="8"><%= at.work_start_time.floor_to(15.minutes) - at.work_end_time.floor_to(15.minutes) - 15.minutes.to_i %></td>
           <td colspan="8"><%= at.text_field :hourly_wage, class: "form-control" %></td>
         </tr>
       <% end %>

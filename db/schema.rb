@@ -29,9 +29,9 @@ ActiveRecord::Schema.define(version: 20191129155216) do
     t.string "name"
     t.string "email"
     t.boolean "admin", default: false
-    t.boolean "leader", default: false
     t.boolean "kitchen", default: false
     t.boolean "hole", default: false
+    t.boolean "wash", default: false
     t.string "remember_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
