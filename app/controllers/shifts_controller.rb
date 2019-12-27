@@ -1,6 +1,8 @@
 class ShiftsController < ApplicationController
+  
   before_action :set_user
-  before_action :set_next_shifts
+  before_action :set_next_shifts_date
+  before_action :create_next_shifts
   
   def apply_next_shifts
   end
@@ -22,8 +24,7 @@ class ShiftsController < ApplicationController
   def confirm_next_shifts
   end
 
-   # 次に申請するシフトレコードを自動生成
-  def set_next_shifts
+  def set_next_shifts_date
     if Date.current.day <= 15
       @first_day = Date.current.beginning_of_month.since(15.days)
       @last_day = @first_day.end_of_month
@@ -31,16 +32,17 @@ class ShiftsController < ApplicationController
       @first_day = Date.current.next_month.beginning_of_month
       @last_day = @first_day.since(14.days)
     end
-    next_shifts = [*@first_day..@last_day]
+    @next_shifts = [*@first_day..@last_day]
+  end
+  
+  def create_next_shifts
     @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
-    
-    unless next_shifts.count == @shifts.count
+    unless @next_shifts.count == @shifts.count
       ActiveRecord::Base.transaction do
-         next_shifts.each { |day| @user.shifts.create!(worked_on: day) }
-       end
-       @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
+        @next_shifts.each { |day| @user.shifts.create!(worked_on: day) }
+      end
+      @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
     end
-    
   rescue ActiveRecord::RecordInvalid 
     flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
     redirect_to root_url
