@@ -19,6 +19,9 @@ class ShiftsController < ApplicationController
     redirect_to shifts_apply_next_shifts_user_path(@user)
   end
   
+  def confirm_next_shifts
+  end
+
    # 次に申請するシフトレコードを自動生成
   def set_next_shifts
     if Date.current.day <= 15
