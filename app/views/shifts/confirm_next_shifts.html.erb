@@ -5,7 +5,13 @@
     <th>ポジション</th>
     <th>スタッフ名</th>
     <% @next_shifts.each do |day| %>
-      <th><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+      <% if day.wday == 6 %>
+        <th class="blue"><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+      <% elsif day.wday == 0 %>
+        <th class="red"><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+      <% else %>
+        <th><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+      <% end %>
     <% end %>
   </tr>
   
