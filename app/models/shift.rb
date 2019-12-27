@@ -19,7 +19,7 @@ class Shift < ApplicationRecord
   
   def correct_request_time # 希望退勤時間は希望出勤時間より遅い時間に制限
     if request_start_time.present?
-      errors.add(:request_start_time, "または、希望終了時間が不正です。") if text_to_time(request_start_time).to_i >= text_to_time(request_end_time).to_i
+      errors.add(:request_start_time, "または、希望終了時間が不正です。") if text_to_time(request_start_time).to_s >= text_to_time(request_end_time).to_s
     end
   end
 end
