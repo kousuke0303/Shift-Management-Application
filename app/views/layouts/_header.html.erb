@@ -47,7 +47,7 @@
             <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
           </div>
           <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "シフト申請", '#', class: "nav-link" %></div>
+            <div class="nav-item"><%= link_to "シフト申請", shifts_apply_next_shifts_user_path(current_user), class: "nav-link" %></div>
           </div>
         <% end %>
       </div>

@@ -26,3 +26,14 @@ ja:
           created_at: 登録日
           updated_at: 更新日
           user_id: ユーザーID
+        shift:
+          id: シフトID
+          worked_on: 勤務日
+          apply_day: 申請日
+          request_start_time: 希望開始時間
+          request_end_time: 希望終了時間
+          approve_day: 承認日
+          from_admin_msg: 管理者コメント
+          from_staff_msg: 従業員コメント
+          start_time: シフト開始時間
+          end_time: シフト終了時間

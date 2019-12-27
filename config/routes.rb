@@ -9,5 +9,11 @@ Rails.application.routes.draw do
   post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
   
-  resources :users
+  resources :users do
+    member do
+      get 'shifts/apply_next_shifts'
+      patch 'shifts/update_next_shifts'
+    end
+    resources :shifts, only: :update
+  end
 end

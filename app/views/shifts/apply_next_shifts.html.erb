@@ -1,0 +1,56 @@
+<% provide(:title, "Apply Shifts") %>
+<%= form_with(model: @user, url: shifts_update_next_shifts_user_path,
+    local: true, method: :patch) do |f| %>
+  <div class="row">
+    <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <table class="table table-bordered table-condensed table-hover" id="apply-shifts-table">
+        
+        <thead>
+          <tr>
+            <th>日時</th>
+            <th>出勤</th>
+            <th>退勤</th>
+            <th>備考</th>
+          </tr>
+        <thead>
+        
+        <tbody>
+        <% @shifts.each do |day| %>
+          <%= f.fields_for "shifts[]", day do |shift| %>
+            <tr>
+              <% if day.worked_on.wday == 6 %>
+                <td class="blue"><%= l(day.worked_on, format: :long) %></td>
+              <% elsif day.worked_on.wday == 0 %>
+                <td class="red"><%= l(day.worked_on, format: :long) %></td>
+              <% else %>
+                <td><%= l(day.worked_on, format: :long) %></td>
+              <% end %>
+              <td>
+                <%= shift.select :request_start_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "0:00": "0:00"}, day.request_start_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+              </td>
+              <td>
+                <%= shift.select :request_end_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "0:00": "0:00"}, day.request_end_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+              </td>
+              <td>
+                <%= shift.text_field :from_staff_msg, class: "form-control" %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+        </tbody>
+        
+      </table>
+      <div class="btn-apply-shifts-area"><%= f.submit "シフト申請", class: "btn btn-lg btn-primary" %></div>
+    </div>
+  </div>
+<% end %>

@@ -10,6 +10,9 @@ User.create!(name: "Admin User",
   password = "password"
   User.create!(name: name,
                email: email,
+               kitchen: false,
+               hole: true,
+               wash: true,
                password: password,
                password_confirmation: password)
 end
