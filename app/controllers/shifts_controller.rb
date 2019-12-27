@@ -22,6 +22,8 @@ class ShiftsController < ApplicationController
   end
   
   def confirm_next_shifts
+    @kitchen_staff = User.where(admin: false, kitchen: true)
+    @hole_staff = User.where(admin: false, kitchen: false, hole: true)
   end
 
   def set_next_shifts_date

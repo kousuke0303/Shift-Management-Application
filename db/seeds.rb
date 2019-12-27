@@ -4,9 +4,22 @@ User.create!(name: "Admin User",
              password_confirmation: "password",
              admin: true)
 
-60.times do |n|
+5.times do |n|
   name  = Faker::Name.name
-  email = "sample-#{n+1}@email.com"
+  email = "kitchen-#{n+1}@email.com"
+  password = "password"
+  User.create!(name: name,
+               email: email,
+               kitchen: true,
+               hole: true,
+               wash: true,
+               password: password,
+               password_confirmation: password)
+end
+               
+5.times do |n|
+  name  = Faker::Name.name
+  email = "hole-#{n+1}@email.com"
   password = "password"
   User.create!(name: name,
                email: email,

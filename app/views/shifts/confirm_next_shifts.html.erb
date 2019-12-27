@@ -1,1 +1,31 @@
 <% provide(:title, "Confirm Shifts") %>
+
+<table class="table table-bordered table-condensed table-hover" id="next-shifts-table">
+  <tr>
+    <th>ポジション</th>
+    <th>スタッフ名</th>
+    <% @next_shifts.each do |day| %>
+      <th><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+    <% end %>
+  </tr>
+  
+  <% @kitchen_staff.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @next_shifts.each do |day| %>
+        <td></td>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @hole_staff.each do |staff| %>
+    <tr>
+      <td>ホール</td>
+      <td><%= staff.name %></td>
+      <% @next_shifts.each do |day| %>
+        <td></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>

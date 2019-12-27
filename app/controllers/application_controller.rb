@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
   include ShiftsHelper
   
+  $days_of_the_week = %w{日 月 火 水 木 金 土}
+  
   def logged_in_user
     unless logged_in?
       store_location

@@ -21,3 +21,17 @@
 .btn-apply-shifts-area {
   text-align: center;
 }
+
+/* 次回のシフトテーブル */
+
+#next-shifts-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
