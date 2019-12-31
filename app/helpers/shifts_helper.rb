@@ -61,4 +61,20 @@ module ShiftsHelper
       240
     end
   end
+  
+  def find_user_by_shift(shift)
+    @staff = User.find(shift.user_id)
+  end
+  
+  def put_position(user)
+    if user.kitchen = true && user.hole = false
+      return "キッチン"
+    elsif user.kitchen = false && user.hole = true
+      return "ホール"
+    elsif user.kitchen = true && user.hole = true
+      return "キッチン/ホール"
+    else
+      return "洗い場"
+    end
+  end
 end

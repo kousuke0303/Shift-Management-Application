@@ -35,5 +35,5 @@ ja:
           approve_day: 承認日
           from_admin_msg: 管理者コメント
           from_staff_msg: 従業員コメント
-          start_time: シフト開始時間
-          end_time: シフト終了時間
+          start_time: 出勤時間
+          end_time: 退勤時間

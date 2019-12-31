@@ -1,8 +1,8 @@
 class ShiftsController < ApplicationController
   
   before_action :set_user
-  before_action :set_next_shifts_date
-  before_action :create_next_shifts
+  before_action :set_next_shifts_date, only:[:apply_next_shifts, :confirm_next_shifts]
+  before_action :create_next_shifts, only: :apply_next_shifts
   
   def apply_next_shifts
   end
@@ -24,11 +24,18 @@ class ShiftsController < ApplicationController
   def confirm_next_shifts
     @kitchen_staff = User.where(admin: false, kitchen: true)
     @hole_staff = User.where(admin: false, kitchen: false, hole: true)
+    @staffs = User.where(admin: false)
+    if params[:date]
+      @shifts = Shift.where(worked_on: params[:date], start_time: nil).where.not(request_start_time: nil)
+      @date = params[:date].to_date
+    elsif params[:staff]
+      @shifts = Shift.where()
+    end
   end
 
   def set_next_shifts_date
     if Date.current.day <= 15
-      @first_day = Date.current.beginning_of_month.since(15.days)
+      @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
       @last_day = @first_day.end_of_month
     else
       @first_day = Date.current.next_month.beginning_of_month

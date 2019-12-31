@@ -41,3 +41,43 @@
     color: red;
   }
 }
+
+/* 申請中シフトの検索フォーム */
+
+.search-shift-tittle {
+  padding: 0;
+}
+
+.search-shift {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+  text-align: right;
+}
+
+.search-shift-form-left {
+  padding: 0;
+}
+
+.search-shift-form-right {
+  padding: 0;
+}
+
+.applying-shift-date {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#applying-shifts-table-date {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
