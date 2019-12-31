@@ -41,7 +41,7 @@
             </div>
           <% elsif %>
             <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤登録", '#', class: "nav-link" %></div>
+              <div class="nav-item"><%= link_to "出退勤登録", users_attendances_register_path(id: current_user.id), class: "nav-link" %></div>
             </div>
             <div class="col-xs-3 col-md-3 col-lg-3">
               <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
