@@ -13,7 +13,8 @@ Rails.application.routes.draw do
     member do
       get 'shifts/apply_next_shifts'
       patch 'shifts/update_next_shifts'
-      get 'shifts/confirm_next_shifts'
+      get 'shifts/applying_next_shifts'
+      patch 'shifts/confirm_next_shifts'
     end
     resources :shifts, only: :update
   end

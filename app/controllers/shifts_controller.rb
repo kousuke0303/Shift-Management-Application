@@ -1,7 +1,7 @@
 class ShiftsController < ApplicationController
   
   before_action :set_user
-  before_action :set_next_shifts_date, only:[:apply_next_shifts, :confirm_next_shifts]
+  before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   
   def apply_next_shifts
@@ -21,15 +21,16 @@ class ShiftsController < ApplicationController
     redirect_to shifts_apply_next_shifts_user_path(@user)
   end
   
-  def confirm_next_shifts
+  def applying_next_shifts
     @kitchen_staff = User.where(admin: false, kitchen: true)
     @hole_staff = User.where(admin: false, kitchen: false, hole: true)
     @staffs = User.where(admin: false)
     if params[:date]
-      @shifts = Shift.where(worked_on: params[:date], start_time: nil).where.not(request_start_time: nil)
+      @shifts = Shift.where(worked_on: params[:date], start_time: nil).where("request_start_time LIKE ?", "%:%")
       @date = params[:date].to_date
     elsif params[:staff]
-      @shifts = Shift.where()
+      @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff]).
+                      where("request_start_time LIKE ?", "%:%")
     end
   end
 
@@ -55,6 +56,9 @@ class ShiftsController < ApplicationController
   rescue ActiveRecord::RecordInvalid 
     flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
     redirect_to root_url
+  end
+  
+  def confirm_next_shifts
   end
   
   private

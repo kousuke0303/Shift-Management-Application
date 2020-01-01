@@ -39,7 +39,7 @@
 <div class="row">
   <div class="col-xs-3 col-md-3 search-shift-tittle"><p class="search-shift">日毎に作成：</p></div>
   <div class="col-xs-3 col-md-3">
-    <%= form_with url: shifts_confirm_next_shifts_user_path(@user), method: :get, local: true do |f| %>
+    <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
       <div class="col-xs-9 search-shift-form-left">
         <%= f.date_field :date, min: @first_day, max: @last_day, class: "form-control" %>
       </div>
@@ -53,7 +53,7 @@
 <div class="row"> 
   <div class="col-xs-3 col-md-3 search-shift-tittle"><p class="search-shift">スタッフ毎に作成：</p></div>
   <div class="col-xs-3 col-md-3">
-    <%= form_with url: shifts_confirm_next_shifts_user_path(@user), method: :get, local: true do |f| %>
+    <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
       <div class="col-xs-9 search-shift-form-left">
         <%= f.collection_select(:staff, @staffs, :id, :name, {prompt: "スタッフを選択"},
               {class: "form-control"}) %>
@@ -92,7 +92,7 @@
 <% end %>
 
 <% if params[:staff] %>
-  <div class="applying-shift-staff">の申請シフト一覧</div>
+  <div class="applying-shift-staff"><%= find_user_by_shift(@shifts[0]).name %>の申請シフト一覧</div>
   
   <table class="table table-bordered table-condensed" id="applying-shifts-table-staff">
     <tr>
@@ -105,7 +105,7 @@
     </tr>
     <% @shifts.each do |shift| %>
       <tr>
-        <td><%= put_position(@staff) %></td>
+        <td></td>
         <td><%= find_user_by_shift(shift).name %></td>
         <td><%= shift.request_start_time %></td>
         <td><%= shift.request_end_time %></td>

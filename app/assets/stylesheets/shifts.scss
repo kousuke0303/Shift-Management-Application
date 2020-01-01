@@ -63,6 +63,8 @@
   padding: 0;
 }
 
+/* 申請中シフト表示エリア(日毎) */
+
 .applying-shift-date {
   font-size: 2em;
   font-weight: bold;
@@ -71,6 +73,27 @@
 }
 
 #applying-shifts-table-date {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+/* 申請中シフト表示エリア(スタッフ毎) */
+
+.applying-shift-staff {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#applying-shifts-table-staff {
   th {
     background: gold;
     text-align: center;
