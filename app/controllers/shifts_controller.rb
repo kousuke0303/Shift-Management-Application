@@ -26,11 +26,12 @@ class ShiftsController < ApplicationController
     @hole_staff = User.where(admin: false, kitchen: false, hole: true)
     @staffs = User.where(admin: false)
     if params[:date]
-      @shifts = Shift.where(worked_on: params[:date], start_time: nil).where("request_start_time LIKE ?", "%:%")
+      @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%").
+                      where.not("start_time LIKE ?", "%:%")
       @date = params[:date].to_date
     elsif params[:staff]
-      @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff], start_time: nil).
-                      where("request_start_time LIKE ?", "%:%")
+      @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff]).
+                      where("request_start_time LIKE ?", "%:%").where.not("start_time LIKE ?", "%:%")
     end
   end
   
@@ -42,7 +43,7 @@ class ShiftsController < ApplicationController
       end
     end
     flash[:success] = "シフトに反映しました。"
-    redirect_to shifts_applying_next_shifts_user_path(@user)
+    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date])
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
     redirect_to shifts_applying_next_shifts_user_path(@user)
