@@ -66,7 +66,7 @@
 </div>
 
 <% if params[:date] && params[:date].present? %>
-  <div class="applying-shift-date"><%= l(@date, format: :long) %>の申請シフト一覧</div>
+  <div class="applying-shift-date"><%= l(@date, format: :long) %>の申請中シフト一覧</div>
 
   <%= form_with(model: @user, url: shifts_confirm_next_shifts_user_path, local: true, method: :patch) do |f| %>
     <table class="table table-bordered table-condensed" id="applying-shifts-table-date">
@@ -110,8 +110,10 @@
   <% end %>
 <% end %>
 
-<% if params[:staff] && params[:staff].present? && @shifts.count > 0 %>
-  <div class="applying-shift-staff"><%= find_user_by_shift(@shifts[0]).name %>の申請シフト一覧</div>
+<% if params[:staff] && params[:staff].present? %>
+  <div class="applying-shift-staff">
+    <%= User.find(params[:staff]).name %>の申請中シフト一覧
+  </div>
   
   <%= form_with(model: @user, url: shifts_confirm_next_shifts_user_path, local: true, method: :patch) do |f| %>
     <table class="table table-bordered table-condensed" id="applying-shifts-table-staff">
