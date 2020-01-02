@@ -62,10 +62,12 @@ module ShiftsHelper
     end
   end
   
+  # シフトレコードから、ユーザー情報を取得
   def find_user_by_shift(shift)
     @staff = User.find(shift.user_id)
   end
   
+  # ユーザーの、可能なポジションを表示
   def put_position(user)
     if user.kitchen = true && user.hole = false
       return "キッチン"
@@ -76,5 +78,11 @@ module ShiftsHelper
     else
       return "洗い場"
     end
+  end
+  
+  # シフトレコードから、出勤・退勤時間を表示
+  def start_and_end_time_of_shift(staff, day)
+    shifts = Shift.where(user_id: staff.id, worked_on: day).where("start_time LIKE ?", "%:%")
+    "#{shifts[0].start_time}-#{shifts[0].end_time}" if shifts.count > 0
   end
 end

@@ -29,9 +29,23 @@ class ShiftsController < ApplicationController
       @shifts = Shift.where(worked_on: params[:date], start_time: nil).where("request_start_time LIKE ?", "%:%")
       @date = params[:date].to_date
     elsif params[:staff]
-      @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff]).
+      @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff], start_time: nil).
                       where("request_start_time LIKE ?", "%:%")
     end
+  end
+  
+  def confirm_next_shifts
+    ActiveRecord::Base.transaction do
+      shifts_params.each do |id, item|
+        shift = Shift.find(id)
+        shift.update_attributes!(item)
+      end
+    end
+    flash[:success] = "シフトに反映しました。"
+    redirect_to shifts_applying_next_shifts_user_path(@user)
+  rescue ActiveRecord::RecordInvalid
+    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
+    redirect_to shifts_applying_next_shifts_user_path(@user)
   end
 
   def set_next_shifts_date
@@ -58,11 +72,9 @@ class ShiftsController < ApplicationController
     redirect_to root_url
   end
   
-  def confirm_next_shifts
-  end
-  
   private
     def shifts_params
-      params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg])[:shifts]
+      params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg,
+                                            :start_time, :end_time])[:shifts]
     end
 end

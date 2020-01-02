@@ -8,8 +8,8 @@ class CreateShifts < ActiveRecord::Migration[5.1]
       t.date :approve_day
       t.string :from_admin_msg
       t.string :from_staff_msg
-      t.datetime :start_time
-      t.datetime :end_time
+      t.text :start_time
+      t.text :end_time
       t.references :user, foreign_key: true
 
       t.timestamps

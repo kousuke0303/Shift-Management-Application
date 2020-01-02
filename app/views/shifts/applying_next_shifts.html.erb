@@ -20,7 +20,7 @@
       <td>キッチン</td>
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
-        <td></td>
+        <td><%= start_and_end_time_of_shift(staff, day) %></td>
       <% end %>
     </tr>
   <% end %>
@@ -65,53 +65,91 @@
   </div>
 </div>
 
-<% if params[:date] %>
+<% if params[:date] && params[:date].present? %>
   <div class="applying-shift-date"><%= l(@date, format: :long) %>の申請シフト一覧</div>
 
-  <table class="table table-bordered table-condensed" id="applying-shifts-table-date">
-    <tr>
-      <th>ポジション</th>
-      <th>スタッフ名</th>
-      <th>希望開始時間</th>
-      <th>希望終了時間</th>
-      <th>出勤時間</th>
-      <th>退勤時間</th>
-    </tr>
-    <% @shifts.each do |shift| %>
-      <% find_user_by_shift(shift) %>
+  <%= form_with(model: @user, url: shifts_confirm_next_shifts_user_path, local: true, method: :patch) do |f| %>
+    <table class="table table-bordered table-condensed" id="applying-shifts-table-date">
       <tr>
-        <td><%= put_position(@staff) %></td>
-        <td><%= @staff.name %></td>
-        <td><%= shift.request_start_time %></td>
-        <td><%= shift.request_end_time %></td>
-        <td></td>
-        <td></td>
+        <th>ポジション</th>
+        <th>スタッフ名</th>
+        <th>希望開始時間</th>
+        <th>希望終了時間</th>
+        <th>出勤時間</th>
+        <th>退勤時間</th>
       </tr>
-    <% end %>
-  </table>
+      <% @shifts.each do |obj| %>
+        <%= f.fields_for "shifts[]", obj do |shift| %>
+          <% find_user_by_shift(obj) %>
+          <tr>
+            <td><%= put_position(@staff) %></td>
+            <td><%= @staff.name %></td>
+            <td><%= obj.request_start_time %></td>
+            <td><%= obj.request_end_time %></td>
+            <td>
+              <%= shift.select :start_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "ラスト": "ラスト"}, obj.start_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+            </td>
+            <td>
+              <%= shift.select :end_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "ラスト": "ラスト"}, obj.end_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+    <div class="btn-confirm-shifts-area"><%= f.submit "シフトに反映", class: "btn btn-lg btn-primary" %></div>
+  <% end %>
 <% end %>
 
-<% if params[:staff] %>
+<% if params[:staff] && params[:staff].present? && @shifts.count > 0 %>
   <div class="applying-shift-staff"><%= find_user_by_shift(@shifts[0]).name %>の申請シフト一覧</div>
   
-  <table class="table table-bordered table-condensed" id="applying-shifts-table-staff">
-    <tr>
-      <th>日付</th>
-      <th>スタッフ名</th>
-      <th>希望開始時間</th>
-      <th>希望終了時間</th>
-      <th>出勤時間</th>
-      <th>退勤時間</th>
-    </tr>
-    <% @shifts.each do |shift| %>
+  <%= form_with(model: @user, url: shifts_confirm_next_shifts_user_path, local: true, method: :patch) do |f| %>
+    <table class="table table-bordered table-condensed" id="applying-shifts-table-staff">
       <tr>
-        <td></td>
-        <td><%= find_user_by_shift(shift).name %></td>
-        <td><%= shift.request_start_time %></td>
-        <td><%= shift.request_end_time %></td>
-        <td></td>
-        <td></td>
+        <th>日付</th>
+        <th>スタッフ名</th>
+        <th>希望開始時間</th>
+        <th>希望終了時間</th>
+        <th>出勤時間</th>
+        <th>退勤時間</th>
       </tr>
-    <% end %>
-  </table>
+      <% @shifts.each do |obj| %>
+        <%= f.fields_for "shifts[]", obj do |shift| %>
+          <tr>
+            <td></td>
+            <td><%= find_user_by_shift(obj).name %></td>
+            <td><%= obj.request_start_time %></td>
+            <td><%= obj.request_end_time %></td>
+            <td>
+              <%= shift.select :start_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "ラスト": "ラスト"}, obj.start_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+            </td>
+            <td>
+              <%= shift.select :end_time, options_for_select({"10:00": "10:00", "10:30": "10:30", "11:00": "11:00",
+                    "11:30": "11:30", "12:00": "12:30", "13:00": "13:30", "14:00": "14:00", "14:30": "14:30","15:00": "15:00",
+                    "15:30": "15:30", "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:30",
+                    "19:00": "19:30", "20:00": "20:00", "20:30": "20:30", "21:00": "21:00", "21:30": "21:30", "22:00": "22:00",
+                    "22:30": "22:30", "23:00": "23:00", "23:30": "23:30", "ラスト": "ラスト"}, obj.end_time),
+                    {include_blank: "時刻を選択"}, class: "form-control" %>
+            </td>
+          </tr>
+        <% end %>
+      <% end %>
+    </table>
+    <div class="btn-confirm-shifts-area"><%= f.submit "シフトに反映", class: "btn btn-lg btn-primary" %></div>
+  <% end %>
 <% end %>

@@ -33,8 +33,8 @@ ActiveRecord::Schema.define(version: 2019_12_24_163948) do
     t.date "approve_day"
     t.string "from_admin_msg"
     t.string "from_staff_msg"
-    t.datetime "start_time"
-    t.datetime "end_time"
+    t.text "start_time"
+    t.text "end_time"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
