@@ -15,10 +15,10 @@ ActiveRecord::Schema.define(version: 20191129155216) do
   create_table "attendances", force: :cascade do |t|
     t.date "day"
     t.datetime "work_start_time"
+    t.datetime "break_start_time"
+    t.datetime "break_end_time"
     t.datetime "work_end_time"
     t.string "salary"
-    t.string "integer"
-    t.integer "hourly_wage"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

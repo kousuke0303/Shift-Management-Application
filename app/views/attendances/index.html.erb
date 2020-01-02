@@ -1,0 +1,17 @@
+<h1 style="text-align: left;">退勤中</h1>
+<h1 id="RealtimeClockArea"></h1>
+<% if @attendances.work_start_time.nil? %>
+  <%= link_to "出勤登録", user_attendance_path(@user, @attendances), method: :patch, class: "btn btn-primary btn-attendance" %>
+<% end %>
+<%= l(@attendances.work_start_time, format: :time) if @attendances.work_start_time.present? %>
+<script type="text/javascript">
+function showClock1() {
+   var nowTime = new Date();
+   var nowHour = nowTime.getHours();
+   var nowMin  = nowTime.getMinutes();
+   var nowSec  = nowTime.getSeconds();
+   var msg = nowHour + ":" + nowMin + ":" + nowSec;
+   document.getElementById("RealtimeClockArea").innerHTML = msg;
+}
+setInterval('showClock1()',1000);
+</script>
