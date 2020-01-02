@@ -26,12 +26,11 @@ class ShiftsController < ApplicationController
     @hole_staff = User.where(admin: false, kitchen: false, hole: true)
     @staffs = User.where(admin: false)
     if params[:date]
-      @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%").
-                      where.not("start_time LIKE ?", "%:%")
+      @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%")
       @date = params[:date].to_date
     elsif params[:staff]
       @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff]).
-                      where("request_start_time LIKE ?", "%:%").where.not("start_time LIKE ?", "%:%")
+                      where("request_start_time LIKE ?", "%:%")
     end
   end
   

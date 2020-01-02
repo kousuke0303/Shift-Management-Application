@@ -28,13 +28,13 @@ ActiveRecord::Schema.define(version: 2019_12_24_163948) do
   create_table "shifts", force: :cascade do |t|
     t.date "worked_on"
     t.date "apply_day"
-    t.text "request_start_time"
-    t.text "request_end_time"
+    t.string "request_start_time"
+    t.string "request_end_time"
     t.date "approve_day"
     t.string "from_admin_msg"
     t.string "from_staff_msg"
-    t.text "start_time"
-    t.text "end_time"
+    t.string "start_time"
+    t.string "end_time"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
