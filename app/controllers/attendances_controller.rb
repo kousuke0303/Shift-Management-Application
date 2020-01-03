@@ -2,10 +2,16 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user
   
   def register
-    # 今日出勤済みかどうか調べる
-    if Attendance.find_by(user_id: current_user.id, day: Date.today)
-      # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
-      @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
+    # 従業員でログインした場合のみ、出退勤登録画面に移動する
+    if current_user.admin
+      # 管理者でログインした場合、出退勤登録画面に移動しないようにする
+      redirect_to static_pages_top_path
+    else
+      # 今日出勤済みかどうか調べる
+      if Attendance.find_by(user_id: current_user.id, day: Date.today)
+        # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
+        @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
+      end
     end
   end
   
