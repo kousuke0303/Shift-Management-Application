@@ -1,56 +1,60 @@
 <header class="navbar navbar-fixed-top">
   <div class="container nav-above">
+    <% if logged_in? %>
       <%= link_to "シフト管理アプリ", root_path, id: "logo" %>
-      <nav>
-        <ul class="nav navbar-nav navbar-right">
-        <% if logged_in? %>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <%= current_user.name %> <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li><%= link_to "チュートリアル", "#" %></li>
-              <li class="divider"></li>
-              <li><%= link_to "設定", edit_user_path(current_user) %></li>
-              <li class="divider"></li>
-              <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
-            </ul>
-          </li>
-        <% end %>
-        </ul>
-      </nav>
+    <% end %>
+    <nav>
+      <ul class="nav navbar-nav navbar-right">
+      <% if logged_in? %>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <%= current_user.name %> <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "チュートリアル", "#" %></li>
+            <li class="divider"></li>
+            <li><%= link_to "設定", edit_user_path(current_user) %></li>
+            <li class="divider"></li>
+            <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
+          </ul>
+        </li>
+      <% end %>
+      </ul>
+    </nav>
   </div>
-  <div class="nav-below">
-    <div class="container">
-      <div class="row">
-        <% if logged_in? && current_user.admin? %>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "出退勤管理", '#', class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "シフト管理", '#', class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "スタッフ管理", users_path, class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "給与管理", '#', class: "nav-link" %></div>
-          </div>
-        <% elsif logged_in? %>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "出退勤登録", '#', class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <div class="nav-item"><%= link_to "シフト申請", '#', class: "nav-link" %></div>
-          </div>
-        <% end %>
+  <% if logged_in? %>
+    <div class="nav-below">
+      <div class="container">
+        <div class="row">
+          <% if current_user.admin? %>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "出退勤管理", '#', class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "シフト管理", '#', class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "スタッフ管理", users_path, class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "給与管理", attendances_salary_management_path(id: current_user.id), class: "nav-link" %></div>
+            </div>
+          <% elsif %>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "出退勤登録", users_attendances_register_path(id: current_user.id), class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <div class="nav-item"><%= link_to "シフト申請", '#', class: "nav-link" %></div>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
-  </div>
+  <% end %>
 </header>

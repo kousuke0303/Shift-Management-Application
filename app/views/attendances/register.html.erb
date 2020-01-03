@@ -1,0 +1,26 @@
+<% if @attendance.nil? || @attendance[0].work_end_time %>
+  <h1 class="text-left work-status-border">退勤中</h1>
+<% elsif @attendance && @attendance[0].break_start_time.nil? && @attendance[0].break_end_time.nil? %>
+  <h1 class="text-left work-status-border">出勤中</h1>
+<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time.nil? %>
+  <h1 class="text-left work-status-border">休憩中</h1>
+<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time %>
+  <h1 class="text-left work-status-border">出勤中</h1>
+<% end %>
+
+<h2 id="RealDateArea"></h2>
+<h1 id="RealtimeClockArea"></h1>
+<% if @attendance.nil? || @attendance[0].work_end_time %>
+  <%= link_to "出勤", user_attendances_path(current_user), method: :post, class: "btn btn-primary btn-block" %>
+<% elsif @attendance && @attendance[0].break_start_time.nil? && @attendance[0].break_end_time.nil? %>
+  <%= link_to "休憩開始", users_attendances_breakstart_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+  <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time.nil? %>
+  <%= link_to "休憩終了", users_attendances_breakend_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time %>
+  <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+<% end %>
+
+<script type="text/javascript">
+   <%= raw Rails.application.assets["register.js"].to_s %>
+</script>

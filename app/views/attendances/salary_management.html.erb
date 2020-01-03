@@ -1,0 +1,67 @@
+<% provide(:title, "給与管理") %>
+
+<div class="container">
+  <div class="col-md-11 col-md-offset-0">
+    <%= form_with model: @user,  method: :get, local: true do |f| %>
+      <%= f.label :search, "スタッフ検索" %>
+      <br>
+      <div style="display: inline-flex">
+        <%= f.text_field :name, class: "form-control", placeholder: "スタッフ名を入力" %>
+      </div>
+      <br>
+      <br>
+      <%= f.label :search, "年月日検索" %>
+      <br>
+      <div style="display: inline-flex">
+        <%= f.date_field :day, class: "form-control" %>
+      </div>
+      <br>
+      <div style="margin-top: 15px; margin-bottom: 15px;">
+        <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
+      </div>
+
+      <table class="table table-bordered table-condensed table-striped">
+        <thead>
+          <tr>
+            <th class="salary-management-table">日時</th>
+            <th class="salary-management-table">スタッフ名</th>
+            <th class="salary-management-table">出勤時間</th>
+            <th class="salary-management-table">退勤時間</th>
+            <th class="salary-management-table">休憩開始時間</th>
+            <th class="salary-management-table">休憩終了時間</th>
+          </tr>
+        </thead>
+        <% if params["date"] %>
+          <% @attendances.each do |at| %>
+            <tbody>
+              <tr>
+                <td class="center"><%= l(at.day, format: :short) %></td>
+                <td class="center"><%= at.user.name %></td>
+                <td class="center"><%= l(at.work_start_time , format: :time) %></td>
+                <td class="center"><%= l(at.work_end_time, format: :time) %></td>
+                <td class="center"><%= l(at.break_start_time, format: :time) %></td>
+                <td class="center"><%= l(at.break_end_time, format: :time) %></td>
+              </tr>
+            </tbody>
+            <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
+            <% day_salary = day_work_time.to_i * at.salary.to_i %>
+            <% @total_salary = @total_salary + day_salary %>
+          <% end %>
+        <% end %>
+      </table>
+
+      <table class="table table-bordered table-condensed table-striped">
+        <thead>
+          <tr>
+            <th class="salary-management-table">給与合計</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @total_salary %></td>
+          </tr>
+        </tbody>
+      </table>
+    <% end %>
+  </div>
+</div>
