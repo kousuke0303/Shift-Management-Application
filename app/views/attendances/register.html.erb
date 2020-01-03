@@ -17,7 +17,7 @@
 <h2><%= date.year %>年<%= date.month %>月<%= date.day %>日</h2>
 <!--時間の表示-->
 <h1 id="RealtimeClockArea"></h1>
-<!--出勤ボタン押下後、または退勤ボタン押下後に出勤ボタンを表示-->
+<!--出勤ボタン押下前、または退勤ボタン押下後に出勤ボタンを表示-->
 <% if @attendances.nil? || @attendances[0].work_end_time %>
   <%= link_to "出勤", user_attendances_path(current_user), method: :post, class: "btn btn-primary btn-block" %>
 <!--出勤ボタン押下後、かつ休憩開始ボタン押下前、かつ休憩終了ボタン押下前に休憩開始ボタン、退勤ボタンを表示-->
