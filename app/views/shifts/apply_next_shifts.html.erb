@@ -3,6 +3,19 @@
     local: true, method: :patch) do |f| %>
   <div class="row">
     <div class="col-xs-12 col-md-10 col-md-offset-1">
+      <div class="apply-period-area">
+        <% if Date.current.day <= 15 %>
+          <%= @first_day.month %>月後半のシフト申請
+        <% else %>
+          <%= @first_day.month %>月前半のシフト申請
+        <% end %>
+        <br>申請可能期間：<%= @start_apply_day.strftime('%-m/%-d') %>～<%= @end_apply_day.strftime('%-m/%-d') %>
+        <% if @shifts[0].apply_day.present? %>
+          <span class="display-apply-day">最終申請日：<%= @shifts[0].apply_day.strftime('%-m/%-d') %></span>
+        <% else %>
+          <span class="no-apply">未申請</span>
+        <% end %>
+      </div>
       <table class="table table-bordered table-condensed table-hover" id="apply-shifts-table">
         
         <thead>

@@ -3,6 +3,7 @@ class ShiftsController < ApplicationController
   before_action :set_user
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
+  before_action :set_apply_limit, only: :apply_next_shifts
   
   def apply_next_shifts
   end
@@ -49,6 +50,7 @@ class ShiftsController < ApplicationController
     redirect_to shifts_applying_next_shifts_user_path(@user)
   end
 
+  # 申請を求めるシフトの、日付を定義
   def set_next_shifts_date
     if Date.current.day <= 15
       @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
@@ -60,6 +62,7 @@ class ShiftsController < ApplicationController
     @next_shifts = [*@first_day..@last_day]
   end
   
+  # 申請を求めるシフトの、レコードを自動生成
   def create_next_shifts
     @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
     unless @next_shifts.count == @shifts.count
@@ -71,6 +74,17 @@ class ShiftsController < ApplicationController
   rescue ActiveRecord::RecordInvalid 
     flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
     redirect_to root_url
+  end
+  
+  # シフトの募集期間を定義
+  def set_apply_limit
+    if Date.current.day <= 15
+      @start_apply_day = Date.current.beginning_of_month
+      @end_apply_day = Date.current.beginning_of_month.since(7.days)
+    else
+      @start_apply_day = Date.current.beginning_of_month.since(15.days)
+      @end_apply_day = @start_apply_day.since(7.days)
+    end
   end
   
   private

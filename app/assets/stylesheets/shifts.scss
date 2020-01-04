@@ -1,5 +1,21 @@
 /* シフト申請画面 */
 
+.apply-period-area {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+  
+  .display-apply-day {
+  margin-left: 40px;
+  }
+  span.no-apply {
+    border: 2px solid red;
+    color: red;
+    margin-left: 40px;
+  }
+}
+
 #apply-shifts-table {
   th {
     background: gold;
