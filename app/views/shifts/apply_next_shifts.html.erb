@@ -42,11 +42,14 @@
                     "16:00": "16:00", "16:30": "16:30", "17:00": "17:00","17:30": "17:30", "18:00": "18:00",
                     "18:30": "18:30", "19:00": "19:00", "19:30": "19:30", "20:00": "20:00", "20:30": "20:30",
                     "21:00": "21:00", "21:30": "21:30", "22:00": "22:00", "22:30": "22:30", "23:00": "23:00",
-                    "23:30": "23:30", "ラスト": "ラスト"},day.request_start_time),
+                    "23:30": "23:30", "ラスト": "ラスト"},day.request_end_time),
                     {include_blank: "時刻を選択"}, class: "form-control" %>
               </td>
               <td>
                 <%= shift.text_field :from_staff_msg, class: "form-control" %>
+                <%= shift.hidden_field :start_time, value: "" %>
+                <%= shift.hidden_field :end_time, value: "" %>
+                <%= shift.hidden_field :apply_day, value: Date.current %>
               </td>
             </tr>
           <% end %>
