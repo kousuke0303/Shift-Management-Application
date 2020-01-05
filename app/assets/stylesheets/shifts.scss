@@ -1,0 +1,146 @@
+/* シフト申請画面 */
+
+.apply-period-area {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+  
+  .display-apply-day {
+  margin-left: 40px;
+  }
+  span.no-apply {
+    border: 2px solid red;
+    color: red;
+    margin-left: 40px;
+  }
+}
+
+#apply-shifts-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  td.blue {
+    color: blue;
+  }
+  td.red {
+    color: red;
+  }
+}
+
+.btn-apply-shifts-area {
+  text-align: center;
+}
+
+/* シフト承認ページタイトル */
+
+.next_shifts-title {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.create-limit {
+  margin-left: 40px;
+}
+
+/* 次回のシフトテーブル */
+
+#next-shifts-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  th.blue {
+    color: blue;
+  }
+  th.red {
+    color: red;
+  }
+}
+
+/* 申請中シフトの検索フォーム */
+
+.search-shift-tittle {
+  padding: 0;
+}
+
+.search-shift {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin: 0;
+  text-align: right;
+}
+
+.search-shift-form-left {
+  padding: 0;
+}
+
+.search-shift-form-right {
+  padding: 0;
+}
+
+/* 申請中シフト表示エリア(日毎) */
+
+.applying-shift-date {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#applying-shifts-table-date {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+/* 申請中シフト表示エリア(スタッフ毎) */
+
+.applying-shift-staff {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}
+
+#applying-shifts-table-staff {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+.btn-confirm-shifts-area {
+  text-align: center;
+}
+
+.no-shift-comment {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
+}

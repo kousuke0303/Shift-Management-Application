@@ -13,6 +13,13 @@ Rails.application.routes.draw do
   patch  '/users/:id/attendances/breakend',  to: 'attendances#breakend', as: 'users_attendances_breakend'
   
   resources :users do
+    member do
+      get 'shifts/apply_next_shifts'
+      patch 'shifts/update_next_shifts'
+      get 'shifts/applying_next_shifts'
+      patch 'shifts/confirm_next_shifts'
+    end
+    resources :shifts, only: :update
     resources :attendances
   end
 end
