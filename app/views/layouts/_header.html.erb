@@ -23,37 +23,36 @@
     </nav>
   </div>
   <% if logged_in? %>
-    <div class="nav-below">
-      <div class="container">
-        <div class="row">
-          <% if current_user.admin? %>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤管理", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト管理", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "スタッフ管理", users_path, class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "給与管理", attendances_salary_management_path(id: current_user.id), class: "nav-link" %></div>
-            </div>
-          <% elsif %>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤登録", users_attendances_register_path(id: current_user.id), class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト申請", '#', class: "nav-link" %></div>
-            </div>
-          <% end %>
-        </div>
+  <div class="nav-below">
+    <div class="container">
+      <div class="row">
+        <% if logged_in? && current_user.admin? %>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "出退勤管理", '#', class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "シフト管理", shifts_applying_next_shifts_user_path(current_user), class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "スタッフ管理", users_path, class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "給与管理", users_attendances_salary_management_path(current_user), class: "nav-link" %></div>
+          </div>
+        <% elsif logged_in? %>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "出退勤登録", users_attendances_register_path(id: current_user.id), class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <div class="nav-item"><%= link_to "シフト申請", shifts_apply_next_shifts_user_path(current_user), class: "nav-link" %></div>
+          </div>
+        <% end %>
       </div>
     </div>
   <% end %>

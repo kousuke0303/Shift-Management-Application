@@ -1,17 +1,29 @@
 class AttendancesController < ApplicationController
-  before_action :logged_in_user
+  include AttendancesHelper
   
+  before_action :logged_in_user
+
   #給与管理
   def salary_management
     #勤怠情報が存在している情報のみ出力
-    @attendances = Attendance.where.not(day: params["date"], work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil).includes(:user)
+    @attendances = Attendance.where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil)
+    @search_form = UserAttendanceSearchForm.new(params[:search])
+    @users = @search_form.search
   end
   
-  #給与合計を算出するために実労働時間を算出するロジック
-  def total_time(start_time, start_break_time, finish_break_time, finish_time)
-    (((finish_time + (start_break_time - finish_break_time) - start_time / 60 ) / 60.0))
+  class UserAttendanceSearchForm
+    include ActiveModel::Model
+    
+    attr_accessor :name, :day
+    
+    def search
+      rel = User.all
+      rel = rel.where(name: name) if name.present?
+      rel = rel.joins(:attendance).eager_load(:attendance).where("attendances.day = ?", attendances.params[:day]) if day.present?
+      rel
+    end
   end
-  
+
   def register
     # 今日出勤済みかどうか調べる
     if Attendance.find_by(user_id: current_user.id, day: Date.today)
