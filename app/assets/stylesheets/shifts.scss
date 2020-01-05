@@ -56,10 +56,7 @@
 #next-shifts-table {
   th {
     background: gold;
-    text-align: center;
-    vertical-align: middle;
-  }
-  td {
+    padding: 2px;
     text-align: center;
     vertical-align: middle;
   }
@@ -68,6 +65,15 @@
   }
   th.red {
     color: red;
+  }
+  td {
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td.display-shift {
+    font-size: 0.9em;
   }
 }
 

@@ -14,15 +14,15 @@
 
 <table class="table table-bordered table-condensed" id="next-shifts-table">
   <tr>
-    <th>ポジション</th>
+    <th width=8%>ポジション</th>
     <th>スタッフ名</th>
     <% @next_shifts.each do |day| %>
       <% if day.wday == 6 %>
-        <th class="blue"><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+        <th class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% elsif day.wday == 0 %>
-        <th class="red"><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+        <th class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% else %>
-        <th><%= day.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.wday] %>)</th>
+        <th><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% end %>
     <% end %>
   </tr>
@@ -32,7 +32,7 @@
       <td>キッチン</td>
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
-        <td><%= start_and_end_time_of_shift(staff, day) %></td>
+        <td width=5% class="display-shift"><%= start_and_end_time_of_shift(staff, day) %></td>
       <% end %>
     </tr>
   <% end %>

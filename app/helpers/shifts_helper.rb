@@ -83,6 +83,6 @@ module ShiftsHelper
   # シフトレコードから、出勤・退勤時間を表示
   def start_and_end_time_of_shift(staff, day)
     shifts = Shift.where(user_id: staff.id, worked_on: day).where("start_time LIKE ?", "%:%")
-    "#{shifts[0].start_time}-#{shifts[0].end_time}" if shifts.count > 0
+    "#{text_to_time(shifts[0].start_time)}-#{text_to_time(shifts[0].end_time)}" if shifts.count > 0
   end
 end
