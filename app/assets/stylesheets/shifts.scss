@@ -38,6 +38,19 @@
   text-align: center;
 }
 
+/* シフト承認ページタイトル */
+
+.next_shifts-title {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.create-limit {
+  margin-left: 40px;
+}
+
 /* 次回のシフトテーブル */
 
 #next-shifts-table {
