@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
 
   get 'sessions/new'
-
   root 'attendances#register'
+  # 管理者でログインした場合、出退勤登録画面に移動しないようにする
+  get '/static_pages', to: 'static_pages#top', as: 'static_pages_top'
   get '/signup', to: 'users#new'
   
   get    '/login', to: 'sessions#new'

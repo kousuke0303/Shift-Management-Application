@@ -2,11 +2,13 @@
 
 <div class="container">
   <div class="col-md-11 col-md-offset-0">
-    <%= form_for @search_form, as: 'search', url: users_attendances_salary_management_path, html: {method: :get}, local: true do |f| %>
+    <h4>※検索する際は、スタッフ検索・年月日検索どちらか一方でお願いします</h4>
+    <br>
+    <%= form_with method: :get, local: true do |f| %>
       <%= f.label :name, "スタッフ検索" %>
       <br>
       <div style="display: inline-flex">
-        <%= f.collection_select :name, @users, :name, :name, {prompt: "スタッフ名を選択"},
+        <%= f.collection_select :user_id, @staffs, :id, :name, {prompt: "スタッフ名を選択"},
             {class: "form-control"} %>
       </div>
       <br>
@@ -21,34 +23,33 @@
         <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
       </div>
     <% end %>
-
-    <table class="table table-bordered table-condensed table-striped">
-      <thead>
-        <tr>
-          <th class="salary-management-table">日時</th>
-          <th class="salary-management-table">スタッフ名</th>
-          <th class="salary-management-table">出勤時間</th>
-          <th class="salary-management-table">退勤時間</th>
-          <th class="salary-management-table">休憩開始時間</th>
-          <th class="salary-management-table">休憩終了時間</th>
-        </tr>
-      </thead>
-        <% @attendances.each do |at| %>
-          <tbody>
-            <tr>
-              <td class="center"><%= l(at.day, format: :short) %></td>
-              <td class="center"><%= at.user.name %></td>
-              <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td>
-              <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
-              <td class="center"><%= l(at.break_start_time, format: :time) if at.break_start_time.present? %></td>
-              <td class="center"><%= l(at.break_end_time, format: :time) if at.break_end_time.present? %></td>
-            </tr>
-          </tbody>
-          <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
-          <% day_salary = day_work_time.to_i * at.salary.to_i %>
-          <% @total_salary = @total_salary.to_i + day_salary.to_i %>
-        <% end %>
-    </table>
+      <table class="table table-bordered table-condensed table-striped">
+        <thead>
+          <tr>
+            <th class="salary-management-table">日時</th>
+            <th class="salary-management-table">スタッフ名</th>
+            <th class="salary-management-table">出勤時間</th>
+            <th class="salary-management-table">退勤時間</th>
+            <th class="salary-management-table">休憩開始時間</th>
+            <th class="salary-management-table">休憩終了時間</th>
+          </tr>
+        </thead>
+          <% @attendances.each do |at| %>
+            <tbody>
+              <tr>
+                <td class="center"><%= l(at.day, format: :long) %></td>
+                <td class="center"><%= at.user.name %></td>
+                <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td>
+                <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
+                <td class="center"><%= l(at.break_start_time, format: :time) if at.break_start_time.present? %></td>
+                <td class="center"><%= l(at.break_end_time, format: :time) if at.break_end_time.present? %></td>
+              </tr>
+            </tbody>
+            <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
+            <% day_salary = day_work_time.to_f * at.salary.to_f %>
+            <% @total_salary = @total_salary.to_i + day_salary.to_i %>
+          <% end %>
+      </table>
 
       <table class="table table-bordered table-condensed table-striped">
         <thead>

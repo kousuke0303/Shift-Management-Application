@@ -1,23 +1,34 @@
-<% if @attendance.nil? || @attendance[0].work_end_time %>
+<!--出勤ボタン押下前、または退勤ボタン押下後に退勤中を表示-->
+<% if @attendances.nil? || @attendances[0].work_end_time %>
   <h1 class="text-left work-status-border">退勤中</h1>
-<% elsif @attendance && @attendance[0].break_start_time.nil? && @attendance[0].break_end_time.nil? %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下前、かつ休憩終了ボタン押下前に出勤中を表示-->
+<% elsif @attendances && @attendances[0].break_start_time.nil? && @attendances[0].break_end_time.nil? %>
   <h1 class="text-left work-status-border">出勤中</h1>
-<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time.nil? %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下前に休憩中を表示-->
+<% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time.nil? %>
   <h1 class="text-left work-status-border">休憩中</h1>
-<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下後に出勤中を表示-->
+<% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time %>
   <h1 class="text-left work-status-border">出勤中</h1>
 <% end %>
 
-<h2 id="RealDateArea"></h2>
+<!--日付の表示-->
+<% date = Date.current %>
+<h2><%= date.year %>年<%= date.month %>月<%= date.day %>日</h2>
+<!--時間の表示-->
 <h1 id="RealtimeClockArea"></h1>
-<% if @attendance.nil? || @attendance[0].work_end_time %>
+<!--出勤ボタン押下前、または退勤ボタン押下後に出勤ボタンを表示-->
+<% if @attendances.nil? || @attendances[0].work_end_time %>
   <%= link_to "出勤", user_attendances_path(current_user), method: :post, class: "btn btn-primary btn-block" %>
-<% elsif @attendance && @attendance[0].break_start_time.nil? && @attendance[0].break_end_time.nil? %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下前、かつ休憩終了ボタン押下前に休憩開始ボタン、退勤ボタンを表示-->
+<% elsif @attendances && @attendances[0].break_start_time.nil? && @attendances[0].break_end_time.nil? %>
   <%= link_to "休憩開始", users_attendances_breakstart_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
   <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
-<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time.nil? %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下前に休憩終了ボタンを表示-->
+<% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time.nil? %>
   <%= link_to "休憩終了", users_attendances_breakend_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
-<% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time %>
+<!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下後に退勤ボタンを表示-->
+<% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time %>
   <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
 <% end %>
 
