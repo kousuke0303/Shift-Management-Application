@@ -2,13 +2,13 @@
 
 <div class="container">
   <div class="col-md-11 col-md-offset-0">
-    <h4>※検索する際は、スタッフ検索・年月日検索どちらか一方でお願いします</h4>
+    <h4>※スタッフ検索・年月日検索どちらか一方での検索でお願いします</h4>
     <br>
     <%= form_with method: :get, local: true do |f| %>
       <%= f.label :name, "スタッフ検索" %>
       <br>
       <div style="display: inline-flex">
-        <%= f.collection_select :user_id, @staffs, :id, :name, {prompt: "スタッフ名を選択"},
+        <%= f.collection_select :user_id, @staffs, :id, :name, {prompt: "スタッフを選択"},
             {class: "form-control"} %>
       </div>
       <br>
@@ -21,12 +21,13 @@
       <br>
       <div style="margin-top: 15px; margin-bottom: 15px;">
         <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
+        <%= link_to "リセット", users_attendances_salary_management_path, class: "btn btn-lg btn-primary" %>
       </div>
     <% end %>
       <table class="table table-bordered table-condensed table-striped">
         <thead>
           <tr>
-            <th class="salary-management-table">日時</th>
+            <th class="salary-management-table">年月日</th>
             <th class="salary-management-table">スタッフ名</th>
             <th class="salary-management-table">出勤時間</th>
             <th class="salary-management-table">退勤時間</th>
@@ -45,6 +46,7 @@
                 <td class="center"><%= l(at.break_end_time, format: :time) if at.break_end_time.present? %></td>
               </tr>
             </tbody>
+            <!-- attendances_helperでday_work_time関数を実装し、それに給料を掛けて、各スタッフごとで足し算していく-->
             <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
             <% day_salary = day_work_time.to_f * at.salary.to_f %>
             <% @total_salary = @total_salary.to_i + day_salary.to_i %>

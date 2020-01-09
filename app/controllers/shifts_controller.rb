@@ -3,6 +3,7 @@ class ShiftsController < ApplicationController
   before_action :set_user
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
+  before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
   
   def apply_next_shifts
   end
@@ -26,11 +27,12 @@ class ShiftsController < ApplicationController
     @hole_staff = User.where(admin: false, kitchen: false, hole: true)
     @staffs = User.where(admin: false)
     if params[:date]
-      @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%")
+      @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%").
+                      where.not("start_time LIKE ?", "%:%")
       @date = params[:date].to_date
     elsif params[:staff]
       @shifts = Shift.where(worked_on: @first_day..@last_day, user_id: params[:staff]).
-                      where("request_start_time LIKE ?", "%:%")
+                      where("request_start_time LIKE ?", "%:%").where.not("start_time LIKE ?", "%:%")
     end
   end
   
@@ -42,12 +44,14 @@ class ShiftsController < ApplicationController
       end
     end
     flash[:success] = "シフトに反映しました。"
-    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date])
+    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date]) if params[:date]
+    redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
     redirect_to shifts_applying_next_shifts_user_path(@user)
   end
 
+  # 申請を求めるシフトの、日付を定義
   def set_next_shifts_date
     if Date.current.day <= 15
       @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
@@ -59,6 +63,7 @@ class ShiftsController < ApplicationController
     @next_shifts = [*@first_day..@last_day]
   end
   
+  # 申請を求めるシフトの、レコードを自動生成
   def create_next_shifts
     @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
     unless @next_shifts.count == @shifts.count
@@ -72,9 +77,24 @@ class ShiftsController < ApplicationController
     redirect_to root_url
   end
   
+  # シフトの募集・作成期間を定義
+  def set_apply_limit
+    if Date.current.day <= 15
+      @start_apply_day = Date.current.beginning_of_month
+      @end_apply_day = Date.current.beginning_of_month.since(7.days)
+      @start_create_day = @start_apply_day.since(8.days)
+      @end_create_day = @start_apply_day.since(14.days)
+    else
+      @start_apply_day = Date.current.beginning_of_month.since(15.days)
+      @end_apply_day = @start_apply_day.since(7.days)
+      @start_create_day = @start_apply_day.since(8.days)
+      @end_create_day = @start_apply_day.end_of_month
+    end
+  end
+  
   private
     def shifts_params
-      params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg,
+      params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg, :apply_day,
                                             :start_time, :end_time])[:shifts]
     end
 end

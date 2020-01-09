@@ -5,12 +5,13 @@ class AttendancesController < ApplicationController
 
   #給与管理
   def salary_management
+    #管理者を除いたスタッフを出力
     @staffs = User.where(admin: false)
-    #勤怠情報が存在している情報のみ出力
+    #スタッフ検索か年月日検索どちらかかできるように実装(スタッフと年月日両方で検索しても１件しか出力されないので不要かと)
     @attendances = Attendance
                    .where(user_id: params[:user_id])
                    .or(Attendance.where(day: params[:day]))
-                   .where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil)
+                   .where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil) 
   end
 
   def register
@@ -32,9 +33,9 @@ class AttendancesController < ApplicationController
     if Attendance.find_by(user_id: current_user.id, day: Date.today)
       flash[:info] = "今日はもう出勤済みです。"
       redirect_to users_attendances_register_path(current_user)
-    else
+    elseΩ
       # 出勤ボタン押下時にレコードが生成される
-      # 日本時間に合わせる為、9時間分の秒数を足す
+      # 日本時間に合わせる為、9時間分の秒数を足す→下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current.change(sec: 0) + 32400)
       @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current)
       if @attendance.save
@@ -51,6 +52,7 @@ class AttendancesController < ApplicationController
     @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
     # 出勤時間が未登録であることを判定します。
     if @attendances[0].work_end_time.nil?
+      # 下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # if @attendances[0].update_attributes(work_end_time: Time.current.change(sec: 0) + 32400)
       if @attendances[0].update_attributes(work_end_time: Time.current)
         flash[:info] = "お疲れ様でした！"
@@ -66,6 +68,7 @@ class AttendancesController < ApplicationController
     @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
     # 休憩開始時間が未登録であることを判定します。
     if @attendances[0].break_start_time.nil?
+      # 下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0) + 32400)
       if @attendances[0].update_attributes(break_start_time: Time.current)
         flash[:info] = "休憩を開始しました。"
@@ -81,6 +84,7 @@ class AttendancesController < ApplicationController
     @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
     # 休憩開始時間が未登録であることを判定します。
     if @attendances[0].break_end_time.nil?
+      # 下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # if @attendances[0].update_attributes(break_end_time: Time.current.change(sec: 0) + 32400)
       if @attendances[0].update_attributes(break_end_time: Time.current)
         flash[:info] = "休憩を終了しました。"
