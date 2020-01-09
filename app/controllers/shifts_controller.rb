@@ -1,9 +1,44 @@
 class ShiftsController < ApplicationController
   
-  before_action :set_user
+  before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, :confirm_next_shifts]
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
+  before_action :set_shift, only: [:edit, :update]
+  
+  def new
+    @shift = Shift.new
+  end
+  
+  def create
+  end
+  
+  def edit
+    find_user_by_shift(@shift) # シフトの所有スタッフを定義
+  end
+
+  def update
+    if params[:remove] && params[:remove].present?
+      if @shift.update_attributes(start_time: "", end_time: "")
+        flash[:success] = "シフトを外しました。"
+      else
+        flash[:danger] = "シフトの編集に失敗しました。"
+      end
+    elsif
+      if @shift.update_attributes(shift_params)
+        flash[:success] = "シフトを編集しました。"
+      else
+        flash[:danger] = "シフトの編集に失敗しました。"
+      end
+    end
+    if params[:date]
+      redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
+    elsif params[:staff]
+      redirect_to shifts_applying_next_shifts_user_path(current_user, staff: params[:staff])
+    else
+      redirect_to shifts_applying_next_shifts_user_path(current_user)
+    end
+  end
   
   def apply_next_shifts
   end
@@ -49,6 +84,12 @@ class ShiftsController < ApplicationController
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
     redirect_to shifts_applying_next_shifts_user_path(@user)
+  end
+  
+  # beforeフィルター
+  
+  def set_shift
+    @shift = Shift.find(params[:id])
   end
 
   # 申請を求めるシフトの、日付を定義
@@ -96,5 +137,9 @@ class ShiftsController < ApplicationController
     def shifts_params
       params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg, :apply_day,
                                             :start_time, :end_time])[:shifts]
+    end
+    
+    def shift_params
+      params.require(:shift).permit(:start_time, :end_time, :from_admin_msg)
     end
 end
