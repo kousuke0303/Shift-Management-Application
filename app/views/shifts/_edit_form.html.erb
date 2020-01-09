@@ -59,6 +59,8 @@
             </table>
             <div class="edit-shift-btn-area">
               <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
+              <%= link_to "シフトから外す", user_shift_path(current_user, date: params[:date], remove: true), method: :patch,
+                  class: "btn btn-md btn-default" %>
             </div>
             <% end %>
           <% elsif params[:staff] %>
@@ -111,6 +113,8 @@
             </table>
             <div class="edit-shift-btn-area">
               <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
+              <%= link_to "シフトから外す", user_shift_path(current_user, staff: params[:staff], remove: true), method: :patch,
+                  class: "btn btn-md btn-default" %>
             </div>
             <% end %>
           <% else %>
@@ -163,6 +167,8 @@
             </table>
             <div class="edit-shift-btn-area">
               <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
+              <%= link_to "シフトから外す", user_shift_path(current_user, remove: true), method: :patch,
+                  class: "btn btn-md btn-default" %>
             </div>
             <% end %>
           <% end %>

@@ -14,28 +14,29 @@ class ShiftsController < ApplicationController
   end
   
   def edit
-    find_user_by_shift(@shift)
+    find_user_by_shift(@shift) # シフトの所有スタッフを定義
   end
 
   def update
-    if @shift.update_attributes(shift_params)
-      flash[:success] = "シフトを編集しました。"
-      if params[:date]
-        redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
-      elsif params[:staff]
-        redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:staff])
+    if params[:remove] && params[:remove].present?
+      if @shift.update_attributes(start_time: "", end_time: "")
+        flash[:success] = "シフトを外しました。"
       else
-        redirect_to shifts_applying_next_shifts_user_path(current_user)
+        flash[:danger] = "シフトの編集に失敗しました。"
       end
+    elsif
+      if @shift.update_attributes(shift_params)
+        flash[:success] = "シフトを編集しました。"
+      else
+        flash[:danger] = "シフトの編集に失敗しました。"
+      end
+    end
+    if params[:date]
+      redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
+    elsif params[:staff]
+      redirect_to shifts_applying_next_shifts_user_path(current_user, staff: params[:staff])
     else
-      flash[:danger] = "シフトの編集に失敗しました。"
-      if params[:date]
-        redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
-      elsif params[:staff]
-        redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:staff])
-      else
-        redirect_to shifts_applying_next_shifts_user_path(current_user)
-      end
+      redirect_to shifts_applying_next_shifts_user_path(current_user)
     end
   end
   
