@@ -1,6 +1,35 @@
 class AttendancesController < ApplicationController
   before_action :logged_in_user
   
+  def index
+    @user = User.find(params[:user_id])
+    @users = User.all
+    @attendances = Attendance.all
+    @staff = User.where(admin: false)
+    # 日付入力、スタッフ名空欄、本日チェックなしで表示する押下時
+    if (params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
+      @attendance_lists = Attendance.where(day: (params[:start_date])..(params[:end_date]))
+    # 日付空欄、スタッフ名入力、本日チェックなしで表示する押下時
+    elsif !(params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && !(params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
+      @attendance_lists = Attendance.where(user_id: params[:staff])
+    # 日付入力、スタッフ名入力、本日チェックなしで表示する押下時
+    elsif (params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
+      @attendance_lists = Attendance.where(day: (params[:start_date])..(params[:end_date])).where(user_id: params[:staff])
+    # 日付空欄、スタッフ名空欄、本日チェックありで表示する押下時
+    elsif !(params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && !(params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
+      @attendance_lists = Attendance.where(day: Date.current)
+    # 日付入力、スタッフ名空欄、本日チェックありで表示する押下時
+    elsif (params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
+      @attendance_lists = Attendance.where(day: Date.current)
+    # 日付入力、スタッフ名入力、本日チェックありで表示する押下時
+    elsif (params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
+      @attendance_lists = Attendance.where(day: Date.current).where(user_id: params[:staff])
+    # 日付空欄、スタッフ名入力、本日チェックありで表示する押下時
+    elsif !(params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && !(params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
+      @attendance_lists = Attendance.where(day: Date.current).where(user_id: params[:staff])
+    end
+  end
+  
   def register
     # 従業員でログインした場合のみ、出退勤登録画面に移動する
     if current_user.admin

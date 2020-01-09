@@ -1,17 +1,79 @@
-<h1 style="text-align: left;">退勤中</h1>
-<h1 id="RealtimeClockArea"></h1>
-<% if @attendances.work_start_time.nil? %>
-  <%= link_to "出勤登録", user_attendance_path(@user, @attendances), method: :patch, class: "btn btn-primary btn-attendance" %>
+<div class="row">
+  <div>
+    <%= form_with url: user_attendances_path(@user), method: :get, local: true do |f| %>
+      <div class="form-inline ">
+        <%= f.date_field :start_date, class: "form-control" %> 〜 <%= f.date_field :end_date, class: "form-control" %>
+      </div>
+      <div class="form-attendance-list-staff">
+        <%= f.collection_select(:staff, @staff, :id, :name, {prompt: "スタッフを選択"},
+              {class: "form-control"}) %>
+      </div>
+      <div class="form-inline">
+        <div class="today-flg-position">
+          <%= f.check_box(:today_flg, {class: "form-control today-flg-box"}) %>
+          <%= f.label "本日の出退勤" %>
+        </div>
+      </div>
+      <div class="center">
+        <%= f.submit "表示する", class: "btn btn-md btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<!--日付、スタッフ名、本日チェックいずれかを入力して表示する押下時-->
+<% if (params[:start_date] && params[:start_date].present?) || (params[:staff] && params[:staff].present?) || (params[:end_date] && params[:end_date].present?) || (params[:today_flg] == "1")%>
+  <table class="table table-bordered table-condensed">
+    <tr>
+      <th>日時</th>
+      <th>スタッフ名</th>
+      <th>出勤状況</th>
+      <th>出勤時間</th>
+      <th>退勤時間</th>
+      <th>休憩時間</th>
+    </tr>
+    <% if @attendance_lists %>
+      <% @attendance_lists.each do |obj| %>
+        <tr>
+          <td><%= obj.day %></td>
+          <td><%= @users[obj.user_id-1].name %></td>
+          <td>
+            <!--出勤ボタン押下前、または退勤ボタン押下後に退勤中を表示-->
+            <% if obj.nil? || obj.work_end_time %>
+              <p>退勤中</p>
+            <!--出勤ボタン押下後、かつ休憩開始ボタン押下前、かつ休憩終了ボタン押下前に出勤中を表示-->
+            <% elsif obj && obj.break_start_time.nil? && obj.break_end_time.nil? %>
+              <p>出勤中</p>
+            <!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下前に休憩中を表示-->
+            <% elsif obj && obj.break_start_time && obj.break_end_time.nil? %>
+              <p>休憩中</p>
+            <!--出勤ボタン押下後、かつ休憩開始ボタン押下後、かつ休憩終了ボタン押下後に出勤中を表示-->
+            <% elsif obj && obj.break_start_time && obj.break_end_time %>
+              <p>出勤中</p>
+            <% end %>
+          </td>
+          <td><%= obj.work_start_time.hour %>:<%= obj.work_start_time.min %></td>
+          <td>
+            <!--退勤時間が存在する場合のみ表示-->
+            <% if obj.work_end_time %>
+              <%= obj.work_end_time.hour %>:<%= obj.work_end_time.min %>
+            <% else %>
+              -
+            <% end %>
+          </td>
+          <td>
+            <!--休憩時間が存在する場合のみ表示-->
+            <% if obj.break_start_time && obj.break_end_time %>
+              <% break_time = obj.break_end_time - obj.break_start_time %>
+              <% break_time_sec = break_time % 60 %>
+              <%= (((break_time - break_time_sec) / 60) % 60).to_i %>分
+            <% else %>
+              -
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
 <% end %>
-<%= l(@attendances.work_start_time, format: :time) if @attendances.work_start_time.present? %>
 <script type="text/javascript">
-function showClock1() {
-   var nowTime = new Date();
-   var nowHour = nowTime.getHours();
-   var nowMin  = nowTime.getMinutes();
-   var nowSec  = nowTime.getSeconds();
-   var msg = nowHour + ":" + nowMin + ":" + nowSec;
-   document.getElementById("RealtimeClockArea").innerHTML = msg;
-}
-setInterval('showClock1()',1000);
 </script>

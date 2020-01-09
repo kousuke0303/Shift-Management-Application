@@ -22,39 +22,135 @@
       </ul>
     </nav>
   </div>
-  <% if logged_in? %>
-    <div class="nav-below">
-      <div class="container">
-        <div class="row">
-          <% if current_user.admin? %>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤管理", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト管理", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "スタッフ管理", users_path, class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "給与管理", '#', class: "nav-link" %></div>
-            </div>
-          <% elsif %>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤登録", users_attendances_register_path(id: current_user.id), class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "出退勤確認", '#', class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト確認", users_path, class: "nav-link" %></div>
-            </div>
-            <div class="col-xs-3 col-md-3 col-lg-3">
-              <div class="nav-item"><%= link_to "シフト申請", '#', class: "nav-link" %></div>
-            </div>
-          <% end %>
-        </div>
+  <div class="nav-below">
+    <div class="container">
+      <div class="row">
+        <% if logged_in? && current_user.admin? %>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to("#", class: "nav-link") do %>
+            <div class="nav-item item-1"><span class="text-1">出退勤管理</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to(shifts_applying_next_shifts_user_path(current_user), class: "nav-link") do %>
+            <div class="nav-item item-2"><span class="text-2">シフト管理</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to(users_path, class: "nav-link") do %>
+            <div class="nav-item item-3"><span class="text-3">スタッフ管理</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to("#", class: "nav-link") do %>
+            <div class="nav-item item-4"><span class="text-4">給与管理</span></div>
+            <% end %>
+          </div>
+        <% elsif logged_in? %>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to(users_attendances_register_path(id: current_user.id), class: "nav-link") do %>
+            <div class="nav-item item-5"><span class="text-5">出退勤登録</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to(user_attendances_path(user_id: current_user.id), class: "nav-link") do %>
+            <div class="nav-item item-6"><span class="text-6">出退勤確認</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to("#", class: "nav-link") do %>
+            <div class="nav-item item-7"><span class="text-7">シフト確認</span></div>
+            <% end %>
+          </div>
+          <div class="col-xs-3 col-md-3 col-lg-3">
+            <%= link_to(shifts_apply_next_shifts_user_path(current_user), class: "nav-link") do %>
+            <div class="nav-item item-8"><span class="text-8">シフト申請</span></div>
+            <% end %>
+          </div>
+        <% end %>
       </div>
     </div>
-  <% end %>
+  </div>
 </header>
+
+<script>
+  $(function() {
+    $('div.item-1').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-1').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-1').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-2').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-2').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-2').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-3').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-3').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-3').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-4').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-4').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-4').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-5').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-5').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-5').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-6').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-6').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-6').css('color', '');
+    });
+  });
+  
+  $(function() {
+    $('div.item-7').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-7').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-7').css('color', '');
+    });
+  });
+
+  $(function() {
+    $('div.item-8').hover(function() {
+      $(this).css('background', 'whitesmoke');
+      $('span.text-8').css('color', 'dimgray');
+    }, function() {
+    $(this).css('background', '');
+    $('span.text-8').css('color', '');
+    });
+  });
+</script>
