@@ -32,7 +32,21 @@
       <td>キッチン</td>
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
-        <td width=5% class="display-shift"><%= start_and_end_time_of_shift(staff, day) %></td>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <% if params[:date] && params[:date].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
+              <% elsif params[:staff] && params[:staff].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
+              <% else %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              <% end %>
+            </button>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
       <% end %>
     </tr>
   <% end %>
@@ -86,8 +100,8 @@
         <tr>
           <th width=10%>ポジション</th>
           <th width=10%>スタッフ名</th>
-          <th width=9%>希望開始時間</th>
-          <th width=9%>希望終了時間</th>
+          <th width=9%>希望出勤時間</th>
+          <th width=9%>希望退勤時間</th>
           <th width=19%>従業員コメント</th>
           <th width=12%>出勤時間</th>
           <th width=12%>退勤時間</th>
@@ -141,8 +155,8 @@
         <tr>
           <th width=7%>日付</th>
           <th width=10%>ポジション</th>
-          <th width=9%>希望開始時間</th>
-          <th width=9%>希望終了時間</th>
+          <th width=9%>希望出勤時間</th>
+          <th width=9%>希望退勤時間</th>
           <th width=20%>従業員コメント</th>
           <th width=12%>出勤時間</th>
           <th width=12%>退勤時間</th>
@@ -187,3 +201,6 @@
     <div class="no-shift-comment">申請中シフトがありません</div>
   <% end %>
 <% end %>
+
+<div class="modal fade" id="edit-shift-modal" tabindex="-1">
+</div>
