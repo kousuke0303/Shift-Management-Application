@@ -13,7 +13,9 @@
           <ul class="dropdown-menu">
             <li><%= link_to "チュートリアル", "#" %></li>
             <li class="divider"></li>
-            <li><%= link_to "設定", edit_user_path(current_user) %></li>
+            <% if current_user.admin? %>
+              <li><%= link_to "設定", edit_user_path(current_user) %></li>
+            <% end %>
             <li class="divider"></li>
             <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
           </ul>

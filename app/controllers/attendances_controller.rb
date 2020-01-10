@@ -7,11 +7,12 @@ class AttendancesController < ApplicationController
   def salary_management
     #管理者を除いたスタッフを出力
     @staffs = User.where(admin: false)
-    #スタッフ検索か年月日検索どちらかかできるように実装(スタッフと年月日両方で検索しても１件しか出力されないので不要かと)
+    #スタッフ検索か年月日検索どちらかで検索可能、または年月検索もできるように実装
     @attendances = Attendance
                    .where(user_id: params[:user_id])
+                   .where("date LIKE ?", "#{params[:date]}%")
                    .or(Attendance.where(day: params[:day]))
-                   .where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil) 
+                   .where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil)
   end
 
   def register
@@ -21,7 +22,7 @@ class AttendancesController < ApplicationController
       redirect_to static_pages_top_path
     else
       # 今日出勤済みかどうか調べる
-      if Attendance.find_by(user_id: current_user.id, day: Date.today)
+      if Attendance.find_by(user_id: current_user.id, day: Date.today, date: Date.today.all_month)
         # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
         @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
       end
@@ -33,11 +34,11 @@ class AttendancesController < ApplicationController
     if Attendance.find_by(user_id: current_user.id, day: Date.today)
       flash[:info] = "今日はもう出勤済みです。"
       redirect_to users_attendances_register_path(current_user)
-    elseΩ
+    else
       # 出勤ボタン押下時にレコードが生成される
       # 日本時間に合わせる為、9時間分の秒数を足す→下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current.change(sec: 0) + 32400)
-      @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current)
+      @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current, date: Date.today)
       if @attendance.save
         flash[:info] = "おはようございます！"
       else

@@ -2,6 +2,9 @@ class User < ApplicationRecord
   has_many :shifts, dependent: :destroy
 
   has_many :attendances, dependent: :destroy
+  
+  #親モデル(ユーザーモデル)を通じてネストしたモデルの関連レコード(勤怠テーブル)の登録・更新を可能にするメソッド
+  accepts_nested_attributes_for :attendances, allow_destroy: true
 
   attr_accessor :remember_token
   before_save { self.email = email.downcase }
