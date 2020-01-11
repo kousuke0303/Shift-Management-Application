@@ -12,6 +12,7 @@ ja:
           kitchen: キッチン
           hole: ホール
           wash: 洗い場
+          hourly_wage: 時給
           password: パスワード
           password_confirmation: パスワード再入力
           created_at: 登録日
@@ -21,7 +22,7 @@ ja:
           day: 出勤日
           work_start_time: 出勤時間
           work_end_time: 退勤時間
-          salary: 給料
+          salary: 日給
           hourly_wage: 時給
           created_at: 登録日
           updated_at: 更新日

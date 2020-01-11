@@ -13,12 +13,12 @@
 ActiveRecord::Schema.define(version: 2019_12_24_163948) do
 
   create_table "attendances", force: :cascade do |t|
-    t.date "day"
+    t.string "day"
     t.datetime "work_start_time"
     t.datetime "break_start_time"
     t.datetime "break_end_time"
     t.datetime "work_end_time"
-    t.string "salary"
+    t.integer "salary"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 2019_12_24_163948) do
     t.boolean "kitchen", default: false
     t.boolean "hole", default: false
     t.boolean "wash", default: false
+    t.integer "hourly_wage"
     t.string "remember_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
