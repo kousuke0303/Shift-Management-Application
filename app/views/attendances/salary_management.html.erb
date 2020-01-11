@@ -14,10 +14,11 @@
       </div>
       <br>
       <br>
-      <%= f.label :date, "年月検索" %>
+      <%= f.label :day, "年月検索" %>
       <br>
       <div style="display: inline-flex">
-        <%= f.month_field :date, class: "form-control" %>
+        <%= f.date_select :day, {:discard_day => true, :include_blank => true}, class: "form-control" %>
+        <%= f.date_select :day, {:discard_day => true, :include_blank => true}, class: "form-control" %>
       </div>
       <div style="margin-top: 15px; margin-bottom: 15px;">
         <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
@@ -45,7 +46,7 @@
             <th class="salary-management-table">休憩終了時間</th>
           </tr>
         </thead> 
-          <% if params[:date].present? && params[:day].present? %>
+          <% if params[:day].present? || params["day(1i)"].present? && params[:user_id].present? %>
             <% @attendances.each do |at| %>
               <tbody>
                 <tr>

@@ -26,6 +26,7 @@ end
                kitchen: false,
                hole: true,
                wash: true,
+               Attendance.salary :1000
                password: password,
                password_confirmation: password)
 end

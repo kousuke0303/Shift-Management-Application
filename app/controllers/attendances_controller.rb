@@ -10,7 +10,6 @@ class AttendancesController < ApplicationController
     #スタッフ検索か年月日検索どちらかで検索可能、または年月検索もできるように実装
     @attendances = Attendance
                    .where(user_id: params[:user_id])
-                   .where("date LIKE ?", "#{params[:date]}%")
                    .or(Attendance.where(day: params[:day]))
   end
 
@@ -21,7 +20,7 @@ class AttendancesController < ApplicationController
       redirect_to static_pages_top_path
     else
       # 今日出勤済みかどうか調べる
-      if Attendance.find_by(user_id: current_user.id, day: Date.today, date: Date.today.all_month)
+      if Attendance.find_by(user_id: current_user.id, day: Date.today)
         # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
         @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
       end
