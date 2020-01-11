@@ -7,6 +7,7 @@ class CreateAttendances < ActiveRecord::Migration[5.1]
       t.datetime :break_end_time
       t.datetime :work_end_time
       t.string :salary
+      t.string :date
       t.references :user, foreign_key: true
 
       t.timestamps

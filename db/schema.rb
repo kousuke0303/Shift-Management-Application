@@ -19,10 +19,10 @@ ActiveRecord::Schema.define(version: 2020_01_10_110106) do
     t.datetime "break_end_time"
     t.datetime "work_end_time"
     t.string "salary"
+    t.string "date"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "date"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
