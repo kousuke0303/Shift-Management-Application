@@ -12,13 +12,16 @@ Rails.application.routes.draw do
   get    '/users/:id/attendances/register',  to: 'attendances#register', as: 'users_attendances_register'
   patch  '/users/:id/attendances/breakstart',  to: 'attendances#breakstart', as: 'users_attendances_breakstart'
   patch  '/users/:id/attendances/breakend',  to: 'attendances#breakend', as: 'users_attendances_breakend'
-  
+  get    '/users/:id/attendances/salary_management',  to: 'attendances#salary_management', as: 'users_attendances_salary_management'
+
   resources :users do
     member do
       get 'shifts/apply_next_shifts'
       patch 'shifts/update_next_shifts'
       get 'shifts/applying_next_shifts'
       patch 'shifts/confirm_next_shifts'
+      get 'edit_user_info'
+      patch 'update_user_info'
     end
     resources :shifts, only: [:new, :create, :edit, :update]
     resources :attendances

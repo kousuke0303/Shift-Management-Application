@@ -21,16 +21,6 @@
       </td>
     </tr>
     <tr>
-      <th>リーダー</th>
-      <td>
-        <% if @user.leader? %>
-          〇
-        <% else %>
-          ✕
-        <% end %>
-      </td>
-    </tr>
-    <tr>
       <th>キッチン</th>
       <td>
         <% if @user.kitchen? %>
@@ -49,6 +39,22 @@
           ✕
         <% end %>
       </td>
+    </tr>
+    <tr>
+      <th>洗い場</th>
+      <td>
+        <% if @user.wash? %>
+          〇
+        <% else %>
+          ✕
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <% if !current_user?(@user) %>
+        <th>時給</th>
+        <td>¥<%= @attendance.salary %></td>
+      <% end %>
     </tr>
   </table>
 </div>

@@ -1,9 +1,9 @@
 /* 出退勤登録 */
 
 .work-status-border {
-    border: 2px solid black;
-    padding: 5px;
-    display: inline-block;
+  border: 2px solid black;
+  padding: 5px;
+  display: inline-block;
 }
 
 .today-flg-position {
@@ -17,4 +17,10 @@
 
 .form-attendance-list-staff {
     width: 40%;
+}
+
+/* 給与管理 */
+.salary-management-table{
+  background-color: #ffd700;
+  text-align: center;
 }

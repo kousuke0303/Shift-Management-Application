@@ -13,7 +13,9 @@
           <ul class="dropdown-menu">
             <li><%= link_to "チュートリアル", "#" %></li>
             <li class="divider"></li>
-            <li><%= link_to "設定", edit_user_path(current_user) %></li>
+            <% if current_user.admin? %>
+              <li><%= link_to "設定", edit_user_path(current_user) %></li>
+            <% end %>
             <li class="divider"></li>
             <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
           </ul>
@@ -22,6 +24,7 @@
       </ul>
     </nav>
   </div>
+  <% if logged_in? %>
   <div class="nav-below">
     <div class="container">
       <div class="row">
@@ -42,7 +45,7 @@
             <% end %>
           </div>
           <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
+            <%= link_to(users_attendances_salary_management_path(current_user), class: "nav-link") do %>
             <div class="nav-item item-4"><span class="text-4">給与管理</span></div>
             <% end %>
           </div>
@@ -70,6 +73,8 @@
         <% end %>
       </div>
     </div>
+  <% end %>
+</header>
   </div>
 </header>
 

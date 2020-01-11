@@ -1,0 +1,60 @@
+<% provide(:class_text, 'user-info') %>
+<% provide(:button_text, '更新') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      <h1 class="modal-title">ユーザー情報編集</h1>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <%= form_with(model: @user, url: update_user_info_user_path(@user), local: true, method: :patch) do |f| %>
+            <%= render 'shared/error_messages', object: @user %>
+
+            <h5>※半角で入力してください</h5>
+
+            <%= f.label :email, class: "label-#{yield(:class_text)}" %>
+            <%= f.email_field :email, class: "form-control" %>
+　　　　　　
+　　        <h3 class="skill-check-title">スキルチェック</h3>
+  
+            <div class="row skill-check-area">
+              <div class="col-xs-6 skill-check-item">
+                <%= f.label :admin, class: "label-#{yield(:class_text)}" %>
+                <%= f.check_box :admin, class: "skill-check" %>
+              </div>
+              <div class="col-xs-6 skill-check-item">
+                <%= f.label :kitchen, class: "label-#{yield(:class_text)}" %>
+                <%= f.check_box :kitchen, class: "skill-check" %>
+              </div>
+              <div class="col-xs-6 skill-check-item">
+                <%= f.label :hole, class: "label-#{yield(:class_text)}" %>
+                <%= f.check_box :hole, class: "skill-check" %>
+              </div>
+              <div class="col-xs-6 skill-check-item">
+                <%= f.label :wash, class: "label-#{yield(:class_form_withtext)}" %>&emsp;
+                <%= f.check_box :wash, class: "skill-check" %>
+              </div>
+            </div>
+　　　　　　<div>
+　　　　　　  <h5>※半角で入力してください</h5>
+              <%= f.fields_for :attendances do |at| %>
+                <%= at.label :salary, class: "label-#{yield(:class_text)}" %>
+                <%= at.text_field :salary, class: "form-control" %>
+              <% end %>
+            </div>
+
+            <div class="center">
+              <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
+              <button type="button" class="btn btn-default btn-<%= yield(:class_text) %>" data-dismiss="modal">キャンセル</button>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
