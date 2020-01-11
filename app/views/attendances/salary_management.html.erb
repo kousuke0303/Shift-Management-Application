@@ -45,24 +45,34 @@
             <th class="salary-management-table">休憩終了時間</th>
           </tr>
         </thead> 
-        <% if params[:date] %>
-          <% @attendances.each do |at| %>
-            <tbody>
-              <tr>
-                <td class="center"><%= l(at.day, format: :long) %></td>
-                <td class="center"><%= at.user.name %></td>
-                <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td>
-                <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
-                <td class="center"><%= l(at.break_start_time, format: :time) if at.break_start_time.present? %></td>
-                <td class="center"><%= l(at.break_end_time, format: :time) if at.break_end_time.present? %></td>
-              </tr>
-            </tbody>
-            <!-- attendances_helperでday_work_time関数を実装し、それに給料を掛けて、各スタッフごとで足し算していく-->
-            <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
-            <% day_salary = day_work_time.to_f * at.salary.to_f %>
-            <% @total_salary = @total_salary.to_i + day_salary.to_i %>
+          <% if params[:date].present? && params[:day].present? %>
+            <% @attendances.each do |at| %>
+              <tbody>
+                <tr>
+                  <td class="center"><%= l(at.day, format: :long) %></td>
+                  <td class="center"><%= at.user.name %></td>
+                  <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td>
+                  <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
+                  <% if at.break_start_time.present? %>
+                    <td class="center"><%= l(at.break_start_time, format: :time) if at.break_start_time.present? %></td>
+                  <% else %>
+                    <td class="center"></td>
+                  <% end %>
+                  <% if at.break_end_time.present? %>
+                    <td class="center"><%= l(at.break_end_time, format: :time) if at.break_end_time.present? %></td>
+                  <% else %>
+                    <td class="center"></td>
+                  <% end %>
+                </tr>
+              </tbody>
+              <% if at.work_start_time.present? && at.break_start_time.present? && at.break_end_time.present? && at.work_end_time.present? %>
+                <!-- attendances_helperでday_work_time関数を実装し、それに給料を掛けて、各スタッフごとで足し算していく-->
+                <% day_work_time = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)) %>
+              <% end %>
+              <% day_salary = day_work_time.to_f * at.salary.to_f %>
+              <% @total_salary = @total_salary.to_i + day_salary.to_i %>
+            <% end %>
           <% end %>
-        <% end %>
       </table>
 
       <table class="table table-bordered table-condensed table-striped">

@@ -12,7 +12,6 @@ class AttendancesController < ApplicationController
                    .where(user_id: params[:user_id])
                    .where("date LIKE ?", "#{params[:date]}%")
                    .or(Attendance.where(day: params[:day]))
-                   .where.not(work_start_time: nil, break_start_time: nil, break_end_time: nil, work_end_time: nil)
   end
 
   def register
