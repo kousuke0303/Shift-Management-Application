@@ -10,16 +10,18 @@ class AttendancesController < ApplicationController
     @staff = User.where(admin: false)
     # 日付入力、スタッフ名空欄、本日チェックなしで表示する押下時
     if (params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
-      @attendance_lists = Attendance.where(day: (params[:start_date])..(params[:end_date]))
+      flash[:info] = "日付とスタッフ名を両方入力して表示するボタンを押してください。"
+      redirect_to user_attendances_path(current_user)
     # 日付空欄、スタッフ名入力、本日チェックなしで表示する押下時
     elsif !(params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && !(params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
-      @attendance_lists = Attendance.where(user_id: params[:staff])
+      flash[:info] = "日付とスタッフ名を両方入力して表示するボタンを押してください。"
+      redirect_to user_attendances_path(current_user)
     # 日付入力、スタッフ名入力、本日チェックなしで表示する押下時
     elsif (params[:start_date].present? && (params[:start_date] != "")) && (params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "0")
       @attendance_lists = Attendance.where(day: (params[:start_date])..(params[:end_date])).where(user_id: params[:staff])
     # 日付空欄、スタッフ名空欄、本日チェックありで表示する押下時
     elsif !(params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && !(params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
-      @attendance_lists = Attendance.where(day: Date.current)
+      @attendance_lists = Attendance.where(day: Date.current).paginate(page: params[:page])
     # 日付入力、スタッフ名空欄、本日チェックありで表示する押下時
     elsif (params[:start_date].present? && (params[:start_date] != "")) && !(params[:staff].present? && (params[:satff] != "")) && (params[:end_date].present? && (params[:end_date] != "")) && (params[:today_flg] == "1")
       @attendance_lists = Attendance.where(day: Date.current)
@@ -52,7 +54,7 @@ class AttendancesController < ApplicationController
       redirect_to static_pages_top_path
     else
       # 今日出勤済みかどうか調べる
-      if Attendance.find_by(user_id: current_user.id, day: Date.today, date: Date.today.all_month)
+      if Attendance.find_by(user_id: current_user.id, day: Date.today)
         # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
         @attendances = Attendance.where(user_id: current_user.id).where(day: Date.today)
       end
@@ -68,7 +70,9 @@ class AttendancesController < ApplicationController
       # 出勤ボタン押下時にレコードが生成される
       # 日本時間に合わせる為、9時間分の秒数を足す→下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current.change(sec: 0) + 32400)
-      @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current, date: Date.today)
+      # 午前9:00より前に出勤ボタン押下時、Date.todayが前日の日付で表示されるため、午前8時59分以前でも当日日付が表示されるようにする
+      Time.current.hour < 9 ? (date = Date.today + 1) : (date =  Date.today)
+      @attendance = Attendance.new(day: date, user_id: current_user.id, work_start_time: Time.current)
       if @attendance.save
         flash[:info] = "おはようございます！"
       else
