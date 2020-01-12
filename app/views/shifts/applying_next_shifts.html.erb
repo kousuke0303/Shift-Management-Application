@@ -1,5 +1,9 @@
 <% provide(:title, "Confirm Shifts") %>
 
+<div class="btn-to-current-shifts">
+  <%= link_to "現在のシフト", shifts_current_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+</div>
+
 <div class="next_shifts-title">
   <% if Date.current.day <= 15 %>
     <%= @first_day.month %>月後半のシフト作成

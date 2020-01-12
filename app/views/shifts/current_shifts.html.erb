@@ -1,0 +1,9 @@
+<% provide(:title, "Current Shifts") %>
+
+<div class="btn-switch-shifts">
+  <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+</div>
+
+<div class="next_shifts-title">
+  <%= Date.current.since(14.days) %>のシフト
+</div>

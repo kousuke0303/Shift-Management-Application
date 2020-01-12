@@ -86,6 +86,9 @@ class ShiftsController < ApplicationController
     redirect_to shifts_applying_next_shifts_user_path(@user)
   end
   
+  def current_shifts
+  end
+  
   # beforeフィルター
   
   def set_shift
@@ -131,6 +134,18 @@ class ShiftsController < ApplicationController
       @start_create_day = @start_apply_day.since(8.days)
       @end_create_day = @start_apply_day.end_of_month
     end
+  end
+  
+  # 現在のシフトの期間を定義
+  def set_current_shifts_date
+    if Date.current.day <= 15
+      @first_day = Date.current.beginning_of_month
+      @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date
+    else
+      @first_day = Date.current.next_month.beginning_of_month
+      @last_day = @first_day.since(14.days)
+    end
+    @next_shifts = [*@first_day..@last_day]
   end
   
   private
