@@ -142,10 +142,10 @@ class ShiftsController < ApplicationController
       @first_day = Date.current.beginning_of_month
       @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date
     else
-      @first_day = Date.current.next_month.beginning_of_month
-      @last_day = @first_day.since(14.days)
+      @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
+      @last_day = @first_day.end_of_month
     end
-    @next_shifts = [*@first_day..@last_day]
+    @current_shifts = [*@first_day..@last_day]
   end
   
   private
