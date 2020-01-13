@@ -31,13 +31,3 @@ end
                password: password,
                password_confirmation: password)
 end
-
-30.times do |n|
-  Attendance.create!(day: Date.current,
-               work_start_time: Time.current,
-               break_start_time: Time.current,
-               break_end_time: Time.current,
-               work_end_time: Time.current,
-               salary: 9000,
-               user_id: n+1)
-end
