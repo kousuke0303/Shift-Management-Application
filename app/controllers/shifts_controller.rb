@@ -1,10 +1,18 @@
 class ShiftsController < ApplicationController
   
-  before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, :confirm_next_shifts]
+  before_action :logged_in_user
+  before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, 
+                                 :confirm_next_shifts, :current_shifts]
+  before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update]
+  before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
+                                 :confirm_next_shifts, :current_shifts]
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :set_shift, only: [:edit, :update]
+  before_action :set_current_shifts_date, only: :current_shifts
+  before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
+  before_action :create_current_shifts, only: :current_shifts
   
   def new
     @shift = Shift.new
@@ -19,17 +27,11 @@ class ShiftsController < ApplicationController
 
   def update
     if params[:remove] && params[:remove].present?
-      if @shift.update_attributes(start_time: "", end_time: "")
-        flash[:success] = "シフトを外しました。"
-      else
-        flash[:danger] = "シフトの編集に失敗しました。"
-      end
+      @shift.update_attributes(start_time: "", end_time: "") ?
+      flash[:success] = "シフトを外しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     elsif
-      if @shift.update_attributes(shift_params)
-        flash[:success] = "シフトを編集しました。"
-      else
-        flash[:danger] = "シフトの編集に失敗しました。"
-      end
+      @shift.update_attributes(shift_params) ?
+      flash[:success] = "シフトを編集しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     end
     if params[:date]
       redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
@@ -58,9 +60,6 @@ class ShiftsController < ApplicationController
   end
   
   def applying_next_shifts
-    @kitchen_staff = User.where(admin: false, kitchen: true)
-    @hole_staff = User.where(admin: false, kitchen: false, hole: true)
-    @staffs = User.where(admin: false)
     if params[:date]
       @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%").
                       where.not("start_time LIKE ?", "%:%")
@@ -146,6 +145,29 @@ class ShiftsController < ApplicationController
       @last_day = @first_day.end_of_month
     end
     @current_shifts = [*@first_day..@last_day]
+  end
+  
+  # 現在のシフトレコードを自動生成
+  def create_current_shifts
+    ActiveRecord::Base.transaction do
+      @staffs.each do |staff|
+        unless @current_shifts.count == staff.shifts.where(worked_on: @first_day..@last_day).count
+          @current_shifts.each { |day| staff.shifts.create!(worked_on: day) }
+        end
+      end
+    end
+  rescue ActiveRecord::RecordInvalid 
+    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
+    redirect_to root_url
+  end
+  
+  # スタッフをポジション毎に変数に代入
+  def separate_staffs_by_position
+    @staffs = User.where(admin: false)
+    @kitchen_staffs = User.where(admin: false, kitchen: true)
+    @hole_staffs = User.where(admin: false, kitchen: false, hole: true)
+    @wash_staffs = User.where(admin: false, kitchen: false, hole: false, wash: true)
+    @newcomer_staffs = User.where(admin: false, kitchen: false, hole: false, wash: false)
   end
   
   private

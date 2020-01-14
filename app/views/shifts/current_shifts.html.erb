@@ -1,9 +1,123 @@
 <% provide(:title, "Current Shifts") %>
 
-<div class="btn-switch-shifts">
-  <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+<% if @user.admin? %>
+  <div class="btn-switch-shifts">
+    <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+  </div>
+<% end %>
+
+<div class="current_shifts-title">
+  <% if Date.current.day <= 15 %>
+    <%= @first_day.month %>月前半のシフト
+  <% else %>
+    <%= @first_day.month %>月後半のシフト
+  <% end %>
+  <br><%= @first_day.strftime('%-m/%-d') %>～<%= @last_day.strftime('%-m/%-d') %>
 </div>
 
-<div class="next_shifts-title">
-  <%= Date.current.since(14.days) %>のシフト
-</div>
+<table class="table table-bordered table-condensed" id="current-shifts-table">
+  <tr>
+    <th width=8%>ポジション</th>
+    <th>スタッフ名</th>
+    <% @current_shifts.each do |day| %>
+      <% if day.wday == 6 %>
+        <th class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% elsif day.wday == 0 %>
+        <th class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% else %>
+        <th><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% end %>
+    <% end %>
+  </tr>
+  
+  <% @kitchen_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @hole_staffs.each do |staff| %>
+    <tr>
+      <td>ホール</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @wash_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @newcomer_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<% unless @user.admin? %>
+<% end %>
