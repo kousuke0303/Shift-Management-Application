@@ -39,7 +39,7 @@
           <td width=5% class="display-shift">
             <% if @user.admin? %>
               <button>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
               </button>
             <% else %>
               <%= start_and_end_time_of_shift(staff, day) %>
@@ -61,7 +61,7 @@
           <td width=5% class="display-shift">
             <% if @user.admin? %>
               <button>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
               </button>
             <% else %>
               <%= start_and_end_time_of_shift(staff, day) %>
@@ -83,7 +83,7 @@
           <td width=5% class="display-shift">
             <% if @user.admin? %>
               <button>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
               </button>
             <% else %>
               <%= start_and_end_time_of_shift(staff, day) %>
@@ -119,27 +119,29 @@
   <% end %>
 </table>
 
-<div class="personal-shifts-title"><%= @user.name %>のシフト</div>
-
-<table class="table table-bordered table-condensed" id="personal-current-shifts-table">
-  <tr>
-    <th width=8%>日付</th>
-    <th width=9%>希望出勤時間</th>
-    <th width=9%>希望退勤時間</th>
-    <th width=28%>従業員コメント</th>
-    <th width=9%>出勤時間</th>
-    <th width=9%>退勤時間</th>
-    <th width=28%>管理者コメント</th>
-  </tr>
-  <% @shifts.each do |shift| %>
+<% if @shifts.count > 0 %>
+  <div class="personal-shifts-title"><%= @user.name %>のシフト</div>
+  <table class="table table-bordered table-condensed" id="personal-current-shifts-table">
     <tr>
-      <td><%= shift.worked_on.strftime('%-m/%-d') %></td>
-      <td><%= shift.request_start_time %></td>
-      <td><%= shift.request_end_time %></td>
-      <td><%= shift.from_staff_msg %></td>
-      <td><%= shift.start_time %></td>
-      <td><%= shift.end_time %></td>
-      <td><%= shift.from_admin_msg %></td>
+      <th width=8%>日付</th>
+      <th width=9%>希望出勤時間</th>
+      <th width=9%>希望退勤時間</th>
+      <th width=28%>従業員コメント</th>
+      <th width=9%>出勤時間</th>
+      <th width=9%>退勤時間</th>
+      <th width=28%>管理者コメント</th>
     </tr>
-  <% end %>
-</table>
+    <% @shifts.each do |shift| %>
+      <tr>
+        <td><%= shift.worked_on.strftime('%-m/%-d') %></td>
+        <td><%= shift.request_start_time %></td>
+        <td><%= shift.request_end_time %></td>
+        <td><%= shift.from_staff_msg %></td>
+        <td><%= shift.start_time %></td>
+        <td><%= shift.end_time %></td>
+        <td><%= shift.from_admin_msg %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+<div class="modal fade" id="edit-shift-modal" tabindex="-1"></div>

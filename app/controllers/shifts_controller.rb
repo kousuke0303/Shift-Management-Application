@@ -5,7 +5,7 @@ class ShiftsController < ApplicationController
                                  :confirm_next_shifts, :current_shifts]
   before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update]
   before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
-                                 :confirm_next_shifts, :current_shifts]
+                                      :confirm_next_shifts, :current_shifts]
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
@@ -33,7 +33,9 @@ class ShiftsController < ApplicationController
       @shift.update_attributes(shift_params) ?
       flash[:success] = "シフトを編集しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     end
-    if params[:date]
+    if params[:current]
+      redirect_to shifts_current_shifts_user_path(current_user)
+    elsif params[:date]
       redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
     elsif params[:staff]
       redirect_to shifts_applying_next_shifts_user_path(current_user, staff: params[:staff])

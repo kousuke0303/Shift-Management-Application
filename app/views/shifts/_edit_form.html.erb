@@ -1,4 +1,7 @@
-<% if params[:date] %>
+<% if params[:current] %>
+  <% provide(:edit_url, user_shift_path(@staff, @shift, current: true)) %>
+  <% provide(:remove_url, user_shift_path(current_user, current: true, remove: true)) %>
+<% elsif params[:date] %>
   <% provide(:edit_url, user_shift_path(@staff, @shift, date: params[:date])) %>
   <% provide(:remove_url, user_shift_path(current_user, date: params[:date], remove: true)) %>
 <% elsif params[:staff] %>
