@@ -69,8 +69,7 @@
             </table>
             <div class="edit-shift-btn-area">
               <%= f.submit "編集する", class: "btn btn-md btn-primary" %>
-              <%= link_to "シフトから外す", yield(:remove_url), method: :patch,
-                  class: "btn btn-md btn-default" %>
+              <%= link_to "シフトから外す", yield(:remove_url), method: :patch, class: "btn btn-md btn-default" %>
             </div>
             <% end %>
         </div>
