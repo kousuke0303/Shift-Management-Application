@@ -29,7 +29,7 @@ class ShiftsController < ApplicationController
     if params[:remove] && params[:remove].present?
       @shift.update_attributes(start_time: "", end_time: "") ?
       flash[:success] = "シフトを外しました。" : flash[:danger] = "シフトの編集に失敗しました。"
-    elsif
+    else
       @shift.update_attributes(shift_params) ?
       flash[:success] = "シフトを編集しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     end
@@ -86,6 +86,7 @@ class ShiftsController < ApplicationController
   end
   
   def current_shifts
+    @shifts = @user.shifts.where(worked_on: @first_day..@last_day).where("start_time LIKE ?", "%:%").order(:worked_on)
   end
   
   # beforeフィルター

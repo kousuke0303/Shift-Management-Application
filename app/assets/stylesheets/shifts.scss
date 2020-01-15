@@ -235,3 +235,26 @@
     text-decoration: none;
   }
 }
+
+/* 現在の個人のシフトの名前表示 */
+
+.personal-shifts-title {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 30px 0 15px 0;
+  text-align: center;
+}
+
+/* 現在の個人のシフトテーブル */
+
+#personal-current-shifts-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}

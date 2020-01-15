@@ -1,7 +1,7 @@
 <% provide(:title, "Confirm Shifts") %>
 
 <div class="btn-switch-shifts">
-  <%= link_to "現在のシフト", shifts_current_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+  <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
 </div>
 
 <div class="next_shifts-title">

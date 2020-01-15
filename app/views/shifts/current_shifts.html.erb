@@ -2,7 +2,7 @@
 
 <% if @user.admin? %>
   <div class="btn-switch-shifts">
-    <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(current_user), class: "btn btn-lg btn-primary" %>
+    <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
   </div>
 <% end %>
 
@@ -119,5 +119,27 @@
   <% end %>
 </table>
 
-<% unless @user.admin? %>
-<% end %>
+<div class="personal-shifts-title"><%= @user.name %>のシフト</div>
+
+<table class="table table-bordered table-condensed" id="personal-current-shifts-table">
+  <tr>
+    <th width=8%>日付</th>
+    <th width=9%>希望出勤時間</th>
+    <th width=9%>希望退勤時間</th>
+    <th width=28%>従業員コメント</th>
+    <th width=9%>出勤時間</th>
+    <th width=9%>退勤時間</th>
+    <th width=28%>管理者コメント</th>
+  </tr>
+  <% @shifts.each do |shift| %>
+    <tr>
+      <td><%= shift.worked_on.strftime('%-m/%-d') %></td>
+      <td><%= shift.request_start_time %></td>
+      <td><%= shift.request_end_time %></td>
+      <td><%= shift.from_staff_msg %></td>
+      <td><%= shift.start_time %></td>
+      <td><%= shift.end_time %></td>
+      <td><%= shift.from_admin_msg %></td>
+    </tr>
+  <% end %>
+</table>
