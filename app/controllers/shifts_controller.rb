@@ -14,17 +14,12 @@ class ShiftsController < ApplicationController
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
   before_action :create_current_shifts, only: :current_shifts
   
-  def new
-    @shift = Shift.new
-  end
-  
-  def create
-  end
-  
+  # 承認済シフト編集モーダル
   def edit
     find_user_by_shift(@shift) # シフトの所有スタッフを定義
   end
 
+  # 承認済シフト編集モーダルのアップデートアクション
   def update
     if params[:remove] && params[:remove].present?
       @shift.update_attributes(start_time: "", end_time: "") ?
@@ -44,9 +39,11 @@ class ShiftsController < ApplicationController
     end
   end
   
+  # スタッフの次回のシフト申請ページ
   def apply_next_shifts
   end
   
+  # スタッフの次回のシフト申請アクション
   def update_next_shifts
     ActiveRecord::Base.transaction do
       shifts_params.each do |id, item|
@@ -61,6 +58,7 @@ class ShiftsController < ApplicationController
     redirect_to shifts_apply_next_shifts_user_path(@user)
   end
   
+  # 管理者側の、希望シフトの承認ページ
   def applying_next_shifts
     if params[:date]
       @shifts = Shift.where(worked_on: params[:date]).where("request_start_time LIKE ?", "%:%").
@@ -72,6 +70,7 @@ class ShiftsController < ApplicationController
     end
   end
   
+  # 管理者側の、希望シフトの承認アクション
   def confirm_next_shifts
     ActiveRecord::Base.transaction do
       shifts_params.each do |id, item|
@@ -87,8 +86,13 @@ class ShiftsController < ApplicationController
     redirect_to shifts_applying_next_shifts_user_path(@user)
   end
   
+  # 現在のシフト確認ページ
   def current_shifts
     @shifts = @user.shifts.where(worked_on: @first_day..@last_day).where("start_time LIKE ?", "%:%").order(:worked_on)
+  end
+  
+  # 新規シフト追加モーダル(シフト希望無い場合)
+  def add
   end
   
   # beforeフィルター

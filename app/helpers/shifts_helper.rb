@@ -86,4 +86,8 @@ module ShiftsHelper
     @shift = shifts[0]
     "#{text_to_time(@shift.start_time)}-#{text_to_time(@shift.end_time)}" if shifts.count > 0
   end
+  
+  def empty_shift(staff, day)
+    @empty_shift = Shift.where(user_id: staff.id, worked_on: day)[0]
+  end
 end
