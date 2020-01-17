@@ -43,7 +43,7 @@
           </td>
         <% elsif @user.admin? && empty_shift(staff, day) %>
           <td width=5% class="add-shift-frame">
-            <%= link_to(shifts_add_user_shift_path(@user, @empty_shift)) do %>
+            <%= link_to(add_user_shift_path(staff, @empty_shift), remote: true) do %>
             <div class=""></div>
             <% end %>
           </td>
@@ -144,4 +144,6 @@
     <% end %>
   </table>
 <% end %>
+
 <div class="modal fade" id="edit-shift-modal" tabindex="-1"></div>
+<div class="modal fade" id="add-shift-modal" tabindex="-1"></div>

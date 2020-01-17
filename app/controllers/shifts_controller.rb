@@ -3,13 +3,13 @@ class ShiftsController < ApplicationController
   before_action :logged_in_user
   before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, 
                                  :confirm_next_shifts, :current_shifts]
-  before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update]
+  before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update, :add, :add_update]
   before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
                                       :confirm_next_shifts, :current_shifts]
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
-  before_action :set_shift, only: [:edit, :update]
+  before_action :set_shift, only: [:edit, :update, :add, :add_update]
   before_action :set_current_shifts_date, only: :current_shifts
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
   before_action :create_current_shifts, only: :current_shifts
@@ -93,6 +93,14 @@ class ShiftsController < ApplicationController
   
   # 新規シフト追加モーダル(シフト希望無い場合)
   def add
+    @staff = User.find(params[:user_id])
+  end
+  
+  # シフト追加アクション
+  def add_update
+    @shift.update_attributes(shift_params) ?
+    flash[:success] = "シフトを追加しました。" : flash[:danger] = "シフトの追加に失敗しました。"
+    redirect_to shifts_current_shifts_user_path(current_user)
   end
   
   # beforeフィルター

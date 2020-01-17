@@ -22,7 +22,8 @@ Rails.application.routes.draw do
     end
     resources :shifts, only: [:edit, :update] do
       member do
-        get 'shifts/add'
+        get 'add'
+        patch 'add_update'
       end
     end
     resources :attendances
