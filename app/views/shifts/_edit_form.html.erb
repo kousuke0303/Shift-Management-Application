@@ -41,8 +41,20 @@
                 <th>従業員コメント</th>
               </tr>
               <tr>
-                <td><%= @shift.request_start_time %></td>
-                <td><%= @shift.request_end_time %></td>
+                <td>
+                  <% if @shift.request_start_time.present? %>
+                    <%= @shift.request_start_time %>
+                  <% else %>
+                  --
+                  <% end %>
+                </td>
+                <td>
+                  <% if @shift.request_end_time.present? %>
+                    <%= @shift.request_end_time %>
+                  <% else %>
+                  --
+                  <% end %>
+                </td>
                 <td><%= @shift.from_staff_msg %></td>
               </tr>
               <tr>
