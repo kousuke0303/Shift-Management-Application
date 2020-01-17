@@ -7,7 +7,35 @@
 }
 
 /* 給与管理 */
-.salary-management-table{
+.salary-management-table {
   background-color: #ffd700;
   text-align: center;
 }
+
+.staff-select-field {
+  display: inline-flex;
+}
+
+.year-month-select-field {
+  display: inline-flex;
+}
+
+.year-month-day-label {
+  display: inline-flex;
+  flex-direction: row;
+  padding-left: 80px;
+}
+
+.day-label {
+  display: inline-flex;
+  flex-direction: row;
+  padding-left: 40px;
+}
+
+
+.indicate-btn {
+  margin-top: 15px; 
+  margin-bottom: 15px;
+  padding-left: 100px;
+}
+

@@ -53,7 +53,7 @@
     <tr>
       <% if !current_user?(@user) %>
         <th>時給</th>
-        <td>¥<%= @attendance.salary %></td>
+        <td>¥<%= @user.hourly_wage %></td>
       <% end %>
     </tr>
   </table>

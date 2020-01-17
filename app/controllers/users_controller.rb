@@ -16,7 +16,7 @@ class UsersController < ApplicationController
 
   def new
     @user = User.new 
-    @user.attendances.build
+    # @user.attendances.build
   end
 
   def create
@@ -34,7 +34,7 @@ class UsersController < ApplicationController
   end
   
   def update
-    if @user.update_attributes(update_user_params)
+    if @user.update_attributes(user_params)
       flash[:success] = "ユーザー情報を更新しました。"
       redirect_to @user
     else
@@ -63,15 +63,11 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, attendances_attributes:[:salary])
-    end
-    
-    def update_user_params
-      params.require(:user).permit(:name, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, attendances_attributes:[:id, :salary, :_destroy])
+      params.require(:user).permit(:name, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, :hourly_wage)
     end
     
     def update_user_info_params
-      params.require(:user).permit(:email, :admin, :kitchen, :hole, :wash, attendances_attributes:[:id, :salary, :_destroy])
+      params.require(:user).permit(:email, :admin, :kitchen, :hole, :wash, :hourly_wage)
     end
     
     def set_user

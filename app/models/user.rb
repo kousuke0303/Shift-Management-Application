@@ -3,8 +3,8 @@ class User < ApplicationRecord
 
   has_many :attendances, dependent: :destroy
   
-  #親モデル(ユーザーモデル)を通じてネストしたモデルの関連レコード(勤怠テーブル)の登録・更新を可能にするメソッド
-  accepts_nested_attributes_for :attendances, allow_destroy: true
+  # 親モデル(ユーザーモデル)を通じてネストしたモデルの関連レコード(勤怠テーブル)の登録・更新を可能にするメソッド
+  # accepts_nested_attributes_for :attendances, allow_destroy: true
 
   attr_accessor :remember_token
   before_save { self.email = email.downcase }
@@ -43,8 +43,4 @@ class User < ApplicationRecord
   def forget
     update_attribute(:remember_digest, nil)
   end
-
-  # scope :has_attendance_day, -> attendance_day {
-  #   joins(:attendances).merge(Attendance.day_is attendance_day)
-  # }
 end

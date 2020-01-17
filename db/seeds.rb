@@ -13,6 +13,7 @@ User.create!(name: "Admin User",
                kitchen: true,
                hole: true,
                wash: true,
+               hourly_wage: 900,
                password: password,
                password_confirmation: password)
 end
@@ -26,7 +27,7 @@ end
                kitchen: false,
                hole: true,
                wash: true,
-               Attendance.salary :1000
+               hourly_wage: 900,
                password: password,
                password_confirmation: password)
 end

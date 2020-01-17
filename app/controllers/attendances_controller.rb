@@ -7,10 +7,20 @@ class AttendancesController < ApplicationController
   def salary_management
     #管理者を除いたスタッフを出力
     @staffs = User.where(admin: false)
-    #スタッフ検索か年月日検索どちらかで検索可能、または年月検索もできるように実装
-    @attendances = Attendance
-                   .where(user_id: params[:user_id])
-                   .or(Attendance.where(day: params[:day]))
+    #月が10月以降の時と、10月以前で年月日検索を条件分岐
+    @attendance = Attendance.find_by(params[:user_id])
+    if @attendance.day.to_date.month > 10
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+    else
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+      pp @attendances
+    end 
   end
 
   def register
@@ -36,7 +46,7 @@ class AttendancesController < ApplicationController
       # 出勤ボタン押下時にレコードが生成される
       # 日本時間に合わせる為、9時間分の秒数を足す→下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
       # @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current.change(sec: 0) + 32400)
-      @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current, date: Date.today)
+      @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current)
       if @attendance.save
         flash[:info] = "おはようございます！"
       else

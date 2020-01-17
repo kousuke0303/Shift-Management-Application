@@ -23,7 +23,7 @@ Rails.application.routes.draw do
       get 'edit_user_info'
       patch 'update_user_info'
     end
-    resources :shifts, only: :update
+    resources :shifts, only: [:new, :create, :edit, :update]
     resources :attendances
   end
 end

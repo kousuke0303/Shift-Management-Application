@@ -10,19 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_11_092732) do
+ActiveRecord::Schema.define(version: 2019_12_24_163948) do
 
   create_table "attendances", force: :cascade do |t|
-    t.date "day"
+    t.string "day"
     t.datetime "work_start_time"
     t.datetime "break_start_time"
     t.datetime "break_end_time"
     t.datetime "work_end_time"
-    t.string "salary"
+    t.integer "salary"
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "date"
     t.index ["user_id"], name: "index_attendances_on_user_id"
   end
 
@@ -49,6 +48,7 @@ ActiveRecord::Schema.define(version: 2020_01_11_092732) do
     t.boolean "kitchen", default: false
     t.boolean "hole", default: false
     t.boolean "wash", default: false
+    t.integer "hourly_wage"
     t.string "remember_digest"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

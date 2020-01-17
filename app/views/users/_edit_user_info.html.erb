@@ -15,8 +15,6 @@
           <%= form_with(model: @user, url: update_user_info_user_path(@user), local: true, method: :patch) do |f| %>
             <%= render 'shared/error_messages', object: @user %>
 
-            <h5>※半角で入力してください</h5>
-
             <%= f.label :email, class: "label-#{yield(:class_text)}" %>
             <%= f.email_field :email, class: "form-control" %>
 　　　　　　
@@ -40,12 +38,9 @@
                 <%= f.check_box :wash, class: "skill-check" %>
               </div>
             </div>
-　　　　　　<div>
-　　　　　　  <h5>※半角で入力してください</h5>
-              <%= f.fields_for :attendances do |at| %>
-                <%= at.label :salary, class: "label-#{yield(:class_text)}" %>
-                <%= at.text_field :salary, class: "form-control" %>
-              <% end %>
+　　　　　  <div>
+              <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
+              <%= f.text_field :hourly_wage, class: "form-control" %>
             </div>
 
             <div class="center">

@@ -27,6 +27,9 @@
       <%= f.check_box :wash, class: "skill-check" %>
     </div>
   </div>
+  
+  <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :hourly_wage, class: "form-control" %>
 
   <%= f.label :password, class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>
