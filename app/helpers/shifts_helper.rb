@@ -62,11 +62,6 @@ module ShiftsHelper
     end
   end
   
-  # シフトレコードから、ユーザー情報を取得
-  def find_user_by_shift(shift)
-    @staff = User.find(shift.user_id)
-  end
-  
   # ユーザーの、可能なポジションを表示
   def put_position(user)
     if user.kitchen = true && user.hole = false

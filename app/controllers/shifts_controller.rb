@@ -9,6 +9,7 @@ class ShiftsController < ApplicationController
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
+  before_action :set_staff, only: [:edit, :add]
   before_action :set_shift, only: [:edit, :update, :add, :add_update]
   before_action :set_current_shifts_date, only: :current_shifts
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
@@ -16,7 +17,6 @@ class ShiftsController < ApplicationController
   
   # 承認済シフト編集モーダル
   def edit
-    find_user_by_shift(@shift) # シフトの所有スタッフを定義
   end
 
   # 承認済シフト編集モーダルのアップデートアクション
@@ -93,7 +93,6 @@ class ShiftsController < ApplicationController
   
   # 新規シフト追加モーダル(シフト希望無い場合)
   def add
-    @staff = User.find(params[:user_id])
   end
   
   # シフト追加アクション
@@ -107,6 +106,10 @@ class ShiftsController < ApplicationController
   
   def set_shift
     @shift = Shift.find(params[:id])
+  end
+  
+  def set_staff
+    @staff = User.find(params[:user_id])
   end
 
   # 申請を求めるシフトの、日付を定義
