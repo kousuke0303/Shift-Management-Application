@@ -62,6 +62,10 @@ module ShiftsHelper
     end
   end
   
+  def find_user_by_shift(obj)
+    @staff = User.find(obj.user_id)
+  end
+  
   # シフトレコードから、ユーザー情報を取得
   def find_user_by_shift(shift)
     @staff = User.find(shift.user_id)
