@@ -62,6 +62,10 @@ module ShiftsHelper
     end
   end
   
+  def find_user_by_shift(obj)
+    @staff = User.find(obj.user_id)
+  end
+  
   # ユーザーの、可能なポジションを表示
   def put_position(user)
     if user.kitchen = true && user.hole = false
