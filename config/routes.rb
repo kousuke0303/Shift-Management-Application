@@ -20,10 +20,14 @@ Rails.application.routes.draw do
       patch 'shifts/update_next_shifts'
       get 'shifts/applying_next_shifts'
       patch 'shifts/confirm_next_shifts'
-      get 'edit_user_info'
-      patch 'update_user_info'
+      get 'shifts/current_shifts'
     end
-    resources :shifts, only: [:new, :create, :edit, :update]
+    resources :shifts, only: [:edit, :update] do
+      member do
+        get 'add'
+        patch 'add_update'
+      end
+    end
     resources :attendances
   end
 end

@@ -51,7 +51,7 @@
           </div>
         <% elsif logged_in? %>
           <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to(users_attendances_register_path(id: current_user.id), class: "nav-link") do %>
+            <%= link_to(users_attendances_register_path(current_user), class: "nav-link") do %>
             <div class="nav-item item-5"><span class="text-5">出退勤登録</span></div>
             <% end %>
           </div>
@@ -61,7 +61,7 @@
             <% end %>
           </div>
           <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
+            <%= link_to(shifts_current_shifts_user_path(current_user), class: "nav-link") do %>
             <div class="nav-item item-7"><span class="text-7">シフト確認</span></div>
             <% end %>
           </div>

@@ -1,5 +1,9 @@
 <% provide(:title, "Confirm Shifts") %>
 
+<div class="btn-switch-shifts">
+  <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
+</div>
+
 <div class="next_shifts-title">
   <% if Date.current.day <= 15 %>
     <%= @first_day.month %>月後半のシフト作成
@@ -27,7 +31,7 @@
     <% end %>
   </tr>
   
-  <% @kitchen_staff.each do |staff| %>
+  <% @kitchen_staffs.each do |staff| %>
     <tr>
       <td>キッチン</td>
       <td><%= staff.name %></td>
@@ -51,12 +55,74 @@
     </tr>
   <% end %>
   
-  <% @hole_staff.each do |staff| %>
+  <% @hole_staffs.each do |staff| %>
     <tr>
       <td>ホール</td>
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
-        <td></td>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <% if params[:date] && params[:date].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
+              <% elsif params[:staff] && params[:staff].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
+              <% else %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              <% end %>
+            </button>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @wash_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @next_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <% if params[:date] && params[:date].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
+              <% elsif params[:staff] && params[:staff].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
+              <% else %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              <% end %>
+            </button>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @newcomer_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @next_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <% if params[:date] && params[:date].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
+              <% elsif params[:staff] && params[:staff].present? %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
+              <% else %>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+              <% end %>
+            </button>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
       <% end %>
     </tr>
   <% end %>
@@ -202,5 +268,4 @@
   <% end %>
 <% end %>
 
-<div class="modal fade" id="edit-shift-modal" tabindex="-1">
-</div>
+<div class="modal fade" id="edit-shift-modal" tabindex="-1"></div>

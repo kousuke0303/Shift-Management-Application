@@ -1,0 +1,161 @@
+<% provide(:title, "Current Shifts") %>
+
+<% if @user.admin? %>
+  <div class="btn-switch-shifts">
+    <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
+  </div>
+<% end %>
+
+<div class="current_shifts-title">
+  <% if Date.current.day <= 15 %>
+    <%= @first_day.month %>月前半のシフト
+  <% else %>
+    <%= @first_day.month %>月後半のシフト
+  <% end %>
+  <br><%= @first_day.strftime('%-m/%-d') %>～<%= @last_day.strftime('%-m/%-d') %>
+</div>
+
+<table class="table table-bordered table-condensed" id="current-shifts-table">
+  <tr>
+    <th width=8%>ポジション</th>
+    <th>スタッフ名</th>
+    <% @current_shifts.each do |day| %>
+      <% if day.wday == 6 %>
+        <th class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% elsif day.wday == 0 %>
+        <th class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% else %>
+        <th><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+      <% end %>
+    <% end %>
+  </tr>
+  
+  <% @kitchen_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if @user.admin? && start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
+            </button>
+          </td>
+        <% elsif @user.admin? && empty_shift(staff, day) %>
+          <td width=5% class="add-shift-frame">
+            <%= link_to(add_user_shift_path(staff, @empty_shift), remote: true) do %>
+            <div class=""></div>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift">
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @hole_staffs.each do |staff| %>
+    <tr>
+      <td>ホール</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @wash_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <% if @user.admin? %>
+              <button>
+                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
+              </button>
+            <% else %>
+              <%= start_and_end_time_of_shift(staff, day) %>
+            <% end %>
+          </td>
+        <% else %>
+          <td width=5% class="display-shift"></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+  
+  <% @newcomer_staffs.each do |staff| %>
+    <tr>
+      <td>キッチン</td>
+      <td><%= staff.name %></td>
+      <% @current_shifts.each do |day| %>
+        <% if @user.admin? && start_and_end_time_of_shift(staff, day) %>
+          <td width=5% class="display-shift">
+            <button>
+              <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+            </button>
+          </td>
+        <% else %>
+          <td></td>
+        <% end %>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+
+<% if @shifts.count > 0 %>
+  <div class="personal-shifts-title"><%= @user.name %>のシフト</div>
+  <table class="table table-bordered table-condensed" id="personal-current-shifts-table">
+    <tr>
+      <th width=8%>日付</th>
+      <th width=9%>希望出勤時間</th>
+      <th width=9%>希望退勤時間</th>
+      <th width=28%>従業員コメント</th>
+      <th width=9%>出勤時間</th>
+      <th width=9%>退勤時間</th>
+      <th width=28%>管理者コメント</th>
+    </tr>
+    <% @shifts.each do |shift| %>
+      <tr>
+        <td><%= shift.worked_on.strftime('%-m/%-d') %></td>
+        <td>
+          <% if shift.request_start_time.present? %>
+            <%= shift.request_start_time %>
+          <% else %>
+          --
+          <% end %>
+        </td>
+        <td>
+          <% if shift.request_end_time.present? %>
+            <%= shift.request_end_time %>
+          <% else %>
+          --
+          <% end %>
+        </td>
+        <td><%= shift.from_staff_msg %></td>
+        <td><%= shift.start_time %></td>
+        <td><%= shift.end_time %></td>
+        <td><%= shift.from_admin_msg %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<div class="modal fade" id="edit-shift-modal" tabindex="-1"></div>
+<div class="modal fade" id="add-shift-modal" tabindex="-1"></div>

@@ -62,9 +62,8 @@ module ShiftsHelper
     end
   end
   
-  # シフトレコードから、ユーザー情報を取得
-  def find_user_by_shift(shift)
-    @staff = User.find(shift.user_id)
+  def find_user_by_shift(obj)
+    @staff = User.find(obj.user_id)
   end
   
   # ユーザーの、可能なポジションを表示
@@ -85,5 +84,9 @@ module ShiftsHelper
     shifts = Shift.where(user_id: staff.id, worked_on: day).where("start_time LIKE ?", "%:%")
     @shift = shifts[0]
     "#{text_to_time(@shift.start_time)}-#{text_to_time(@shift.end_time)}" if shifts.count > 0
+  end
+  
+  def empty_shift(staff, day)
+    @empty_shift = Shift.where(user_id: staff.id, worked_on: day)[0]
   end
 end
