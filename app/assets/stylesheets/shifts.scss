@@ -202,6 +202,10 @@
 
 /* 現在のシフトテーブル */
 
+div.current-shifts-table-flame {
+  overflow-x: scroll;
+}
+
 #current-shifts-table {
   th {
     background: gold;
