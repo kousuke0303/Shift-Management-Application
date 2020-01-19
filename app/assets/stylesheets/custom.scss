@@ -76,6 +76,12 @@ p {
   height: 80px;
 }
 
+.dropdown-assemble {
+  position: absolute !important;
+  z-index: 2 !important;
+  background-color: white !important;
+}
+
 #logo {
   float: left;
   margin-top: 7px;
@@ -112,6 +118,11 @@ p {
 .nav-link {
   color: black;
   font-size: 1.5em;
+}
+
+.nav-below-assemble {
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .nav-link:hover {

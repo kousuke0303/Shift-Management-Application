@@ -12,7 +12,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <%= current_user.name %> <b class="caret"></b>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-assemble">
               <li><%= link_to "チュートリアル", "#" %></li>
               <li class="divider"></li>
               <li><%= link_to "設定", edit_user_path(current_user) %></li>
@@ -26,42 +26,44 @@
     </div>
     </nav>
   </div>
-  <div class="nav-below">
-    <div class="container">
-      <div class="row">
-        <% if logged_in? && current_user.admin? %>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
-            <div class="nav-item item-1"><span class="text-1">出退勤管理</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to(shifts_applying_next_shifts_user_path(current_user), class: "nav-link") do %>
-            <div class="nav-item item-2"><span class="text-2">シフト管理</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to(users_path, class: "nav-link") do %>
-            <div class="nav-item item-3"><span class="text-3">スタッフ管理</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
-            <div class="nav-item item-4"><span class="text-4">給与管理</span></div>
-            <% end %>
-          </div>
-        <% elsif logged_in? %>
-          <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
-            <%= link_to(shifts_current_shifts_user_path(current_user), class: "nav-link") do %>
-            <div class="nav-item item-7"><span class="text-7">シフト確認</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
-            <%= link_to(shifts_apply_next_shifts_user_path(current_user), class: "nav-link") do %>
-            <div class="nav-item item-8"><span class="text-8">シフト申請</span></div>
-            <% end %>
-          </div>
-        <% end %>
+  <div class="nav-below-assemble">
+    <div class="nav-below">
+      <div class="container">
+        <div class="row">
+          <% if logged_in? && current_user.admin? %>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <%= link_to("#", class: "nav-link") do %>
+              <div class="nav-item item-1"><span class="text-1">出退勤管理</span></div>
+              <% end %>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <%= link_to(shifts_applying_next_shifts_user_path(current_user), class: "nav-link") do %>
+              <div class="nav-item item-2"><span class="text-2">シフト管理</span></div>
+              <% end %>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <%= link_to(users_path, class: "nav-link") do %>
+              <div class="nav-item item-3"><span class="text-3">スタッフ管理</span></div>
+              <% end %>
+            </div>
+            <div class="col-xs-3 col-md-3 col-lg-3">
+              <%= link_to("#", class: "nav-link") do %>
+              <div class="nav-item item-4"><span class="text-4">給与管理</span></div>
+              <% end %>
+            </div>
+          <% elsif logged_in? %>
+            <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
+              <%= link_to(shifts_current_shifts_user_path(current_user), class: "nav-link") do %>
+              <div class="nav-item item-7" style="z-index: 1;"><span class="text-7">シフト確認</span></div>
+              <% end %>
+            </div>
+            <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
+              <%= link_to(shifts_apply_next_shifts_user_path(current_user), class: "nav-link") do %>
+              <div class="nav-item item-8" style="z-index: 1;"><span class="text-8">シフト申請</span></div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
