@@ -61,18 +61,22 @@
       <td>ホール</td>
       <td><%= staff.name %></td>
       <% @current_shifts.each do |day| %>
-        <% if start_and_end_time_of_shift(staff, day) %>
+        <% if @user.admin? && start_and_end_time_of_shift(staff, day) %>
           <td width=5% class="display-shift">
-            <% if @user.admin? %>
-              <button>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
-              </button>
-            <% else %>
-              <%= start_and_end_time_of_shift(staff, day) %>
+            <button>
+              <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
+            </button>
+          </td>
+        <% elsif @user.admin? && empty_shift(staff, day) %>
+          <td width=5% class="add-shift-frame">
+            <%= link_to(add_user_shift_path(staff, @empty_shift), remote: true) do %>
+            <div class=""></div>
             <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td width=5% class="display-shift">
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
         <% end %>
       <% end %>
     </tr>
@@ -83,18 +87,22 @@
       <td>キッチン</td>
       <td><%= staff.name %></td>
       <% @current_shifts.each do |day| %>
-        <% if start_and_end_time_of_shift(staff, day) %>
+        <% if @user.admin? && start_and_end_time_of_shift(staff, day) %>
           <td width=5% class="display-shift">
-            <% if @user.admin? %>
-              <button>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
-              </button>
-            <% else %>
-              <%= start_and_end_time_of_shift(staff, day) %>
+            <button>
+              <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, current: true), remote: true %>
+            </button>
+          </td>
+        <% elsif @user.admin? && empty_shift(staff, day) %>
+          <td width=5% class="add-shift-frame">
+            <%= link_to(add_user_shift_path(staff, @empty_shift), remote: true) do %>
+            <div class=""></div>
             <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td width=5% class="display-shift">
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
         <% end %>
       <% end %>
     </tr>
@@ -133,7 +141,7 @@
     </tr>
     <% @shifts.each do |shift| %>
       <tr>
-        <td><%= shift.worked_on.strftime('%-m/%-d') %></td>
+        <td><%= shift.worked_on.strftime('%-m/%-d') %> (<%= $days_of_the_week[shift.worked_on.wday] %>)</td>
         <td>
           <% if shift.request_start_time.present? %>
             <%= shift.request_start_time %>

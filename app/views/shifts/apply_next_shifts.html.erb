@@ -32,11 +32,11 @@
           <%= f.fields_for "shifts[]", day do |shift| %>
             <tr>
               <% if day.worked_on.wday == 6 %>
-                <td class="blue"><%= day.worked_on.strftime('%m/%d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
+                <td class="blue"><%= day.worked_on.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
               <% elsif day.worked_on.wday == 0 %>
-                <td class="red"><%= day.worked_on.strftime('%m/%d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
+                <td class="red"><%= day.worked_on.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
               <% else %>
-                <td><%= day.worked_on.strftime('%m/%d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
+                <td><%= day.worked_on.strftime('%-m/%-d') %> (<%= $days_of_the_week[day.worked_on.wday] %>)</td>
               <% end %>
               <td>
                 <%= shift.select :request_start_time, options_for_select({"10:00": "10:00", "10:30": "10:30",
