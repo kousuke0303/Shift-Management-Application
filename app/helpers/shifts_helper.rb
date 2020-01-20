@@ -89,4 +89,16 @@ module ShiftsHelper
   def empty_shift(staff, day)
     @empty_shift = Shift.where(user_id: staff.id, worked_on: day)[0]
   end
+  
+  # 前のシフトの@first_dayを定義
+  def prev_first_day
+    @first_day.day <= 15 ?
+    "#{@first_day.prev_month.year}-#{@first_day.prev_month.month}-16".to_date : @first_day.beginning_of_month
+  end
+  
+  # 次のシフトの@first_dayを定義
+  def next_first_day
+    @first_day.day <= 15 ?
+    "#{@first_day.year}-#{@first_day.month}-16".to_date : @first_day.next_month.beginning_of_month
+  end
 end
