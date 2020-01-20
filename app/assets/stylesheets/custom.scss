@@ -66,8 +66,7 @@ p {
 }
 
 .dropdown-toggle:hover {
-  background-color: white !important;
-  border: solid 1px black !important;
+  border: solid 1px black;
   color: black;
   text-decoration: none;
 }
@@ -121,8 +120,7 @@ p {
 }
 
 .nav-below-assemble {
-  position: relative !important;
-  z-index: 1 !important;
+  z-index: 1;
 }
 
 .nav-link:hover {
