@@ -9,7 +9,7 @@ class AttendancesController < ApplicationController
     @staffs = User.where(admin: false)
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
     @attendance = Attendance.find_by(params[:user_id])
-    if @attendance.day.to_date.month > 10
+    if @attendance.present? && @attendance.day.to_date.month >= 10
       @attendances = Attendance
                      .where(user_id: params[:user_id])
                      .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
@@ -19,7 +19,6 @@ class AttendancesController < ApplicationController
                      .where(user_id: params[:user_id])
                      .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
                      .or(Attendance.where(day: params[:day]))
-      pp @attendances
     end 
   end
 

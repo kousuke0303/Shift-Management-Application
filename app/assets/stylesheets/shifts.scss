@@ -1,7 +1,7 @@
 /* シフト申請画面 */
 
 .apply-period-area {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin-bottom: 15px;
   text-align: center;
@@ -41,7 +41,7 @@
 /* シフト承認ページタイトル */
 
 .next_shifts-title {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin-bottom: 15px;
   text-align: center;
@@ -49,6 +49,11 @@
 
 .create-limit {
   margin-left: 40px;
+}
+
+.btn-switch-shifts {
+  float: left;
+  padding-top: 10px;
 }
 
 /* 次回のシフトテーブル */
@@ -111,7 +116,7 @@
 /* 申請中シフト表示エリア(日毎) */
 
 .applying-shift-date {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin: 20px 0;
   text-align: center;
@@ -132,7 +137,7 @@
 /* 申請中シフト表示エリア(スタッフ毎) */
 
 .applying-shift-staff {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin: 20px 0;
   text-align: center;
@@ -155,7 +160,7 @@
 }
 
 .no-shift-comment {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin: 20px 0;
   text-align: center;
@@ -164,7 +169,7 @@
 /* シフト編集テーブル */
 
 .edit-shift-title {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
@@ -183,5 +188,99 @@
 }
 
 .edit-shift-btn-area {
+  text-align: center;
+}
+
+/* 現在のシフトページタイトル */
+
+.current_shifts-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* 現在のシフトテーブル */
+
+div.current-shifts-table-flame {
+  overflow-x: scroll;
+}
+
+#current-shifts-table {
+  th {
+    background: gold;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  th.blue {
+    color: blue;
+  }
+  th.red {
+    color: red;
+  }
+  td {
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td.display-shift {
+    font-size: 0.8em;
+  }
+  td button {
+    padding: 0;
+  }
+  td a {
+    color: black;
+    text-decoration: none;
+  }
+  td a:hover {
+    text-decoration: none;
+  }
+  td.add-shift-frame {
+    padding: 0;
+  }
+  div {
+    height: 100%;
+  }
+  div:hover {
+    background: aliceblue;
+  }
+}
+
+/* 現在の個人のシフトの名前表示 */
+
+.personal-shifts-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin: 30px 0 15px 0;
+  text-align: center;
+}
+
+/* 現在の個人のシフトテーブル */
+
+#personal-current-shifts-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+/* シフト追加テーブル */
+
+.add-shift-title {
+  font-size: 1.8em;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.add-shift-btn-area {
   text-align: center;
 }

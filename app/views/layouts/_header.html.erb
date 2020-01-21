@@ -1,27 +1,28 @@
 <header class="navbar navbar-fixed-top">
   <div class="container nav-above">
-    <% if logged_in? %>
-      <%= link_to "シフト管理アプリ", root_path, id: "logo" %>
-    <% end %>
     <nav>
-      <ul class="nav navbar-nav navbar-right">
+      <div class="row">
+      <div class="col-xs-8 col-md-8">
+      <%= link_to "シフト管理", root_path, id: "logo" %>
+      </div>
       <% if logged_in? %>
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <%= current_user.name %> <b class="caret"></b>
-          </a>
-          <ul class="dropdown-menu">
-            <li><%= link_to "チュートリアル", "#" %></li>
-            <li class="divider"></li>
-            <% if current_user.admin? %>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <%= current_user.name %> <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><%= link_to "チュートリアル", "#" %></li>
+              <li class="divider"></li>
               <li><%= link_to "設定", edit_user_path(current_user) %></li>
-            <% end %>
-            <li class="divider"></li>
-            <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
-          </ul>
-        </li>
+              <li class="divider"></li>
+              <li><%= link_to "ログアウト", logout_path, method: :delete %></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
       <% end %>
-      </ul>
+    </div>
     </nav>
   </div>
   <% if logged_in? %>
@@ -50,22 +51,12 @@
             <% end %>
           </div>
         <% elsif logged_in? %>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to(users_attendances_register_path(id: current_user.id), class: "nav-link") do %>
-            <div class="nav-item item-5"><span class="text-5">出退勤登録</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
-            <div class="nav-item item-6"><span class="text-6">出退勤確認</span></div>
-            <% end %>
-          </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
-            <%= link_to("#", class: "nav-link") do %>
+          <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
+            <%= link_to(shifts_current_shifts_user_path(current_user), class: "nav-link") do %>
             <div class="nav-item item-7"><span class="text-7">シフト確認</span></div>
             <% end %>
           </div>
-          <div class="col-xs-3 col-md-3 col-lg-3">
+          <div class="col-xs-6 col-md-6 col-lg-6 staff-header-btn">
             <%= link_to(shifts_apply_next_shifts_user_path(current_user), class: "nav-link") do %>
             <div class="nav-item item-8"><span class="text-8">シフト申請</span></div>
             <% end %>
