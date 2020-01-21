@@ -6,6 +6,7 @@
   <table class="table table-bordered table-condensed table-hover" id="table-users">
     <thead>
       <tr>
+        <th>社員ID</th>
         <th>名前</th>
         <th>メールアドレス</th>
         <th></th>
@@ -14,6 +15,7 @@
     <tbody>
       <% @users.each do |user| %>
         <tr>
+          <td><%= user.id %></td>
           <td><%= link_to user.name, user %></td>
           <td><%= user.email %></td>
           <td>
