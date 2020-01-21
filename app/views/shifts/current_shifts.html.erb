@@ -9,13 +9,19 @@
 <div class="current_shifts-title">
   <% if @user.admin? && @first_day != Date.current.prev_month.prev_month.beginning_of_month %>
     <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), class: "btn btn-md btn-primary" %>
+  <% elsif @user.admin? %>
+  <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), disabled: false, class: "btn btn-md btn-default disabled" %>
   <% end %>
   <% if @first_day.day <= 15 %>
     <%= @first_day.month %>月前半のシフト
   <% else %>
     <%= @first_day.month %>月後半のシフト
   <% end %>
-  <%= link_to "＞", shifts_current_shifts_user_path(@user, date: next_first_day), class: "btn btn-md btn-primary" %>
+  <% if @user.admin? && current_shifts? %>
+    <%= link_to "＞", shifts_current_shifts_user_path(@user, date: next_first_day), class: "btn btn-md btn-primary" %>
+  <% elsif @user.admin? %>
+    <%= link_to "＞", shifts_current_shifts_user_path(@user, date: next_first_day), class: "btn btn-md btn-default disabled" %>
+  <% end %>
   <br><%= @first_day.strftime('%-m/%-d') %>～<%= @last_day.strftime('%-m/%-d') %>
 </div>
 

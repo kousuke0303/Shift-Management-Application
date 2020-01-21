@@ -101,4 +101,12 @@ module ShiftsHelper
     @first_day.day <= 15 ?
     "#{@first_day.year}-#{@first_day.month}-16".to_date : @first_day.next_month.beginning_of_month
   end
+  
+  # 現在の最新のシフトか確認
+  def current_shifts?
+    Date.current.day <= 15 ?
+    current_first_day = Date.current.beginning_of_month :
+    current_first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
+    return true unless @first_day == current_first_day
+  end
 end
