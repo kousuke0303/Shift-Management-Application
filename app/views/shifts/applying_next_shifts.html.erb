@@ -129,31 +129,37 @@
 </table>
 
 <div class="row">
-  <div class="col-xs-3 col-md-3 search-shift-tittle"><p class="search-shift">日毎に作成：</p></div>
-  <div class="col-xs-3 col-md-3">
-    <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
-      <div class="col-xs-9 search-shift-form-left">
-        <%= f.date_field :date, min: @first_day, max: @last_day, class: "form-control" %>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-5 search-shift-tittle"><p class="search-shift">日毎に作成：</p></div>
+      <div class="col-md-6">
+        <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
+          <div class="col-xs-9 search-shift-form-left">
+            <%= f.date_field :date, min: @first_day, max: @last_day, class: "form-control" %>
+          </div>
+          <div class="col-xs-3 search-shift-form-right">
+            <%= f.submit "検索", class: "btn btn-md btn-block btn-primary" %>
+          </div>
+        <% end %>
       </div>
-      <div class="col-xs-3 search-shift-form-right">
-        <%= f.submit "検索", class: "btn btn-md btn-block btn-primary" %>
-      </div>
-    <% end %>
+    </div>
   </div>
-</div>
-
-<div class="row"> 
-  <div class="col-xs-3 col-md-3 search-shift-tittle"><p class="search-shift">スタッフ毎に作成：</p></div>
-  <div class="col-xs-3 col-md-3">
-    <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
-      <div class="col-xs-9 search-shift-form-left">
-        <%= f.collection_select(:staff, @staffs, :id, :name, {prompt: "スタッフを選択"},
-              {class: "form-control"}) %>
+    
+  <div class="col-md-6">
+    <div class="row"> 
+      <div class="col-md-5 search-shift-tittle"><p class="search-shift">スタッフ毎に作成：</p></div>
+      <div class="col-md-6">
+        <%= form_with url: shifts_applying_next_shifts_user_path(@user), method: :get, local: true do |f| %>
+          <div class="col-xs-9 search-shift-form-left">
+            <%= f.collection_select(:staff, @staffs, :id, :name, {prompt: "スタッフを選択"},
+                  {class: "form-control"}) %>
+          </div>
+          <div class="col-xs-3 search-shift-form-right">
+            <%= f.submit "検索", class: "btn btn-md btn-block btn-primary" %>
+          </div>
+        <% end %>
       </div>
-      <div class="col-xs-3 search-shift-form-right">
-        <%= f.submit "検索", class: "btn btn-md btn-block btn-primary" %>
-      </div>
-    <% end %>
+    </div>
   </div>
 </div>
 
