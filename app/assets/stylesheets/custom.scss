@@ -66,14 +66,19 @@ p {
 }
 
 .dropdown-toggle:hover {
-  background-color: white !important;
-  border: solid 1px black !important;
+  border: solid 1px black;
   color: black;
   text-decoration: none;
 }
 
 .nav-above {
   height: 80px;
+}
+
+.dropdown-assemble {
+  position: absolute !important;
+  z-index: 2 !important;
+  background-color: whitesmoke !important;
 }
 
 #logo {
@@ -112,6 +117,10 @@ p {
 .nav-link {
   color: black;
   font-size: 1.5em;
+}
+
+.nav-below-assemble {
+  z-index: 1;
 }
 
 .nav-link:hover {

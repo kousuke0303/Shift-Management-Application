@@ -155,13 +155,14 @@ class ShiftsController < ApplicationController
   
   # 現在のシフトの期間を定義
   def set_current_shifts_date
-    if Date.current.day <= 15
-      @first_day = Date.current.beginning_of_month
-      @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date
+    if params[:date]
+      @first_day = params[:date].to_date
     else
-      @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
-      @last_day = @first_day.end_of_month
+      Date.current.day <= 15 ?
+      @first_day = Date.current.beginning_of_month : @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
     end
+    @first_day.day <= 15 ?
+    @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date : @last_day = @first_day.end_of_month
     @current_shifts = [*@first_day..@last_day]
   end
   
