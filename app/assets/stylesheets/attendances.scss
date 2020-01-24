@@ -1,7 +1,21 @@
 /* 出退勤登録 */
 
 .work-status-border {
-    border: 2px solid black;
-    padding: 5px;
-    display: inline-block;
+  border: 2px solid black;
+  padding: 5px;
+  display: inline-block;
+}
+
+/* 出勤中スタッフ表示テーブル */
+
+#workind-staffs-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
 }

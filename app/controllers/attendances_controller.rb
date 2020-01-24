@@ -2,6 +2,7 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user
   
   def register
+    @attendances = Attendance.where(day: Date.today).where.not(work_start_time: nil)
     # 今日出勤済みかどうか調べる
     if Attendance.find_by(user_id: current_user.id, day: Date.today)
       # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
