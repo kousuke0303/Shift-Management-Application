@@ -20,11 +20,39 @@
       <!--「出勤ボタン押下前の場合」-->
       <% if @attendance[0].nil? %>
         <%= link_to "出勤", user_attendances_path(params[:input_id]), method: :post, class: "btn btn-primary btn-block" %>
-      <% end %>
+      <% elsif  %>
+        <%= link_to "休憩開始", users_attendances_breakstart_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+        <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+      <% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time.nil? %>
+        <%= link_to "休憩終了", users_attendances_breakend_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
+      <% elsif @attendance && @attendance[0].break_start_time && @attendance[0].break_end_time %>
+        <%= link_to "退勤", user_attendance_path(current_user), method: :patch, class: "btn btn-primary btn-block" %>
     <% end %>
   </div>
   <div class="col-xs-6">
     <h1>出勤中従業員一覧</h1>
+    <% if @attendance_satff_list %>
+      <table class="table teble-condensed table-bordered" id="workind-staffs-table">
+        <tr>
+          <th width=10%>ID</th>
+          <th width=20%>名前</th>
+          <th width=15%>出勤時間</th>
+          <th width=20%>休憩開始時間</th>
+          <th width=20%>休憩終了時間</th>
+          <th width=15%>退勤時間</th>
+        </tr>
+        <% @attendance_satff_list.reverse_each do |attendance| %>
+          <tr>
+            <td><%= attendance.user_id %></td>
+            <td><%= User.find(attendance.user_id).name %></td>
+            <td><%= attendance.work_start_time.strftime('%H:%M') %></td>
+            <td><%= attendance.break_start_time.strftime('%H:%M') if attendance.break_start_time.present? %></td>
+            <td><%= attendance.break_end_time.strftime('%H:%M') if attendance.break_end_time.present? %></td>
+            <td><%= attendance.work_end_time.strftime('%H:%M') if attendance.work_end_time.present? %></td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
   </div>
 </div>
 
