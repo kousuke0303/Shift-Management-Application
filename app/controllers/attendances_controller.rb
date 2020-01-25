@@ -21,6 +21,34 @@ class AttendancesController < ApplicationController
                      .or(Attendance.where(day: params[:day]))
     end 
   end
+  
+  #給与管理出退勤編集モーダル
+  def salary_management_info
+    @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
+  end
+  
+  #給与管理モーダル内更新処理
+  def update_salary_management_info
+    @attendance = Attendance.find(params[:id])
+    if params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
+      @attendance.update_attributes(update_work_time_in_break_params)
+      flash[:success] = "出退勤情報の編集が完了しました。"
+    elsif params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
+      @attendance.update_attributes(update_work_time_no_break_params)
+      flash[:success] = "出退勤情報の編集が完了しました。"
+    end
+    redirect_to users_attendances_salary_management_url
+  end
+  
+  #給与管理モーダル内の1レコード削除処理
+  def destroy
+    @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
+    @attendance.destroy
+    flash[:success] = "#{@user.name}の#{@attendance.day}のデータを削除しました。"
+    redirect_to users_attendances_salary_management_url
+  end
 
   def register
     # 従業員でログインした場合のみ、出退勤登録画面に移動する
@@ -103,4 +131,16 @@ class AttendancesController < ApplicationController
     redirect_to users_attendances_register_path(current_user)
   end
 end
+
+  private
+  
+  #給与管理_出退勤情報更新(休憩あり)
+  def update_work_time_in_break_params
+    params.require(:attendance).permit(:work_start_time, :break_start_time, :break_end_time, :work_end_time)
+  end
+  
+  #給与管理_出退勤情報更新(休憩なし)
+  def update_work_time_no_break_params
+    params.require(:attendance).permit(:work_start_time, :break_start_time, :break_end_time, :work_end_time)
+  end
 
