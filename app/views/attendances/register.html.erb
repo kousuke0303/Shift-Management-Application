@@ -15,9 +15,11 @@
     <% end %>
     <h2 id="RealDateArea"></h2>
     <h1 id="RealtimeClockArea"></h1>
+    <!--「勤務時間を登録する」押下後-->
     <% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") %>
+      <!--「出勤ボタン押下前の場合」-->
       <% if @attendance[0].nil? %>
-        <%= link_to "出勤", user_attendances_path(@attendance_staff), method: :post, class: "btn btn-primary btn-block" %>
+        <%= link_to "出勤", user_attendances_path(params[:input_id]), method: :post, class: "btn btn-primary btn-block" %>
       <% end %>
     <% end %>
   </div>

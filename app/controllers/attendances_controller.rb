@@ -25,7 +25,7 @@ class AttendancesController < ApplicationController
   
   def create
     # 出勤ボタン押下時にレコードが生成される
-    @attendance = Attendance.new(day: Date.current, user_id: current_user.id, work_start_time: Time.current.change(sec: 0))
+    @attendance = Attendance.new(day: Date.current, user_id: params[:user_id], work_start_time: Time.current.change(sec: 0))
     if @attendance.save
       flash[:info] = "おはようございます！"
     else
