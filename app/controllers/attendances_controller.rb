@@ -4,10 +4,18 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
-      # 今日出勤済みかどうか調べる
-      if Attendance.find_by(user_id: current_user.id, day: Date.current)
-        # 出勤済みでなければ自分のユーザIDの今日日付のレコードを抽出
-        @attendances = Attendance.where(user_id: current_user.id).where(day: Date.current)
+      # 検索があった場合
+      if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
+        # 検索で合致した従業員情報を取得
+        @attendance_staff = User.find(params[:input_id]).authenticate(params[:input_password])
+        if @attendance_staff
+          # 検索で合致した従業員の勤怠情報を取得
+          @attendance = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+        end
+      # else
+      #   # 管理者でログイン時
+      #   @attendance = []
+      # end
       end
     else
       # 従業員でログインした場合、シフト確認画面に移動する
@@ -16,20 +24,14 @@ class AttendancesController < ApplicationController
   end
   
   def create
-    # 今日出勤済みかどうか調べる
-    if Attendance.find_by(user_id: current_user.id, day: Date.current)
-      flash[:info] = "今日はもう出勤済みです。"
-      redirect_to users_attendances_register_path(current_user)
+    # 出勤ボタン押下時にレコードが生成される
+    @attendance = Attendance.new(day: Date.current, user_id: current_user.id, work_start_time: Time.current.change(sec: 0))
+    if @attendance.save
+      flash[:info] = "おはようございます！"
     else
-      # 出勤ボタン押下時にレコードが生成される
-      @attendance = Attendance.new(day: Date.current, user_id: current_user.id, work_start_time: Time.current.change(sec: 0))
-      if @attendance.save
-        flash[:info] = "おはようございます！"
-      else
-        flash[:danger] = "勤怠登録に失敗しました。やり直してください。"
-      end
-      redirect_to users_attendances_register_path(current_user)
+      flash[:danger] = "勤怠登録に失敗しました。やり直してください。"
     end
+    redirect_to users_attendances_register_path(current_user)
   end
   
   def update
