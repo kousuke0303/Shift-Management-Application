@@ -29,13 +29,13 @@
             <!-- スタッフ名 -->
             <td class="center"><%= @attendance.user.name %></td>
             <!-- 出勤時間 -->
-            <td class="center"><%= f.time_field :work_start_time, class: 'form-control' %></td>
+            <td class="center"><%= f.time_select :work_start_time, class: 'form-control' %></td>
             <!-- 退勤時間 -->
-            <td class="center"><%= f.time_field :work_end_time, class: 'form-control' %></td>
+            <td class="center"><%= f.time_select :work_end_time, class: 'form-control' %></td>
             <!-- 休憩開始時間 -->
-            <td class="center"><%= f.time_field :break_start_time, class: 'form-control' %></td>
+            <td class="center"><%= f.time_select :break_start_time, class: 'form-control' %></td>
             <!-- 休憩終了時間 -->
-            <td class="center"><%= f.time_field :break_end_time, class: 'form-control' %></td>
+            <td class="center"><%= f.time_select :break_end_time, class: 'form-control' %></td>
           </tbody>
         </table>
         

@@ -46,7 +46,7 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
     @attendance.destroy
-    flash[:success] = "#{@user.name}の#{@attendance.day}のデータを削除しました。"
+    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
     redirect_to users_attendances_salary_management_url
   end
 
