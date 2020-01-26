@@ -16,10 +16,6 @@ class AttendancesController < ApplicationController
           # 検索で従業員情報が合致しない場合のメッセージ
           flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
         end
-      # else
-      #   # 管理者でログイン時
-      #   @attendance = []
-      # end
       end
     else
       # 従業員でログインした場合、シフト確認画面に移動する
