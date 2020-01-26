@@ -4,14 +4,17 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
-      @attendance_satff_list = Attendance.all
+      @attendance_staff_lists = Attendance.all.paginate(page: params[:page])
       # 検索があった場合
       if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
         # 検索で合致した従業員情報を取得
         @attendance_staff = User.find(params[:input_id]).authenticate(params[:input_password])
         if @attendance_staff
           # 検索で合致した従業員の勤怠情報を取得
-          @attendance = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+          @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+        else
+          # 検索で従業員情報が合致しない場合のメッセージ
+          flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
         end
       # else
       #   # 管理者でログイン時
@@ -37,10 +40,10 @@ class AttendancesController < ApplicationController
   
   def update
     # 退勤ボタン押下時、その日のレコードのwork_end_timeをupdateする
-    @attendance = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
+    @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
     # 出勤時間が未登録であることを判定します。
-    if @attendance[0].work_end_time.nil?
-      if @attendance[0].update_attributes(work_end_time: Time.current.change(sec: 0))
+    if @attendances[0].work_end_time.nil?
+      if @attendances[0].update_attributes(work_end_time: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした！"
       else
         flash[:danger] = "勤怠登録に失敗しました。やり直してください。"
@@ -51,10 +54,10 @@ class AttendancesController < ApplicationController
   
   def breakstart
     # 休憩開始ボタン押下時、その日のレコードのbreak_start_timeに現在時刻を挿入する
-    @attendance = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
-    # 休憩開始時間が未登録であることを判定します。
-    if @attendance[0].break_start_time.nil?
-      if @attendance[0].update_attributes(break_start_time: Time.current.change(sec: 0))
+    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    # 休憩開始時間が未登録であることを判定
+    if @attendances[0].break_start_time.nil?
+      if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0))
         flash[:info] = "休憩を開始しました。"
       else
         flash[:danger] = "休憩開始に失敗しました。やり直してください。"
@@ -65,10 +68,10 @@ class AttendancesController < ApplicationController
   
   def breakend
     # 休憩終了ボタン押下時、その日のレコードのbreak_end_timeに現在時刻を挿入する
-    @attendance = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
+    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
     # 休憩開始時間が未登録であることを判定します。
-    if @attendance[0].break_end_time.nil?
-      if @attendance[0].update_attributes(break_end_time: Time.current.change(sec: 0))
+    if @attendances[0].break_end_time.nil?
+      if @attendances[0].update_attributes(break_end_time: Time.current.change(sec: 0))
         flash[:info] = "休憩を終了しました。"
       else
         flash[:danger] = "休憩終了に失敗しました。やり直してください。"
