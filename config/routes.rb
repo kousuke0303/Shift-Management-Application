@@ -30,8 +30,9 @@ Rails.application.routes.draw do
         patch 'add_update'
       end
     end
+    resources :attendances
   end
-
+  
   resources :attendances do
     member do
       get 'salary_management_info'

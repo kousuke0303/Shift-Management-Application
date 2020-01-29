@@ -1,5 +1,6 @@
 User.create!(name: "Admin User",
              email: "admin@email.com",
+             hourly_wage: 900,
              password: "password",
              password_confirmation: "password",
              admin: true)

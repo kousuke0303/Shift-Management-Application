@@ -27,9 +27,16 @@
           <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5},
               class: "form-control" %>
         </div>
-        <div class="indicate-btn">
-          <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
-        </div>
+        <% if params['day(1i)'].present? && params[:user_id].present? %>
+          <div class="indicate-csv-btn">
+            <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
+            <%= link_to "紙出力", user_path(format: :csv, date: @first_day), class: "btn btn-lg btn-primary" %>
+          </div>
+        <% else %>
+          <div class="indicate-btn">
+            <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
+          </div>
+        <% end %>
       <% end %>
   
       <% if params[:day].present? || params[:user_id].present? %>
@@ -175,56 +182,58 @@
                       <% @total_non_overtime_hourly_wage = @total_non_overtime_hourly_wage.to_i + day_hourly_wage.to_i %>
                     <% end %>
                   <% end %>
-  
-                  <!--通常勤務時間の算出-->
-                  <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がある場合、勤務開始時間、休憩開始時間、休憩終了時間、勤務終了時間を使用して算出-->
-                  <% if ((at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% non_overtime_in_break = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)).to_f %>
-                  <% end %>
-                  <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がない場合、勤務開始時間、勤務終了時間を使用して算出-->
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% non_overtime_no_break = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f %>
-                  <% end %>
-                  <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩がある場合、22時までの通常時間を計算-->
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% non_overtime_22hours_in_break = (22.0 - ((at.break_end_time.min / 60) - (at.break_start_time.min / 60)) - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
-                  <% end %>
-                  <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩がない場合、22時までの通常時間を計算(休憩開始。休憩終了は抜かしている)-->
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% non_overtime_22hours_no_break = (22.0 - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
-                  <% end %>
-                  <% @total_non_overtime = @total_non_overtime.to_f + non_overtime_in_break.to_f + non_overtime_no_break.to_f + non_overtime_22hours_in_break.to_f + non_overtime_22hours_no_break.to_f %>
+
+                  <% if at.work_start_time.present? && at.work_end_time.present? %>
+                    <!--通常勤務時間の算出-->
+                    <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がある場合、勤務開始時間、休憩開始時間、休憩終了時間、勤務終了時間を使用して算出-->
+                    <% if ((at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
+                      <% non_overtime_in_break = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)).to_f %>
+                    <% end %>
+                    <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がない場合、勤務開始時間、勤務終了時間を使用して算出-->
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
+                      <% non_overtime_no_break = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f %>
+                    <% end %>
+                    <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩がある場合、22時までの通常時間を計算-->
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
+                      <% non_overtime_22hours_in_break = (22.0 - ((at.break_end_time.min / 60) - (at.break_start_time.min / 60)) - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
+                    <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩がない場合、22時までの通常時間を計算(休憩開始。休憩終了は抜かしている)-->
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
+                      <% non_overtime_22hours_no_break = (22.0 - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
+                    <% @total_non_overtime = @total_non_overtime.to_f + non_overtime_in_break.to_f + non_overtime_no_break.to_f + non_overtime_22hours_in_break.to_f + non_overtime_22hours_no_break.to_f %>
                   
   
-                  <!--深夜残業時間の算出-->
-                  <!-- 退社時間が22時以降の場合、22時以降の在社時間を算出-->
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
-                    <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
+                    <!--深夜残業時間の算出-->
+                    <!-- 退社時間が22時以降の場合、22時以降の在社時間を算出-->
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                      <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
+                    <% end %>
+                    <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->  
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
+                      <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
+                    <% end %>
+                    <% @total_overtime_and_tomorrow_overtime = @total_overtime_and_tomorrow_overtime.to_f + overtime.to_f + tomorrow_overtime.to_f %>
+                    
+                    <!--深夜残業時間の算出-->
+                    <!-- 出勤時間が22時以降で、退社時間が22時以降の場合、22時以降の在社時間を算出-->
+                    <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                      <% start_overtime =  ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
+                    <!-- 出勤時間が22時以降で、退社時間が0時以降の場合、0時以降の在社時間を算出-->  
+                    <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                      <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f + 24.0 %>
+                    <% end %>
+                    <!-- 出勤時間が0時以降の場合、退社時間が0時以降の場合、0時以降の在社時間を算出-->  
+                    <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 3) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                      <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f) %>
+                    <% end %>
+                    <% @total_start_overtime_and_start_tomorrow_overtime = @total_start_overtime_and_start_tomorrow_overtime.to_f + start_overtime.to_f + start_tomorrow_overtime.to_f %>
+                    
+                    <!--総合勤務時間の算出-->
+                    <!--通常勤務時間と深夜残業時間を合計した時間を算出-->
+                    <% @total_work_time = @total_overtime_and_tomorrow_overtime.to_f + @total_start_overtime_and_start_tomorrow_overtime.to_f + @total_non_overtime.to_f %>
                   <% end %>
-                  <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
-                    <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
-                  <% end %>
-                  <% @total_overtime_and_tomorrow_overtime = @total_overtime_and_tomorrow_overtime.to_f + overtime.to_f + tomorrow_overtime.to_f %>
-                  
-                  <!--深夜残業時間の算出-->
-                  <!-- 退社時間が22時以降の場合、22時以降の在社時間を算出-->
-                  <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
-                    <% start_overtime = total_time(at.work_start_time.floor_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)).to_f %>
-                  <% end %>
-                  <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                  <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
-                    <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f + 24.0 %>
-                  <% end %>
-                  <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                  <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 3) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
-                    <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f) %>
-                  <% end %>
-                  <% @total_start_overtime_and_start_tomorrow_overtime = @total_start_overtime_and_start_tomorrow_overtime.to_f + start_overtime.to_f + start_tomorrow_overtime.to_f %>
-                  
-                  <!--総合勤務時間の算出-->
-                  <!--通常勤務時間と深夜残業時間を合計した時間を算出-->
-                  <% @total_work_time = @total_overtime_and_tomorrow_overtime.to_f + @total_start_overtime_and_start_tomorrow_overtime.to_f + @total_non_overtime.to_f %>
                 <% end %>
             </table>
       

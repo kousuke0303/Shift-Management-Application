@@ -6,6 +6,7 @@
   display: inline-block;
 }
 
+
 /* 給与管理 */
 .salary-management-table {
   background-color: #ffd700;
@@ -39,7 +40,32 @@
   padding-left: 100px;
 }
 
+.indicate-csv-btn {
+  margin-top: 15px; 
+  margin-bottom: 15px; 
+  padding-left: 63px;
+}
+
 .attention{
   color: #FF0000;
 }
 
+
+/* 出退勤登録画面 */
+.attendance-label {
+  text-transform: uppercase;
+}
+
+/* 出勤中スタッフ表示テーブル */
+
+#workind-staffs-table {
+  th {
+    background: gold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td {
+    text-align: center;
+    vertical-align: middle;
+  }
+}
