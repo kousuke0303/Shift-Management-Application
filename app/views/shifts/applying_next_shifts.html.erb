@@ -22,11 +22,11 @@
     <th>スタッフ名</th>
     <% @next_shifts.each do |day| %>
       <% if day.wday == 6 %>
-        <th class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <th width=5% class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% elsif day.wday == 0 %>
-        <th class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <th width=5% class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% else %>
-        <th><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <th width=5%><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
       <% end %>
     <% end %>
   </tr>
@@ -37,19 +37,23 @@
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
-          <td width=5% class="display-shift">
-            <button>
-              <% if params[:date] && params[:date].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
-              <% elsif params[:staff] && params[:staff].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
-              <% else %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+          <td>
+            <% if params[:date] && params[:date].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, date: params[:date]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
               <% end %>
-            </button>
+            <% elsif params[:staff] && params[:staff].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% else %>
+              <%= link_to(edit_user_shift_path(staff, @shift), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td></td>
         <% end %>
       <% end %>
     </tr>
@@ -61,19 +65,23 @@
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
-          <td width=5% class="display-shift">
-            <button>
-              <% if params[:date] && params[:date].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
-              <% elsif params[:staff] && params[:staff].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
-              <% else %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+          <td>
+            <% if params[:date] && params[:date].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, date: params[:date]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
               <% end %>
-            </button>
+            <% elsif params[:staff] && params[:staff].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% else %>
+              <%= link_to(edit_user_shift_path(staff, @shift), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td></td>
         <% end %>
       <% end %>
     </tr>
@@ -85,19 +93,23 @@
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
-          <td width=5% class="display-shift">
-            <button>
-              <% if params[:date] && params[:date].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
-              <% elsif params[:staff] && params[:staff].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
-              <% else %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+          <td>
+            <% if params[:date] && params[:date].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, date: params[:date]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
               <% end %>
-            </button>
+            <% elsif params[:staff] && params[:staff].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% else %>
+              <%= link_to(edit_user_shift_path(staff, @shift), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td></td>
         <% end %>
       <% end %>
     </tr>
@@ -109,19 +121,23 @@
       <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
-          <td width=5% class="display-shift">
-            <button>
-              <% if params[:date] && params[:date].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, date: params[:date]), remote: true %>
-              <% elsif params[:staff] && params[:staff].present? %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true %>
-              <% else %>
-                <%= link_to start_and_end_time_of_shift(staff, day), edit_user_shift_path(staff, @shift), remote: true %>
+          <td>
+            <% if params[:date] && params[:date].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, date: params[:date]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
               <% end %>
-            </button>
+            <% elsif params[:staff] && params[:staff].present? %>
+              <%= link_to(edit_user_shift_path(staff, @shift, staff: params[:staff]), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% else %>
+              <%= link_to(edit_user_shift_path(staff, @shift), remote: true) do %>
+                <div><%= start_and_end_time_of_shift(staff, day) %></div>
+              <% end %>
+            <% end %>
           </td>
         <% else %>
-          <td width=5% class="display-shift"></td>
+          <td></td>
         <% end %>
       <% end %>
     </tr>
