@@ -75,15 +75,21 @@ class ShiftsController < ApplicationController
     ActiveRecord::Base.transaction do
       shifts_params.each do |id, item|
         shift = Shift.find(id)
+        before_start_time = shift.start_time
+        before_end_time = shift.end_time
         shift.update_attributes!(item)
+        unless before_start_time == shift.start_time && before_end_time == shift.end_time
+          @total_change_count = @total_change_count.to_i + 1
+        end
       end
     end
-    flash[:success] = "シフトに反映しました。"
+    flash[:success] = "シフトに反映しました。" if @total_change_count.to_i > 0
     redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date]) if params[:date]
     redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
-    redirect_to shifts_applying_next_shifts_user_path(@user)
+    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date]) if params[:date]
+    redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
   end
   
   # 現在のシフト確認ページ
