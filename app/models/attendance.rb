@@ -13,7 +13,6 @@ class Attendance < ApplicationRecord
       if self.break_end_time.present? && self.break_start_time.present?
         # 休憩時間が存在する場合
         # 実労働時間の計算
-        debugger
         # 勤務終了時間が22時以降かどうか
         if self.work_end_time.hour >= 22
           # 休憩開始時間が22時以降かどうか
