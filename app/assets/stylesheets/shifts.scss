@@ -77,18 +77,20 @@
     text-align: center;
     vertical-align: middle;
   }
-  td.display-shift {
-    font-size: 0.8em;
-  }
-  td button {
-    padding: 0;
-  }
   td a {
     color: black;
     text-decoration: none;
   }
   td a:hover {
     text-decoration: none;
+  }
+  td div {
+    font-size: 0.9em;
+    height: 100%;
+    padding-top: 5px;
+  }
+  td div:hover {
+    background: aliceblue;
   }
 }
 
@@ -229,12 +231,6 @@ div.current-shifts-table-flame {
     text-align: center;
     vertical-align: middle;
   }
-  td.display-shift {
-    font-size: 0.8em;
-  }
-  td button {
-    padding: 0;
-  }
   td a {
     color: black;
     text-decoration: none;
@@ -242,13 +238,12 @@ div.current-shifts-table-flame {
   td a:hover {
     text-decoration: none;
   }
-  td.add-shift-frame {
-    padding: 0;
-  }
-  div {
+  td div {
+    font-size: 0.9em;
     height: 100%;
+    padding-top: 5px;
   }
-  div:hover {
+  td div:hover {
     background: aliceblue;
   }
 }

@@ -21,16 +21,6 @@
       </td>
     </tr>
     <tr>
-      <th>リーダー</th>
-      <td>
-        <% if @user.leader? %>
-          〇
-        <% else %>
-          ✕
-        <% end %>
-      </td>
-    </tr>
-    <tr>
       <th>キッチン</th>
       <td>
         <% if @user.kitchen? %>
@@ -44,6 +34,16 @@
       <th>ホール</th>
       <td>
         <% if @user.hole? %>
+          〇
+        <% else %>
+          ✕
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <th>洗い場</th>
+      <td>
+        <% if @user.wash? %>
           〇
         <% else %>
           ✕
