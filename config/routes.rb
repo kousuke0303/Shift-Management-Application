@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   patch  '/users/:id/attendances/breakstart',  to: 'attendances#breakstart', as: 'users_attendances_breakstart'
   patch  '/users/:id/attendances/breakend',  to: 'attendances#breakend', as: 'users_attendances_breakend'
   get    '/users/:id/attendances/salary_management',  to: 'attendances#salary_management', as: 'users_attendances_salary_management'
+  get    '/users/:id/attendances/attendance_management',  to: 'attendances#attendance_management', as: 'users_attendances_attendance_management'
 
   resources :users do
     member do
@@ -37,6 +38,11 @@ Rails.application.routes.draw do
     member do
       get 'salary_management_info'
       patch 'update_salary_management_info'
+      get 'attendance_management_info'
+      patch 'update_attendance_management_info'
+      get 'attendance_management_notice'
+      patch 'update_attendance_management_notice'
+      get 'today_attendance_list_info'
     end
   end
 end

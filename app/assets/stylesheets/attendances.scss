@@ -56,6 +56,23 @@
   text-transform: uppercase;
 }
 
+/* 出退勤管理 */
+.attendance-management-table {
+  background-color: #ffd700;
+  text-align: center;
+}
+
+/* 出勤ボタン押下していないユーザーへの注意喚起 */
+.notification {
+  display: inline;
+  color: red;
+  font-weight: bold;
+}
+
+.notice {
+  color: red;
+}
+
 /* 出勤中スタッフ表示テーブル */
 
 #workind-staffs-table {

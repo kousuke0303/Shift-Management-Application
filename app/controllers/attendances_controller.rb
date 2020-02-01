@@ -20,17 +20,17 @@ class AttendancesController < ApplicationController
                      .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
                      .or(Attendance.where(day: params[:day]))
     end
-    
       
-    respond_to do |format|
-  　   format.all
-　    format.csv do |csv|
+    respond_to do |format| 
+      format.all
+      format.csv do |csv|
         send_posts_csv(@attendances)
       end
     end
   end
   
   def send_posts_csv(attendances)
+    @attendance = Attendance.find_by(params[:user_id])
     csv_data = CSV.generate do |csv|
       header = %w(年月日 スタッフ名 出勤時間 退勤時間 休憩開始時間 休憩終了時間 日給)
       csv << header
@@ -62,7 +62,7 @@ class AttendancesController < ApplicationController
         csv << values
       end
     end
-    send_data(csv_data, filename: "#{@attendance.user.name}の#{l(@attendance.user.day, format: :short)}の勤怠情報.csv")
+    send_data(csv_data, filename: "#{@attendance.user.name}の#{l(@attendance.day.to_datetime, format: :middle)}の勤怠情報.csv")
   end
   
   #給与管理出退勤編集モーダル
@@ -91,6 +91,66 @@ class AttendancesController < ApplicationController
     @attendance.destroy
     flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
     redirect_to users_attendances_salary_management_url
+  end
+  
+  #出退勤管理
+  def attendance_management
+    #管理者を除いたスタッフを出力
+    @staffs = User.where(admin: false)
+    @attendance = Attendance.find_by(params[:user_id])
+    # @today_attendances_list = Attendance.where(day: Date.today).where(work_end_time: nil)
+    #月が10月以降の時と、10月以前で年月日検索を条件分岐
+    if @attendance.present? && @attendance.day.to_date.month >= 10
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+    else
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+    end
+  end
+  
+  #出退勤管理出退勤編集モーダル
+  def attendance_management_info
+  end
+  
+  #出退勤管理モーダル内更新処理
+  def update_attendance_management_info
+    @attendance = Attendance.find(params[:id])
+    if params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
+      @attendance.update_attributes(update_work_time_in_break_params)
+      flash[:success] = "出退勤情報の編集が完了しました。"
+    elsif params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
+      @attendance.update_attributes(update_work_time_no_break_params)
+      flash[:success] = "出退勤情報の編集が完了しました。"
+    end
+    redirect_to users_attendances_attendance_management_url
+  end
+  
+  #出退勤管理モーダル内の1レコード削除処理
+  def destroy
+    @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
+    @attendance.destroy
+    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
+    redirect_to users_attendances_attendance_management_url
+  end
+  
+  #出退勤管理未打刻一覧モーダル
+  def attendance_management_notice
+  end
+  
+  ##出退勤管理未打刻一覧モーダル内更新処理
+  def update_attendance_management_notice
+    update_work_end_time_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(work_end_time: item[:work_end_time])
+    end
+    flash[:success] = "退勤時間の登録に成功しました。"
+    redirect_to users_attendances_attendance_management_url
   end
 
   def register
@@ -182,4 +242,8 @@ end
   def update_work_time_no_break_params
     params.require(:attendance).permit(:work_start_time, :break_start_time, :break_end_time, :work_end_time)
   end
-
+  
+  #未打刻の退勤時間の更新
+  def update_work_end_time_params
+    params.permit(attendances: [:work_end_time])[:attendances]
+  end

@@ -34,7 +34,7 @@
         <div class="row">
           <% if logged_in? && current_user.admin? %>
             <div class="col-xs-3 col-md-3 col-lg-3">
-              <%= link_to("#", class: "nav-link") do %>
+              <%= link_to(users_attendances_attendance_management_path(current_user), class: "nav-link") do %>
               <div class="nav-item item-1"><span class="text-1">出退勤管理</span></div>
               <% end %>
             </div>

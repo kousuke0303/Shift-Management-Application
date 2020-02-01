@@ -1,0 +1,125 @@
+<% provide(:title, "出退勤管理") %>
+<div class="container">  
+  <div class="row">    
+    <div class="col-md-11 col-md-offset-0">
+      <br>
+      <%= form_with method: :get, local: true do |f| %>  
+        <h5 class="attention">※1スタッフの月表示は、スタッフ検索と年月検索ともに入力して検索してください</h5>
+        <h5 class="attention">※1日のみの検索は年月日検索のみ入力して検索してください</h5>       
+        <br>             
+        <%= f.label :name, "スタッフ検索" %>         
+        <div class="year-month-day-label">  
+          <%= f.label :day, "年月日検索" %>   
+        </div>  
+        <br>   
+        <div class="staff-select-field">     
+          <%= f.collection_select :user_id, @staffs, :id, :name, {prompt: "スタッフを選択"}, {class: "form-control"} %>
+        </div>    
+        <div class="day-label">   
+          <%= f.date_field :day, class: "form-control" %>   
+        </div>       
+        <br>      
+        <br>        
+        <%= f.label :day, "年月検索" %>   
+        <br>       
+        <div class="year-month-select-field">           
+          <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5}, class: "form-control" %>     
+        </div>           
+        <div class="indicate-btn">  
+          <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>   
+        </div>      
+      <% end %>      
+      <% if params[:day].present? || params[:user_id].present? %> 
+        <% if @attendances.count > 0  %>          
+          <table class="table table-bordered table-condensed table-striped">       
+            <thead>                     
+              <tr>           
+                <th class="attendance-management-table">出退勤編集</th>   
+                <th class="attendance-management-table">年月日</th>     
+                <th class="attendance-management-table">スタッフ名</th>     
+                <th class="attendance-management-table">出勤状況</th>        
+                <th class="attendance-management-table">出勤時間</th>       
+                <th class="attendance-management-table">退勤時間</th>                 
+                <th class="attendance-management-table">休憩開始時間</th>        
+                <th class="attendance-management-table">休憩終了時間</th>      
+              </tr>              
+            </thead>   
+            <% @attendances.each do |at| %>
+              <tbody>                   
+                <tr>                   
+                  <td class="center"><%= link_to "編集", attendance_management_info_attendance_path(at), remote: true, class: "btn btn-sm btn-primary" %></td>    
+                  <td class="center"><%= l(at.day.to_date, format: :long) %></td>           
+                  <td class="center"><%= at.user.name %></td>           
+                  <% if !at.work_start_time.present? && !at.break_start_time.present? && !at.break_end_time.present? && !at.work_end_time.present? %>  
+                    <td class="center">未出勤</td>           
+                  <% elsif at.work_start_time.present? && !at.break_start_time.present? && !at.break_end_time.present? && !at.work_end_time.present? %>  
+                    <td class="center">出勤中</td> 
+                  <% elsif at.work_start_time.present? && at.break_start_time.present? && !at.break_end_time.present? && !at.work_end_time.present? %>   
+                    <td class="center">休憩中</td>    
+                  <% elsif at.work_start_time.present? && at.break_start_time.present? && at.break_end_time.present? && !at.work_end_time.present? %> 
+                    <td class="center">出勤中(休憩済)</td> 
+                  <% elsif at.work_start_time.present? && (at.break_start_time.present? || !at.break_start_time.present?) && (at.break_end_time.present? || !at.break_end_time.present?) && at.work_end_time.present? %>
+                    <td class="center">退勤済</td>                 
+                  <% end %>                         
+                  <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
+                  <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>              
+                  <% if at.break_start_time.present? %>          
+                    <td class="center"><%= l(at.break_start_time, format: :time) %></td> 
+                  <% else %>                         
+                    <td class="center"></td>     
+                  <% end %>              
+                  <% if at.break_end_time.present? %>  
+                    <td class="center"><%= l(at.break_end_time, format: :time) %></td> 
+                  <% else %>                              
+                    <td class="center"></td>       
+                  <% end %>                    
+                </tr>                   
+              </tbody>             
+            <% end %>    
+          </table>    
+        <% else %>  
+          <h4>出退勤データはありません</h4> 
+        <% end %>  
+      <% end %> 
+    </div>   
+    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 380px; left: 1px;">   
+      <table class="table table-bordered table-condensed table-striped"> 
+        <thead>    
+          <tr>
+            <th class="attendance-management-table">本日の出勤者数</th>  
+            <th class="attendance-management-table">本日の出勤予定人数</th>
+          </tr>        
+        </thead> 
+        <tbody>    
+          <tr>
+            <% if Attendance.where(day: Date.today).where.not(work_start_time: nil).count > 0 %>
+              <td class="center"><%= Attendance.where(day: Date.today).where.not(work_start_time: nil).count %>名</td>
+            <% else %>
+              <td class="center">0名</td>
+            <% end %>
+            <% if Shift.where(user_id: @staffs.ids, worked_on: Date.today).where("start_time LIKE ?", "%:%").count > 0 %>
+              <td class="center"><%= Shift.where(user_id: @staffs.ids, worked_on: Date.today).where("start_time LIKE ?", "%:%").count %>名</td>
+            <% else %>
+              <td class="center">0名</td>
+            <% end %>
+          </tr>   
+        </tbody> 
+      </table>
+    </div>
+    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 485px; left: 1px;">
+      <% if Attendance.where(user_id: @staffs).where(work_end_time: nil).count > 0 %>
+        <h2 class="notification"><%= link_to "※退勤ボタン未押下：#{Attendance.where(user_id: @staffs).where(work_end_time: nil).count}件", attendance_management_notice_attendance_path, remote: true, class: "notice" %></h2>
+      <% else %>
+        <h2style="position:absolute">退勤ボタン未押下：なし</h2>
+      <% end %>
+    </div>
+  </div>
+</div>
+        
+<!-- モーダルウィンドウ表示 -->
+
+<!-- 出退勤編集 -->
+<div id="attendance_management_info" class="modal fade" tabindex="-1" rule="dialog" area-hidden="true"></div>
+
+<!-- 退勤押下していないスタッフ表示 -->
+<div id="attendance_management_notice" class="modal fade" tabindex="-1" rule="dialog" area-hidden="true"></div>

@@ -30,7 +30,7 @@
         <% if params['day(1i)'].present? && params[:user_id].present? %>
           <div class="indicate-csv-btn">
             <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
-            <%= link_to "紙出力", user_path(format: :csv, date: @first_day), class: "btn btn-lg btn-primary" %>
+            <%= link_to "紙出力", users_attendances_salary_management_path(format: :csv, date: @first_day), class: "btn btn-lg btn-primary" %>
           </div>
         <% else %>
           <div class="indicate-btn">
@@ -255,7 +255,7 @@
                     <td class="center"><%= @attendances.count %></td>
                   <% end %>
                   <td class="center"><%= @total_non_overtime %></td>
-                  <td class="center"><%= @total_overtime_and_tomorrow_overtime + @total_start_overtime_and_start_tomorrow_overtime %></td>
+                  <td class="center"><%= @total_overtime_and_tomorrow_overtime.to_f + @total_start_overtime_and_start_tomorrow_overtime.to_f %></td>
                   <td class="center"><%= @total_work_time %></td>
                   <td class="center">¥<%= @total_non_overtime_hourly_wage.to_i + @total_overtime_hourly_wage.to_i + @total_tomorrow_overtime_hourly_wage.to_i + @total_start_overtime_hourly_wage.to_i + @total_start_tomorrow_overtime_hourly_wage.to_i + @total_start_overtime_end_tomorrow_overtime_hourly_wage.to_i %></td>
                 </tr>
