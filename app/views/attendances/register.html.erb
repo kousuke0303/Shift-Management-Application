@@ -18,7 +18,7 @@
     <h2 id="RealDateArea"></h2>
     <h1 id="RealtimeClockArea"></h1>
     <!--「勤務時間を登録する」押下後-->
-    <% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") %>
+    <% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") &&  %>
       <% if @attendances %>
         <!--「出勤ボタン押下前の場合」-->
         <% if @attendances[0].nil? || @attendances[0].work_end_time %>
@@ -36,7 +36,7 @@
   </div>
   <div class="col-xs-6">
     <h1>出勤中従業員一覧</h1>
-    <% if @attendance_staff_lists %>
+    <% if @attendances.count > 0 %>
       <table class="table teble-condensed table-bordered" id="workind-staffs-table">
         <tr>
           <th width=10%>ID</th>
@@ -46,7 +46,7 @@
           <th width=20%>休憩終了時間</th>
           <th width=15%>退勤時間</th>
         </tr>
-        <% @attendance_staff_lists.reverse_each do |attendance| %>
+        <% @attendances.each do |attendance| %>
           <tr>
             <td><%= attendance.user_id %></td>
             <td><%= User.find(attendance.user_id).name %></td>
@@ -57,7 +57,6 @@
           </tr>
         <% end %>
       </table>
-      <%= will_paginate @attendance_staff_lists %>
     <% end %>
   </div>
 </div>

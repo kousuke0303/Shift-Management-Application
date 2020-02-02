@@ -92,13 +92,13 @@
         </thead> 
         <tbody>    
           <tr>
-            <% if Attendance.where(day: Date.today).where.not(work_start_time: nil).count > 0 %>
-              <td class="center"><%= Attendance.where(day: Date.today).where.not(work_start_time: nil).count %>名</td>
+            <% if Attendance.where(day: Date.current).where.not(work_start_time: nil).count > 0 %>
+              <td class="center"><%= Attendance.where(day: Date.current).where.not(work_start_time: nil).count %>名</td>
             <% else %>
               <td class="center">0名</td>
             <% end %>
-            <% if Shift.where(user_id: @staffs.ids, worked_on: Date.today).where("start_time LIKE ?", "%:%").count > 0 %>
-              <td class="center"><%= Shift.where(user_id: @staffs.ids, worked_on: Date.today).where("start_time LIKE ?", "%:%").count %>名</td>
+            <% if Shift.where(user_id: @staffs.ids, worked_on: Date.current).where("start_time LIKE ?", "%:%").count > 0 %>
+              <td class="center"><%= Shift.where(user_id: @staffs.ids, worked_on: Date.current).where("start_time LIKE ?", "%:%").count %>名</td>
             <% else %>
               <td class="center">0名</td>
             <% end %>

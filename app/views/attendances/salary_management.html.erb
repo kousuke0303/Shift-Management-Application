@@ -27,16 +27,9 @@
           <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5},
               class: "form-control" %>
         </div>
-        <% if params['day(1i)'].present? && params[:user_id].present? %>
-          <div class="indicate-csv-btn">
-            <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
-            <%= link_to "紙出力", users_attendances_salary_management_path(format: :csv, date: @first_day), class: "btn btn-lg btn-primary" %>
-          </div>
-        <% else %>
-          <div class="indicate-btn">
-            <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
-          </div>
-        <% end %>
+        <div class="indicate-btn">
+          <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
+        </div>
       <% end %>
   
       <% if params[:day].present? || params[:user_id].present? %>
@@ -88,12 +81,12 @@
                         <% end %>
                         
                         <!-- 出勤時間が10時〜21時、退勤時間が０時以降でかつ休憩がある場合、22時までは休憩時間を入れた通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して日給計算(1.25倍含む)-->
-                        <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
+                        <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
                           <% non_overtime_hourly_wage = (22.0 - ((at.break_end_time.min / 60) - (at.break_start_time.min / 60)) - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f * at.user.hourly_wage.to_f %>
                           <% tomorrow_overtime_hourly_wage = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * at.user.hourly_wage.to_f * 1.25 %>
                           <% at.salary = non_overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i %>
                         <!-- 出勤時間が10時〜21時、退勤時間でかつ休憩がない場合、22時までは休憩時間を抜かした通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して日給計算(1.25倍含む)-->
-                        <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
+                        <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
                           <% non_overtime_hourly_wage = (22.0 - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f * at.user.hourly_wage.to_f %>
                           <% tomorrow_overtime_hourly_wage = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * at.user.hourly_wage.to_f * 1.25 %>
                           <% at.salary = non_overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i %>
@@ -115,13 +108,13 @@
                         <% end %>
                         
                         <!-- 出勤時間が22時〜24時、退勤時間が0時以降の場の場合、通常の日給計算に1.25倍する -->
-                        <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) %>
+                        <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) %>
                           <% day_hourly_wage = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f + 24.0) * at.user.hourly_wage.to_f * 1.25 %>
                           <% at.salary = day_hourly_wage.to_i %>
                         <% end %>
                         
                         <!-- 出勤時間が0時以降、退勤時間が0時以降の場の場合、通常の日給計算に1.25倍する -->
-                        <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 3) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) %>
+                        <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 9) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) %>
                           <% day_hourly_wage = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f) * at.user.hourly_wage.to_f * 1.25 %>
                           <% at.salary = day_hourly_wage.to_i %>
                         <% end %>
@@ -144,12 +137,12 @@
                     <% end %>
 
                     <!-- 出勤時間が10時〜21時、退勤時間が０時以降でかつ休憩がある場合、休憩時間を考慮した22時までは通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)-->
-                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
                       <% non_overtime_hourly_wage = (22.0 - ((at.break_end_time.min / 60) - (at.break_start_time.min / 60)) - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f * at.user.hourly_wage.to_f %>
                       <% tomorrow_overtime_hourly_wage = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * at.user.hourly_wage.to_f * 1.25 %>
                       <% @total_tomorrow_overtime_hourly_wage = @total_tomorrow_overtime_hourly_wage.to_i + non_overtime_hourly_wage.to_f + tomorrow_overtime_hourly_wage.to_i %>
                     <!-- 出勤時間が10時〜21時、退勤時間が０時以降でかつ休憩がない場合、休憩時間を抜かした22時までは通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)-->
-                    <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
+                    <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
                       <% non_overtime_hourly_wage = (22.0 - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f * at.user.hourly_wage.to_f %>
                       <% tomorrow_overtime_hourly_wage = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * at.user.hourly_wage.to_f * 1.25 %>
                       <% @total_tomorrow_overtime_hourly_wage = @total_tomorrow_overtime_hourly_wage.to_i + non_overtime_hourly_wage.to_f + tomorrow_overtime_hourly_wage.to_i %>
@@ -162,7 +155,7 @@
                     <% end %>
                     
                     <!-- 出勤時間が0時以降、退勤時間が0時以降の場合、通常の日給計算に1.25倍する -->
-                    <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 3) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
+                    <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 9) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
                       <% start_tomorrow_overtime_hourly_wage = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f) * at.user.hourly_wage.to_f * 1.25 %>
                       <% @total_start_tomorrow_overtime_hourly_wage = @total_start_tomorrow_overtime_hourly_wage.to_i + start_tomorrow_overtime_hourly_wage.to_i %>
                     <% end %>
@@ -210,7 +203,7 @@
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
                     <% end %>
                     <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
+                    <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M"))%>
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
                     <% end %>
                     <% @total_overtime_and_tomorrow_overtime = @total_overtime_and_tomorrow_overtime.to_f + overtime.to_f + tomorrow_overtime.to_f %>
@@ -221,11 +214,11 @@
                       <% start_overtime =  ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f %>
                     <% end %>
                     <!-- 出勤時間が22時以降で、退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                    <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                    <% if (at.work_start_time.hour >= 22 && at.work_start_time.hour <= 24) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
                       <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0))).to_f + 24.0 %>
                     <% end %>
                     <!-- 出勤時間が0時以降の場合、退社時間が0時以降の場合、0時以降の在社時間を算出-->  
-                    <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 3) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                    <% if (at.work_start_time.hour >= 0 && at.work_start_time.hour <= 9) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
                       <% start_tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.floor_to(15.minutes).min / 60.0)).to_f) %>
                     <% end %>
                     <% @total_start_overtime_and_start_tomorrow_overtime = @total_start_overtime_and_start_tomorrow_overtime.to_f + start_overtime.to_f + start_tomorrow_overtime.to_f %>
