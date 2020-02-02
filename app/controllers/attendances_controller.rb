@@ -114,7 +114,7 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
-      @attendances = Attendance.where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id)
+      @attendances = Attendance.where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id).all.paginate(page: params[:page])
       # 検索があった場合
       if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
         # 検索で合致した従業員情報を取得
