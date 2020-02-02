@@ -4,7 +4,11 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
-      @attendance_staff_lists = Attendance.all.paginate(page: params[:page])
+      if Time.current < (Time.current.beginning_of_day + 6.hour)
+        @attendance_staff_lists = Attendance.where(day: (Date.current - 1)..(Time.current)).paginate(page: params[:page])
+      else
+        @attendance_staff_lists = Attendance.where(day: Date.current).paginate(page: params[:page])
+      end
       # 検索があった場合
       if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
         # 検索で合致した従業員情報を取得
