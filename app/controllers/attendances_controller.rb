@@ -121,8 +121,7 @@ class AttendancesController < ApplicationController
         @attendance_staff = User.find(params[:input_id]).authenticate(params[:input_password])
         if @attendance_staff
           # 検索で合致した従業員の勤怠情報を取得
-
-          @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id)
+          @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id).all.paginate(page: params[:page])
         else
           # 検索で従業員情報が合致しない場合のメッセージ
           flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
@@ -154,7 +153,6 @@ class AttendancesController < ApplicationController
       end
       redirect_to users_attendances_register_path(current_user)
     end
-    redirect_to users_attendances_register_path(current_user)
   end
   
   def update
