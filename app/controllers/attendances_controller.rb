@@ -114,13 +114,14 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
-      @attendances = Attendance.where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id)
+      @attendances = Attendance.where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id).all.paginate(page: params[:page])
       # 検索があった場合
       if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
         # 検索で合致した従業員情報を取得
         @attendance_staff = User.find(params[:input_id]).authenticate(params[:input_password])
         if @attendance_staff
           # 検索で合致した従業員の勤怠情報を取得
+
           @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current).where.not(work_start_time: nil).where.not(user_id: current_user.id)
         else
           # 検索で従業員情報が合致しない場合のメッセージ
@@ -145,9 +146,7 @@ class AttendancesController < ApplicationController
       redirect_to users_attendances_register_path(current_user)
     else
       # 出勤ボタン押下時にレコードが生成される
-      # 日本時間に合わせる為、9時間分の秒数を足す→下記ですと、出退勤時間・休憩開始終了時間が９時間プラスされたものとして出力されたため消去(永井)
-      # @attendance = Attendance.new(day: Date.today, user_id: current_user.id, work_start_time: Time.current.change(sec: 0) + 32400)
-      @attendance = Attendance.new(day: Date.current, user_id: params[:user_id], work_start_time: Time.current)
+      @attendance = Attendance.new(day: Date.current, user_id: params[:user_id], work_start_time: Time.current.change(sec: 0))
       if @attendance.save
         flash[:info] = "おはようございます！"
       else
@@ -155,6 +154,7 @@ class AttendancesController < ApplicationController
       end
       redirect_to users_attendances_register_path(current_user)
     end
+    redirect_to users_attendances_register_path(current_user)
   end
   
   def update
