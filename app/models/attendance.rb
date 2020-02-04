@@ -1,5 +1,13 @@
 class Attendance < ApplicationRecord
   belongs_to :user
+  
+  validate :work_start_time_cannot_push_less_than_ten_o_clock
+
+  def work_start_time_cannot_push_less_than_ten_o_clock
+    if work_start_time.present? && (work_start_time.hour >= 2 && work_start_time.hour <= 10)
+      errors.add(:work_start_time, ": 10時前の出勤はできません")
+    end
+  end
 
   # # 日給の計算を行う
   # before_save :calculate_salary_per_day
