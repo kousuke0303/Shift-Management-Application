@@ -31,6 +31,7 @@ class AttendancesController < ApplicationController
   #給与管理モーダル内更新処理
   def update_salary_management_info
     @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
     if params[:attendance]['work_start_time(4i)'].present? && (params[:attendance]['work_start_time(4i)'].to_i > 1 && params[:attendance]['work_start_time(4i)'].to_i < 10)
       flash[:danger] = "勤務時間が10時以前は出勤登録できません"
       redirect_back(fallback_location: salary_management)
@@ -69,11 +70,11 @@ class AttendancesController < ApplicationController
       redirect_back(fallback_location: salary_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
       @attendance.update_attributes(update_work_time_in_break_params)
-      flash[:success] = "出退勤情報の編集が完了しました。"
+      flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: salary_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 || params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
       @attendance.update_attributes(update_work_time_no_break_params)
-      flash[:success] = "出退勤情報の編集が完了しました。"
+      flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: salary_management)
     end
   end
@@ -83,8 +84,8 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
     @attendance.destroy
-    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
-    redirect_to users_attendances_salary_management_url
+    flash[:danger] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
+    redirect_back(fallback_location: salary_management)
   end
   
   #出退勤管理
@@ -115,6 +116,7 @@ class AttendancesController < ApplicationController
   #出退勤管理モーダル内更新処理
   def update_attendance_management_info
     @attendance = Attendance.find(params[:id])
+    @user = User.find(@attendance.user_id)
     if params[:attendance]['work_start_time(4i)'].present? && (params[:attendance]['work_start_time(4i)'].to_i > 1 && params[:attendance]['work_start_time(4i)'].to_i < 10)
       flash[:danger] = "勤務時間が10時以前は出勤登録できません"
       redirect_back(fallback_location: attendance_management)
@@ -153,11 +155,11 @@ class AttendancesController < ApplicationController
       redirect_back(fallback_location: attendance_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
       @attendance.update_attributes(update_work_time_in_break_params)
-      flash[:success] = "出退勤情報の編集が完了しました。"
+      flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 || params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
       @attendance.update_attributes(update_work_time_no_break_params)
-      flash[:success] = "出退勤情報の編集が完了しました。"
+      flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end
   end
@@ -167,8 +169,8 @@ class AttendancesController < ApplicationController
     @attendance = Attendance.find(params[:id])
     @user = User.find(@attendance.user_id)
     @attendance.destroy
-    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
-    redirect_to users_attendances_attendance_management_url
+    flash[:danger] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
+    redirect_back(fallback_location: attendance_management)
   end
   
   #出退勤管理未打刻一覧モーダル
