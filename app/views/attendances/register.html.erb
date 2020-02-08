@@ -25,7 +25,7 @@
           <%= link_to "出勤", user_attendances_path(params[:input_id]), method: :post, class: "btn btn-primary btn-block" %>
         <% elsif @attendances && @attendances[0].break_start_time.nil? && @attendances[0].break_end_time.nil? %>
           <%= link_to "休憩開始", users_attendances_breakstart_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
-          <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
+          <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block btn-danger" %>
         <% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time.nil? %>
           <%= link_to "休憩終了", users_attendances_breakend_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
         <% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time %>
