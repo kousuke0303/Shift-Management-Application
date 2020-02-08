@@ -4,8 +4,10 @@ class AttendancesController < ApplicationController
   def register
     # 管理者でログインした場合、出退勤登録画面に移動する
     if current_user.admin
+      # 6は現在日付の朝6時を示す
       if Time.current < (Time.current.beginning_of_day + 6.hour)
-        @attendance_staff_lists = Attendance.where(day: (Date.current - 1)..(Time.current)).paginate(page: params[:page])
+        # -1は現在日付から見て昨日の日付を示す
+        @attendance_staff_lists = Attendance.where(day: (Date.current - 1)..Time.current).paginate(page: params[:page])
       else
         @attendance_staff_lists = Attendance.where(day: Date.current).paginate(page: params[:page])
       end
