@@ -13,11 +13,18 @@ class AttendancesController < ApplicationController
       end
       # 検索があった場合
       if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
-        # 検索で合致した従業員情報を取得
-        @attendance_staff = User.find(params[:input_id]).authenticate(params[:input_password])
-        if @attendance_staff
-          # 検索で合致した従業員の勤怠情報を取得
-          @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+        # IDがusersテーブルに実際に存在するかどうか確認
+        @attendance_exist = User.find_by_id(params[:input_id])
+        if @attendance_exist
+          # 検索で合致した従業員情報を取得
+          @attendance_staff = @attendance_exist.authenticate(params[:input_password])
+          if @attendance_staff
+            # 検索で合致した従業員の勤怠情報を取得
+            @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+          else
+            # 検索で従業員情報が合致しない場合のメッセージ
+            flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
+          end
         else
           # 検索で従業員情報が合致しない場合のメッセージ
           flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
