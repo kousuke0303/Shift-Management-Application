@@ -2,11 +2,12 @@ class AttendancesController < ApplicationController
   include AttendancesHelper
 
   before_action :logged_in_user
+  before_action :set_attendance, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info, :attendance_management_notice, :update_attendance_management_notice] 
+  before_action :set_attendance_user_id, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info]
+  before_action :set_staff, only:[:salary_management, :attendance_management, :new_attendance_management_info]
 
   #給与管理
   def salary_management
-    #管理者を除いたスタッフを出力
-    @staffs = User.where(admin: false)
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
     @attendance = Attendance.find_by(params[:user_id])
     if @attendance.present? && @attendance.day.to_date.month >= 10
@@ -24,56 +25,52 @@ class AttendancesController < ApplicationController
   
   #給与管理出退勤編集モーダル
   def salary_management_info
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
   end
   
   #給与管理モーダル内更新処理
   def update_salary_management_info
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
-    if params[:attendance]['work_start_time(4i)'].present? && (params[:attendance]['work_start_time(4i)'].to_i > 1 && params[:attendance]['work_start_time(4i)'].to_i < 10)
-      flash[:danger] = "勤務時間が10時以前は出勤登録できません"
+    if params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i < 10
+      flash[:danger] = "勤務時間が10時以前は出勤登録できません。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_end_time(4i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['break_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['break_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_start_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_start_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
+      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['work_end_time(4i)'].to_i) && !(params[:attendance]['work_end_time(4i)'].to_i >= 0 && params[:attendance]['work_end_time(4i)'].to_i <= 1)
-      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です"
+      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['work_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['work_end_time(5i)'].to_i)
-      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です"
+      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif params[:attendance]['break_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i
-      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です"
+      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif (params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 2) && (params[:attendance]['break_end_time(4i)'].to_i >= 10 && params[:attendance]['break_end_time(4i)'].to_i <= 24)
-      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です"
+      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です。"
       redirect_back(fallback_location: salary_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
-      @attendance.update_attributes(update_work_time_in_break_params)
+      @attendance.update_attributes(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: salary_management)
     elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 || params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
-      @attendance.update_attributes(update_work_time_no_break_params)
+      @attendance.update_attributes(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: salary_management)
     end
@@ -81,18 +78,15 @@ class AttendancesController < ApplicationController
   
   #給与管理モーダル内の1レコード削除処理
   def destroy
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
     @attendance.destroy
-    flash[:danger] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
+    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
     redirect_back(fallback_location: salary_management)
   end
   
   #出退勤管理
   def attendance_management
-    #管理者を除いたスタッフを出力
-    @staffs = User.where(admin: false)
     @attendance = Attendance.find_by(user_id: params[:user_id])
+    @shift = Shift.find(params[:id])
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
     if @attendance.present? && @attendance.day.to_date.month >= 10
       @attendances = Attendance
@@ -109,56 +103,53 @@ class AttendancesController < ApplicationController
   
   #出退勤管理出退勤編集モーダル
   def attendance_management_info
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
   end
   
   #出退勤管理モーダル内更新処理
   def update_attendance_management_info
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
-    if params[:attendance]['work_start_time(4i)'].present? && (params[:attendance]['work_start_time(4i)'].to_i > 1 && params[:attendance]['work_start_time(4i)'].to_i < 10)
+    if (params[:attendance]['break_start_time(4i)'].to_i == params[:attendance]['work_end_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i - params[:attendance]['break_start_time(5i)'].to_i <= 15) && (params[:attendance]['break_end_time(4i)'].to_i == params[:attendance]['work_end_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i - params[:attendance]['break_end_time(5i)'].to_i <= 15)
+      flash[:danger] = "退勤時間の休憩時間の差が15分以内のため、出退勤編集できません"
+      redirect_back(fallback_location: attendance_management)
+    elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i < 10
       flash[:danger] = "勤務時間が10時以前は出勤登録できません"
       redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_end_time(4i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['break_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['break_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_start_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_start_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_end_time(5i)'].to_i)
-      flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['work_end_time(4i)'].to_i) && !(params[:attendance]['work_end_time(4i)'].to_i >= 0 && params[:attendance]['work_end_time(4i)'].to_i <= 1)
-      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['work_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['work_end_time(5i)'].to_i)
-      flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance]['break_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i
-      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif (params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 2) && (params[:attendance]['break_end_time(4i)'].to_i >= 10 && params[:attendance]['break_end_time(4i)'].to_i <= 24)
-      flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です"
-      redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present?
-      @attendance.update_attributes(update_work_time_in_break_params)
-      flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
-      redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10 || params[:attendance][:break_start_time].blank? || params[:attendance][:break_end_time].brank?
-      @attendance.update_attributes(update_work_time_no_break_params)
+    elsif params[:attendance]['break_start_time(4i)'].present? && params[:attendance]['break_start_time(5i)'].present? && params[:attendance]['break_end_time(4i)'].present? && params[:attendance]['break_end_time(5i)']
+      if (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_start_time(4i)'].to_i) || (params[:attendance]['work_end_time(4i)'].to_i < params[:attendance]['break_end_time(4i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_start_time(4i)'].to_i >= 10 && params[:attendance]['work_start_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 9) && (params[:attendance]['work_end_time(4i)'].to_i >= 10 && params[:attendance]['work_end_time(4i)'].to_i <= 24 && params[:attendance]['break_end_time(4i)'].to_i >= 0 && params[:attendance]['break_end_time(4i)'].to_i <= 9)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['break_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['break_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_start_time(5i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['break_end_time(5i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_start_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_start_time(5i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_end_time(4i)'].to_i == params[:attendance]['break_end_time(4i)'].to_i) && (params[:attendance]['work_end_time(5i)'].to_i < params[:attendance]['break_end_time(5i)'].to_i)
+        flash[:danger] = "出退勤時間と休憩時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_start_time(4i)'].to_i > params[:attendance]['work_end_time(4i)'].to_i) && !(params[:attendance]['work_end_time(4i)'].to_i >= 0 && params[:attendance]['work_end_time(4i)'].to_i <= 1)
+        flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['work_start_time(4i)'].to_i == params[:attendance]['work_end_time(4i)'].to_i) && (params[:attendance]['work_start_time(5i)'].to_i > params[:attendance]['work_end_time(5i)'].to_i)
+        flash[:danger] = "出勤時間と退勤時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif params[:attendance]['break_start_time(4i)'].to_i > params[:attendance]['break_end_time(4i)'].to_i
+        flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      elsif (params[:attendance]['break_start_time(4i)'].to_i >= 0 && params[:attendance]['break_start_time(4i)'].to_i <= 2) && (params[:attendance]['break_end_time(4i)'].to_i >= 10 && params[:attendance]['break_end_time(4i)'].to_i <= 24)
+        flash[:danger] = "休憩開始時間と休憩終了時間の組み合わせが不正です。"
+        redirect_back(fallback_location: attendance_management)
+      end
+    elsif params[:attendance]['work_start_time(4i)'].present? && params[:attendance]['work_start_time(4i)'].to_i >= 10
+      @attendance.update_attributes(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end
@@ -166,10 +157,8 @@ class AttendancesController < ApplicationController
   
   #出退勤管理モーダル内の1レコード削除処理
   def destroy
-    @attendance = Attendance.find(params[:id])
-    @user = User.find(@attendance.user_id)
     @attendance.destroy
-    flash[:danger] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
+    flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報を削除しました。"
     redirect_back(fallback_location: attendance_management)
   end
   
@@ -181,10 +170,36 @@ class AttendancesController < ApplicationController
   def update_attendance_management_notice
     update_work_end_time_params.each do |id, item|
       attendance = Attendance.find(id)
-      attendance.update_attributes(work_end_time: item[:work_end_time])
+      attendance.update_attributes!(work_end_time: item[:work_end_time])
     end
-    flash[:success] = "退勤時間の登録に成功しました。"
+    flash[:success] = "退勤時間の登録に成功しました(退勤時間を入力していなければ登録されていません。"
     redirect_to users_attendances_attendance_management_url
+  end
+  
+  #出退勤管理新規作成モーダル
+  def new_attendance_management_info
+  end
+  
+  #出退勤管理新規作成モーダル内更新処理
+  def create_new_attendance_management_info
+    if Attendance.where(day: params[:day], user_id: params[:user_id]).count > 0
+      flash[:danger] = "同一日に同一ユーザーが存在しているため、出退勤登録できません。"
+      redirect_to users_attendances_attendance_management_url
+    elsif params[:work_start_time].present? && (params[:work_start_time] < params[:work_end_time]) && params[:break_start_time].present? && (params[:break_start_time] > params[:work_start_time]) && (params[:break_start_time] < params[:work_end_time]) && params[:break_end_time].present? && (params[:break_end_time] > params[:work_start_time]) && (params[:break_end_time] < params[:work_end_time]) && params[:work_end_time].present?
+      @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], break_start_time: params[:break_start_time], break_end_time: params[:break_end_time], work_end_time: params[:work_end_time])
+      @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
+      redirect_to users_attendances_attendance_management_url
+    elsif params[:work_start_time].present? && (params[:work_start_time] < params[:work_end_time]) && params[:break_start_time].blank? && params[:break_end_time].blank? && params[:work_end_time].present?
+      @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], work_end_time: params[:work_end_time])
+      @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
+      redirect_to users_attendances_attendance_management_url
+    elsif params[:day].blank? || params[:user_id].blank? || params[:work_start_time].blank? || params[:work_end_time].blank? || params[:break_start_time].blank? || params[:break_end_time].blank?
+      flash[:warning] = "もう一度入力してください。"
+      redirect_to users_attendances_attendance_management_url
+    else
+      flash[:warning] = "出勤時間が10時前、または出退勤時間と休憩時間の組み合わせが不正の場合、出退勤登録されていません。"
+      redirect_to users_attendances_attendance_management_url
+    end
   end
 
   def register
@@ -225,7 +240,7 @@ class AttendancesController < ApplicationController
       if @attendance.save  
         flash[:info] = "おはようございます！"
       else
-        flash[:danger] = "勤怠登録に失敗、もしくは出勤時間が10時前のため出勤不可"
+        flash[:danger] = "勤怠登録に失敗、もしくは出勤時間が10時前のため出勤不可。"
       end
       redirect_to users_attendances_register_path(current_user)
     end
@@ -276,17 +291,22 @@ end
 
   private
   
-  #給与管理_出退勤情報更新(休憩あり)
-  def update_work_time_in_break_params
+  #給与管理_出退勤情報更新
+  def update_work_time_params
     params.require(:attendance).permit(:work_start_time, :break_start_time, :break_end_time, :work_end_time)
   end
   
-  #給与管理_出退勤情報更新(休憩なし)
-  def update_work_time_no_break_params
+  #出退勤新規登録(休憩あり)
+  def update_work_time_in break_params
     params.require(:attendance).permit(:work_start_time, :break_start_time, :break_end_time, :work_end_time)
+  end
+  
+  #出退勤新規登録(休憩なし)
+  def update_work_time_no_break_params
+    params.require(:attendance).permit(:work_start_time, :work_end_time)
   end
   
   #未打刻の退勤時間の更新
   def update_work_end_time_params
-    params.permit(attendances: [:work_end_time])[:attendances]
+    params.require(:attendance).permit(attendances: [:work_end_time])[:attendances]
   end

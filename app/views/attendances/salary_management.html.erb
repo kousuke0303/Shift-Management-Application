@@ -37,7 +37,6 @@
             <table class="table table-bordered table-condensed table-striped">
               <thead>
                 <tr>
-                  <th class="salary-management-table">出退勤編集</th>
                   <th class="salary-management-table">年月日</th>
                   <th class="salary-management-table">スタッフ名</th>
                   <th class="salary-management-table">出勤時間</th>
@@ -50,8 +49,6 @@
                 <% @attendances.each do |at| %>
                   <tbody>
                     <tr>
-                      <td class="center"><%= link_to "編集", salary_management_info_attendance_path(at), remote: true, class: "btn btn-sm btn-primary" %></td>
-        
                       <td class="center"><%= l(at.day.to_date, format: :long) %></td>
                       <td class="center"><%= at.user.name %></td>
                       <td class="center"><%= l(at.work_start_time.ceil_to(15.minutes), format: :time) if at.work_start_time.present? %></td>
@@ -225,7 +222,7 @@
                     
                     <!--総合勤務時間の算出-->
                     <!--通常勤務時間と深夜残業時間を合計した時間を算出-->
-                    <% @total_work_time = @total_overtime_and_tomorrow_overtime.to_f + @total_start_overtime_and_start_tomorrow_overtime.to_f + @total_non_overtime.to_f %>
+                    <% @total_work_time =  @total_overtime_and_tomorrow_overtime + @total_start_overtime_and_start_tomorrow_overtime + @total_non_overtime %>
                   <% end %>
                 <% end %>
             </table>
@@ -247,9 +244,9 @@
                   <% if params['day(1i)'].present? && params[:user_id].present? %>
                     <td class="center"><%= @attendances.count %></td>
                   <% end %>
-                  <td class="center"><%= @total_non_overtime %></td>
-                  <td class="center"><%= @total_overtime_and_tomorrow_overtime.to_f + @total_start_overtime_and_start_tomorrow_overtime.to_f %></td>
-                  <td class="center"><%= @total_work_time %></td>
+                  <td class="center"><%= format("%.2f", @total_non_overtime) %></td>
+                  <td class="center"><%= format("%.2f", @total_overtime_and_tomorrow_overtime + @total_start_overtime_and_start_tomorrow_overtime)%></td>
+                  <td class="center"><%= format("%.2f", @total_work_time) %></td>
                   <td class="center">¥<%= @total_non_overtime_hourly_wage.to_i + @total_overtime_hourly_wage.to_i + @total_tomorrow_overtime_hourly_wage.to_i + @total_start_overtime_hourly_wage.to_i + @total_start_tomorrow_overtime_hourly_wage.to_i + @total_start_overtime_end_tomorrow_overtime_hourly_wage.to_i %></td>
                 </tr>
               </tbody>

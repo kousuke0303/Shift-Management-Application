@@ -60,9 +60,14 @@
                     <td class="center">出勤中(休憩済)</td> 
                   <% elsif at.work_start_time.present? && (at.break_start_time.present? || !at.break_start_time.present?) && (at.break_end_time.present? || !at.break_end_time.present?) && at.work_end_time.present? %>
                     <td class="center">退勤済</td>                 
-                  <% end %>                         
-                  <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
-                  <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>              
+                  <% end %>
+                  <% if at.work_start_time.hour == Shift.find_by(request_start_time: params[:request_start_time], user_id: params[:id], day: Date.current).request_start_time.hour && at.work_start_time.min - Shift.find(params[:id]).request_start_time.min == 1 %>
+                    <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
+                    <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
+                  <% else %>
+                    <td class="center"><%= l(at.work_start_time.ceil_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
+                    <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
+                  <% end %>
                   <% if at.break_start_time.present? %>          
                     <td class="center"><%= l(at.break_start_time, format: :time) %></td> 
                   <% else %>                         
@@ -74,7 +79,7 @@
                     <td class="center"></td>       
                   <% end %>                    
                 </tr>                   
-              </tbody>             
+              </tbody> 
             <% end %>    
           </table>    
         <% else %>  
@@ -82,7 +87,7 @@
         <% end %>  
       <% end %> 
     </div>   
-    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 380px; left: 1px;">   
+    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 375px; left: 1px;">   
       <table class="table table-bordered table-condensed table-striped"> 
         <thead>    
           <tr>
@@ -106,12 +111,15 @@
         </tbody> 
       </table>
     </div>
-    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 485px; left: 1px;">
+    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 475px; left: 1px;">
       <% if Attendance.where(user_id: @staffs).where(work_end_time: nil).count > 0 %>
         <h2 class="notification"><%= link_to "※退勤ボタン未押下：#{Attendance.where(user_id: @staffs).where(work_end_time: nil).count}件", attendance_management_notice_attendance_path, remote: true, class: "notice" %></h2>
       <% else %>
-        <h2style="position:absolute">退勤ボタン未押下：なし</h2>
+        <h2style="position:absolute;">退勤ボタン未押下：なし</h2>
       <% end %>
+    </div>
+    <div class="col-xs-4 col-xs-offset-6" style="position:absolute; bottom: 330px; left: 1px;">
+      <%= link_to "出退勤新規登録", new_attendance_management_info_attendance_path, remote: true, class: "btn btn-lg btn-primary" %>
     </div>
   </div>
 </div>
@@ -123,3 +131,6 @@
 
 <!-- 退勤押下していないスタッフ表示 -->
 <div id="attendance_management_notice" class="modal fade" tabindex="-1" rule="dialog" area-hidden="true"></div>
+
+<!-- 出退勤新規登録 -->
+<div id="new_attendance_management_info" class="modal fade" tabindex="-1" rule="dialog" area-hidden="true"></div>

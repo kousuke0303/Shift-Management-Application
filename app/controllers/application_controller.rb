@@ -21,6 +21,19 @@ class ApplicationController < ActionController::Base
   end
   
   def set_user
-      @user = User.find(params[:id])
+    @user = User.find(params[:id])
+  end
+  
+  def set_attendance_user_id
+    @user = User.find(@attendance.user_id)
+  end
+  
+  def set_attendance
+    @attendance = Attendance.find(params[:id])
+  end
+  
+  def set_staff
+    #管理者を除いたスタッフを出力
+    @staffs = User.where(admin: false)
   end
 end

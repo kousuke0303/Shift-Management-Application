@@ -42,7 +42,8 @@ Rails.application.routes.draw do
       patch 'update_attendance_management_info'
       get 'attendance_management_notice'
       patch 'update_attendance_management_notice'
-      get 'today_attendance_list_info'
+      get 'new_attendance_management_info'
+      post 'create_new_attendance_management_info'
     end
   end
 end
