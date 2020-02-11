@@ -7,12 +7,23 @@
 }
 
 /* 出退勤登録画面 */
+
+.positon-fix-attendance {
+  position: absolute;
+  top: 120px;
+  left: 10%;
+}
+
 .attendance-label {
   text-transform: uppercase;
 }
 
 #attendance_id {
-  width: 100px;
+  width: 80px;
+}
+
+.positon-fix-password {
+  margin-left: 10px;
 }
 
 /* 出勤中スタッフ表示テーブル */
