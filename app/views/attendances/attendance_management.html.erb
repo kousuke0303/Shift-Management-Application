@@ -61,14 +61,8 @@
                   <% elsif at.work_start_time.present? && (at.break_start_time.present? || !at.break_start_time.present?) && (at.break_end_time.present? || !at.break_end_time.present?) && at.work_end_time.present? %>
                     <td class="center">退勤済</td>                 
                   <% end %>
-                  <!-- シフトの始業時間より1分過ぎた場合、始業時間を切り下げる -->
-                  <% if at.work_start_time.hour == at.work_start_time.floor_to(15.minutes).hour && at.work_start_time.min - at.work_start_time.floor_to(15.minutes).min == 1 %>
-                    <td class="center"><%= l(at.work_start_time.floor_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
-                    <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
-                  <% else %>
-                    <td class="center"><%= l(at.work_start_time.ceil_to(15.minutes), format: :time) if at.work_start_time.present? %></td> 
-                    <td class="center"><%= l(at.work_end_time.floor_to(15.minutes), format: :time) if at.work_end_time.present? %></td>
-                  <% end %>
+                  <td class="center"><%= l(at.work_start_time, format: :time) if at.work_start_time.present? %></td> 
+                  <td class="center"><%= l(at.work_end_time, format: :time) if at.work_end_time.present? %></td>
                   <% if at.break_start_time.present? %>          
                     <td class="center"><%= l(at.break_start_time, format: :time) %></td> 
                   <% else %>                         

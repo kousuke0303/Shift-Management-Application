@@ -10,7 +10,7 @@
     </div>
     <div class="modal-body">
       <div class="row">
-        <%= form_with model: @attendance, url: update_attendance_management_notice_attendance_path, local: true, method: :patch do |f| %>
+        <%= form_with model: @attendance, url: update_attendance_management_notice_attendance_path(work_start_time: @attendance.work_start_time, work_end_time: @attendance.work_end_time, break_start_time: @attendance.break_start_time, break_end_time: @attendance.break_end_time), local: true, method: :patch do |f| %>
         <% @title_name = Attendance.where(work_end_time: nil).where.not(user_id: current_user).group_by(&:user_id) %>
           <% @title_name.each do |keys, values| %>
             <h1 class="modal-title"><%= "【#{User.find(keys).name}：未押下日付一覧】" %></h1>
@@ -18,7 +18,10 @@
                 <thead>
                   <tr>
                     <th class="attendance-management-table">年月日</th>
+                    <th class="attendance-management-table">出勤時間</th>
                     <th class="attendance-management-table">退勤時間</th>
+                    <th class="attendance-management-table">休憩開始時間</th>
+                    <th class="attendance-management-table">休憩終了時間</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -26,7 +29,10 @@
                     <%= f.fields_for "attendances[]", value do |af| %>
                       <tr>
                         <td class="text-center"><%= l(value.day.to_date, format: :long) %></td>
+                        <td class="text-center"><%= af.time_field :work_start_time, readonly: true, class: 'form-control' %></td>
                         <td class="text-center"><%= af.time_field :work_end_time, class: 'form-control' %></td>
+                        <td class="text-center"><%= af.time_field :break_start_time, readonly: true, class: 'form-control' %></td>
+                        <td class="text-center"><%= af.time_field :break_end_time, readonly: true, class: 'form-control' %></td>
                       </tr>
                     <% end %>
                   <% end %>
