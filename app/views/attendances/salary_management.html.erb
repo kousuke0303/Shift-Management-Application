@@ -4,37 +4,32 @@
   <div class="row">
     <div class="col-md-11 col-md-offset-0">
       <br>
-      <%= form_with method: :get, local: true do |f| %>
-        <h5 class="attention">※1スタッフの月表示は、スタッフ検索と年月検索ともに入力して検索してください</h5>
-        <h5 class="attention">※1日のみの検索は年月日検索のみ入力して検索してください</h5>
-        <br>
-        <%= f.label :name, "スタッフ検索" %>
-        <div class="year-month-day-label">
-          <%= f.label :day, "年月日検索" %>
-        </div>
-        <br>
-        <div class="staff-select-field">
+      <%= form_with method: :get, local: true do |f| %> 
+        <br>             
+        <%= f.label :name, "スタッフ検索" %>         
+        <div class="year-month-day-label">  
+          <%= f.label :day, "年月検索" %>   
+        </div>  
+        <br>   
+        <div class="staff-select-field">     
           <%= f.collection_select :user_id, @staffs, :id, :name, {prompt: "スタッフを選択"}, {class: "form-control"} %>
-        </div>
+        </div>    
         <div class="day-label">
-          <%= f.date_field :day, class: "form-control" %>
+          <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5}, class: "form-control" %>
         </div>
-        <br>
-        <br>
-        <%= f.label :day, "年月検索" %>
-        <br>
-        <div class="year-month-select-field">
-          <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5},
-              class: "form-control" %>
-        </div>
-        <div class="indicate-btn">
-          <%= f.submit "表示する", class: "btn btn-lg btn-primary" %>
-        </div>
+        <%= f.submit "表示する", class: "btn btn-md btn-primary" %>   
+        <br>      
+        <br>        
+        <%= f.label :day, "年月日検索" %>   
+        <br>       
+        <div class="year-month-select-field">           
+          <%= f.date_field :day, class: "form-control" %>    
+        </div>           
+        <%= f.submit "表示する", class: "btn btn-md btn-primary" %>   
       <% end %>
-  
       <% if params[:day].present? || params[:user_id].present? %>
         <% if @attendances.count > 0  %>
-            <table class="table table-bordered table-condensed table-striped">
+            <table class="table table-bordered table-condensed table-striped" style="margin-top: 50px;">
               <thead>
                 <tr>
                   <th class="salary-management-table">年月日</th>
@@ -111,7 +106,7 @@
                       <% @total_start_overtime_end_tomorrow_overtime_hourly_wage = @total_start_overtime_end_tomorrow_overtime_hourly_wage.to_i + start_overtime_end_tomorrow_overtime_hourly_wage.to_i %>
                     <% end %>
                     
-  　　　　  　     ��　　　<!-- 残業がない場合は、通常の出勤開始・休憩開始・休憩終了・退勤で計算-->
+                     <!-- 残業がない場合は、通常の出勤開始・休憩開始・休憩終了・退勤で計算-->
                     <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21) && (at.break_start_time.present? && at.break_end_time.present?) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
                       <% day_hourly_wage = total_time(at.work_start_time.ceil_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)).to_f * at.user.hourly_wage.to_f %>
                       <% @total_non_overtime_hourly_wage = @total_non_overtime_hourly_wage.to_i + day_hourly_wage.to_i %>

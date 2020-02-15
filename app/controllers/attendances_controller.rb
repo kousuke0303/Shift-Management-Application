@@ -8,8 +8,8 @@ class AttendancesController < ApplicationController
 
   #給与管理
   def salary_management
-    #月が10月以降の時と、10月以前で年月日検索を条件分岐
     @attendance = Attendance.find_by(params[:user_id])
+    #月が10月以降の時と、10月以前で年月日検索を条件分岐
     if @attendance.present? && @attendance.day.to_date.month >= 10
       @attendances = Attendance
                      .where(user_id: params[:user_id])
@@ -75,7 +75,7 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間よりも休憩終了時間の方が早いです。"
       redirect_back(fallback_location: attendance_management)
     else
-      @attendance.update_attributes!(update_work_time_params)
+      @attendance.update_attributes(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end

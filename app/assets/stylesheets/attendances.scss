@@ -22,31 +22,28 @@
 
 .year-month-day-label {
   display: inline-flex;
-  flex-direction: row;
-  padding-left: 80px;
+  padding-left: 45px;
 }
 
 .day-label {
   display: inline-flex;
-  flex-direction: row;
-  padding-left: 40px;
+  padding-left: 5px;
 }
 
+.indicate-btn-1 {
+  padding-bottom: 130px;
+  padding-left: 290px;
+}
 
-.indicate-btn {
-  margin-top: 15px; 
-  margin-bottom: 15px;
-  padding-left: 100px;
+.indicate-btn-2 {
+  padding-bottom: 50px;
+  padding-left: 180px;
 }
 
 .indicate-csv-btn {
   margin-top: 15px; 
   margin-bottom: 15px; 
   padding-left: 63px;
-}
-
-.attention{
-  color: #FF0000;
 }
 
 /* 出退勤登録画面 */
