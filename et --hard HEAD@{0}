@@ -1,0 +1,29 @@
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{0}: checkout: moving from master to develop_nagai
+[33m81e0172[m[33m ([m[1;32mmaster[m[33m)[m HEAD@{1}: commit: 給与管理_修正
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{2}: pull origin develop_nagai: Fast-forward
+[33m496ef56[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: checkout: moving from develop to master
+[33m183eedd[m[33m ([m[1;32mdevelop[m[33m)[m HEAD@{4}: commit: git pull失敗
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{5}: checkout: moving from develop_nagai to develop
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{6}: reset: moving to HEAD@{1}
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{7}: reset: moving to HEAD@{0}
+[33m9de47ba[m[33m ([m[1;36mHEAD -> [m[1;32mdevelop_nagai[m[33m, [m[1;31morigin/develop_nagai[m[33m)[m HEAD@{8}: commit: 給与管理実装完了_ユーザー作成_ユーザー編集_時給カラム追加
+[33m2a62081[m HEAD@{9}: commit (merge): 給与管理_ほぼ完了
+[33m77a0653[m HEAD@{10}: commit (merge): 給与管理_実装完了
+[33mdf916cf[m HEAD@{11}: reset: moving to HEAD@{0}
+[33mdf916cf[m HEAD@{12}: commit (merge): 給与管理機能_実装中
+[33me53eae0[m HEAD@{13}: reset: moving to HEAD@{0}
+[33me53eae0[m HEAD@{14}: commit: 給与管理_テスト
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{15}: Branch: renamed refs/heads/develop-nagai to refs/heads/develop_nagai
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{17}: checkout: moving from develop_saitou to develop-nagai
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{18}: checkout: moving from develop-nagai to develop_saitou
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{19}: reset: moving to HEAD@{1}
+[33m58065e2[m HEAD@{20}: commit: ユーザーモデルにhas_many追加
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{21}: checkout: moving from develop_saitou to develop-nagai
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{22}: checkout: moving from develop-nagai to develop_saitou
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{23}: checkout: moving from develop_saitou to develop-nagai
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{24}: checkout: moving from develop-nagai to develop_saitou
+[33mbcf39e7[m[33m ([m[1;32mdevelop_saitou[m[33m)[m HEAD@{25}: commit (merge): リーダーカラム削除
+[33m09c1146[m HEAD@{26}: commit: ブランチ作成
+[33m3aadbd1[m HEAD@{27}: pull origin develop: Fast-forward
+[33m496ef56[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{28}: checkout: moving from master to develop-nagai
+[33m496ef56[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{29}: clone: from https://github.com/kousuke0303/Shift-Management-Application.git
