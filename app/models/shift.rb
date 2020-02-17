@@ -39,10 +39,13 @@ class Shift < ApplicationRecord
     self.from_admin_msg = "" unless self.from_admin_msg.present?
   end
   
-  # 希望勤務時間がある時のみ、従業員メッセージを許可
+  # メッセージは勤務時間とセット入力
   def from_staff_msg_with_require_work_time
     if self.from_staff_msg.present? && !self.request_start_time.present? && !self.request_end_time.present?
       errors.add(:request_start_time, "と希望退勤時間を入力してください")
+    end
+    if self.from_admin_msg.present? && !self.start_time.present? && !self.end_time.present?
+      errors.add(:start_time, "と退勤時間を入力してください")
     end
   end
 end

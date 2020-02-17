@@ -22,11 +22,19 @@ class ShiftsController < ApplicationController
   # 承認済シフト編集モーダルのアップデートアクション
   def update
     if params[:remove] && params[:remove].present?
-      @shift.update_attributes(start_time: "", end_time: "") ?
+      @shift.update_attributes(start_time: "", end_time: "", from_admin_msg: "") ?
       flash[:success] = "シフトを外しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     else
-      @shift.update_attributes(shift_params) ?
-      flash[:success] = "シフトを編集しました。" : flash[:danger] = "シフトの編集に失敗しました。"
+      before_start_time = @shift.start_time
+      before_end_time = @shift.end_time
+      before_from_admin_msg = @shift.from_staff_msg
+      if @shift.update_attributes(shift_params)
+        unless before_start_time == @shift.start_time && before_end_time == @shift.end_time && before_from_admin_msg == @shift.from_admin_msg
+          flash[:success] = "シフトを編集しました。"
+        end
+      else
+        flash[:danger] = "シフトの編集に失敗しました。"
+      end
     end
     if params[:current]
       redirect_to shifts_current_shifts_user_path(current_user)
@@ -205,7 +213,7 @@ class ShiftsController < ApplicationController
   private
     def shifts_params
       params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg, :apply_day,
-                                            :start_time, :end_time])[:shifts]
+                                            :start_time, :end_time, :from_admin_msg])[:shifts]
     end
     
     def shift_params
