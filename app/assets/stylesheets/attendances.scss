@@ -86,7 +86,11 @@
   margin-left: -230px;
 }
 
-/* 出勤中スタッフ表示テーブル */
+/* 「出退勤データはありません」の表示 */
+.non-attendance-display {
+  margin-right: 100px; 
+  margin-left: 15px;
+}
 
 #workind-staffs-table {
   th {
