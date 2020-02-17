@@ -118,8 +118,11 @@ class ShiftsController < ApplicationController
   
   # シフト追加アクション
   def add_update
-    @shift.update_attributes(shift_params) ?
-    flash[:success] = "シフトを追加しました。" : flash[:danger] = "シフトの追加に失敗しました。"
+    if @shift.update_attributes(shift_params)
+      flash[:success] = "シフトを追加しました。" if @shift.start_time.present?
+    else
+      flash[:danger] = "シフトの追加に失敗しました。"
+    end
     redirect_to shifts_current_shifts_user_path(current_user)
   end
   
