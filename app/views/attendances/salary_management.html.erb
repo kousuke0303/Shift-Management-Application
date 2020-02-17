@@ -14,16 +14,16 @@
       </div>    
       <div class="day-label">
         <%= f.date_select :day, {:discard_day => true, :include_blank => true, :start_year => Time.now.year, :end_year => Time.now.year-5}, class: "form-control" %>
+        <%= f.submit "表示する", class: "btn btn-md btn-primary" %>
       </div>
-      <%= f.submit "表示する", class: "btn btn-md btn-primary" %>   
       <br>      
       <br>        
       <%= f.label :day, "年月日検索" %>   
       <br>       
       <div class="year-month-select-field">           
-        <%= f.date_field :day, class: "form-control" %>    
-      </div>           
-      <%= f.submit "表示する", class: "btn btn-md btn-primary" %>   
+        <%= f.date_field :day, class: "form-control" %>
+        <%= f.submit "表示する", class: "btn btn-md btn-primary" %>  
+      </div>
     <% end %>
     <% if params[:day].present? || params[:user_id].present? %>
       <% if @attendances.count > 0  %>
