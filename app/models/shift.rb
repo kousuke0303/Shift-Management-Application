@@ -6,8 +6,10 @@ class Shift < ApplicationRecord
   validates :user_id, presence: true
   validates :from_staff_msg, length: { maximum: 50 }
   validates :from_admin_msg, length: { maximum: 50 }
-  validate :start_with_end # 出勤・退勤時間はセットで入力
-  validate :correct_start_end_time  # 退勤時間は出勤時間より遅い時間に制限
+  validate :initial_blank
+  validate :start_with_end
+  validate :correct_start_end_time
+  validate :from_staff_msg_with_require_work_time
   
    # 出勤・退勤時間はセットで入力
   def start_with_end
@@ -24,6 +26,23 @@ class Shift < ApplicationRecord
     end
     if start_time.present?
       errors.add(:start_time, "または、退勤時間が不正です。") if text_to_time(start_time).to_s >= text_to_time(end_time).to_s
+    end
+  end
+  
+  # 希望出勤時間、希望退勤時間、出勤時間、退勤時間の初期値は空白
+  def initial_blank
+    self.request_start_time = "" unless self.request_start_time.present?
+    self.request_end_time = "" unless self.request_end_time.present?
+    self.start_time = "" unless self.start_time.present?
+    self.end_time = "" unless self.end_time.present?
+    self.from_staff_msg = "" unless self.from_staff_msg.present?
+    self.from_admin_msg = "" unless self.from_admin_msg.present?
+  end
+  
+  # 希望勤務時間がある時のみ、従業員メッセージを許可
+  def from_staff_msg_with_require_work_time
+    if self.from_staff_msg.present? && !self.request_start_time.present? && !self.request_end_time.present?
+      errors.add(:request_start_time, "と希望退勤時間を入力してください")
     end
   end
 end
