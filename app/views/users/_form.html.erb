@@ -23,10 +23,13 @@
       <%= f.check_box :hole, class: "skill-check" %>
     </div>
     <div class="col-xs-6 skill-check-item">
-      <%= f.label :wash, class: "label-#{yield(:class_text)}" %>&emsp;
+      <%= f.label :wash, class: "label-#{yield(:class_form_withtext)}" %>&emsp;
       <%= f.check_box :wash, class: "skill-check" %>
     </div>
   </div>
+  
+  <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
+  <%= f.text_field :hourly_wage, class: "form-control" %>
 
   <%= f.label :password, class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>

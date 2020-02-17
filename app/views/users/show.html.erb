@@ -50,5 +50,11 @@
         <% end %>
       </td>
     </tr>
+    <tr>
+      <% if !current_user?(@user) %>
+        <th>時給</th>
+        <td>¥<%= @user.hourly_wage %></td>
+      <% end %>
+    </tr>
   </table>
 </div>

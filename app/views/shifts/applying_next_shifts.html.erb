@@ -34,7 +34,7 @@
   <% @kitchen_staffs.each do |staff| %>
     <tr>
       <td>キッチン</td>
-      <td><%= staff.name %></td>
+      <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -62,7 +62,7 @@
   <% @hole_staffs.each do |staff| %>
     <tr>
       <td>ホール</td>
-      <td><%= staff.name %></td>
+      <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -90,7 +90,7 @@
   <% @wash_staffs.each do |staff| %>
     <tr>
       <td>キッチン</td>
-      <td><%= staff.name %></td>
+      <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -118,7 +118,7 @@
   <% @newcomer_staffs.each do |staff| %>
     <tr>
       <td>キッチン</td>
-      <td><%= staff.name %></td>
+      <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>

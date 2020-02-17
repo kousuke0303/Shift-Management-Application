@@ -1,15 +1,3 @@
-// 現在日付をhtmlに表示
-document.getElementById("RealDateArea").innerHTML = getDate();
-
-function getDate() {
-  var now = new Date();
-  var year = now.getFullYear();
-  var mon = now.getMonth()+1; //１を足すこと
-  var day = now.getDate();
-  var date_msg = year + "年" + mon + "月" + day + "日"
-  return date_msg;
-}
-
 // 現在時刻をhtmlに表示
 function showClock() {
    var nowTime = new Date();
