@@ -27,7 +27,7 @@ class ShiftsController < ApplicationController
     else
       before_start_time = @shift.start_time
       before_end_time = @shift.end_time
-      before_from_admin_msg = @shift.from_staff_msg
+      before_from_admin_msg = @shift.from_admin_msg
       if @shift.update_attributes(shift_params)
         unless before_start_time == @shift.start_time && before_end_time == @shift.end_time && before_from_admin_msg == @shift.from_admin_msg
           flash[:success] = "シフトを編集しました。"
