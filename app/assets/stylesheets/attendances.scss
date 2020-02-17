@@ -22,7 +22,7 @@
 
 .year-month-day-label {
   display: inline-flex;
-  padding-left: 45px;
+  transform:translateX(120%);
 }
 
 .day-label {
@@ -57,6 +57,12 @@
   text-align: center;
 }
 
+// /* 本日の出退勤人数/出勤予定人数 */
+// .today-attendance-and-scheduled-attendance {
+//   margin-top: -105px;
+//   margin-left: 550px;
+// }
+
 /* 出勤ボタン押下していないユーザーへの注意喚起 */
 .notification {
   display: inline;
@@ -67,6 +73,18 @@
 .notice {
   color: red;
 }
+
+// /* 退勤ボタン未押下あり */
+// .departure {
+//   margin-top: -135px;
+//   margin-left: 590px;
+// }
+
+// /* 退勤ボタン未押下なし */
+// .non-departure {
+//   margin-top: -5px; 
+//   margin-left: -230px;
+// }
 
 /* 出勤中スタッフ表示テーブル */
 

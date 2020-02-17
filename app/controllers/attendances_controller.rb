@@ -46,7 +46,7 @@ class AttendancesController < ApplicationController
   
   #出退勤管理モーダル内更新処理
   def update_attendance_management_info
-    #下記の実装は、出退勤と休憩時間に矛盾が生じないようにするためのもの
+    #下記の実装は、出退勤と休憩時間に矛盾が生じないようにするため
     if params[:attendance][:work_start_time].to_i < 10
       flash[:danger] = "勤務時間が10時以前は出勤登録できません"
       redirect_back(fallback_location: attendance_management)
@@ -94,6 +94,7 @@ class AttendancesController < ApplicationController
   
   ##出退勤管理未打刻一覧モーダル内更新処理
   def update_attendance_management_notice
+    #退勤時間が0:00〜2:00までは登録できるようにする
     if params[:work_start_time].present? && params[:work_end_time].present? || params[:break_start_time].present? || params[:break_end_time].present? || params[:work_end_time].to_time.hour >= 0 && params[:work_end_time].to_time.hour <= 2 
       update_work_end_time_params.each do |id, item|
         attendance = Attendance.find(id)
@@ -113,20 +114,28 @@ class AttendancesController < ApplicationController
   
   #出退勤管理新規作成モーダル内更新処理
   def create_new_attendance_management_info
-    #出退勤新規登録時に、同じ日に同じスタッフで登録されないようにするためのもの
+    #出退勤新規登録時に、同じ日に同じスタッフで登録されないようにする
     if Attendance.where(day: params[:day], user_id: params[:user_id]).count > 0
       flash[:danger] = "同一日に同一スタッフが存在しているため、出退勤登録できません。"
       redirect_to users_attendances_attendance_management_url
-    elsif params[:work_start_time].present? && (params[:work_start_time] < params[:work_end_time]) && params[:break_start_time].present? && (params[:break_start_time] > params[:work_start_time]) && (params[:break_start_time] < params[:work_end_time]) && params[:break_end_time].present? && (params[:break_end_time] > params[:work_start_time]) && (params[:break_end_time] < params[:work_end_time])
-      @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], break_start_time: params[:break_start_time], break_end_time: params[:break_end_time], work_end_time: params[:work_end_time])
-      @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
-      redirect_to users_attendances_attendance_management_url
-    elsif params[:work_start_time].present? || params[:work_start_time] < params[:break_start_time] || params[:work_start_time] < params[:break_end_time]
-      @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], work_end_time: params[:work_end_time], break_start_time: params[:break_start_time], break_end_time: params[:break_end_time])
-      @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
-      redirect_to users_attendances_attendance_management_url
+    #本日以前の登録はできないようにする
+    elsif params[:day].present? && params[:day].to_date <= Date.current
+      #出退勤・休憩時間に矛盾がないようにする
+      if params[:work_start_time].present? && (params[:work_start_time] < params[:work_end_time]) && params[:break_start_time].present? && (params[:break_start_time] > params[:work_start_time]) && (params[:break_start_time] < params[:work_end_time]) && params[:break_end_time].present? && (params[:break_end_time] > params[:work_start_time]) && (params[:break_end_time] < params[:work_end_time])
+        @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], break_start_time: params[:break_start_time], break_end_time: params[:break_end_time], work_end_time: params[:work_end_time])
+        @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
+        redirect_to users_attendances_attendance_management_url
+      #出退勤に矛盾がないようにする
+      elsif params[:work_start_time].present? || params[:work_start_time] < params[:break_start_time] || params[:work_start_time] < params[:break_end_time]
+        @attendance = Attendance.new(day: params[:day], user_id: params[:user_id], work_start_time: params[:work_start_time], work_end_time: params[:work_end_time], break_start_time: params[:break_start_time], break_end_time: params[:break_end_time])
+        @attendance.save ? flash[:success] = "出退勤新規登録に成功しました。" : flash[:danger] = "出退勤新規登録に失敗しました。"
+        redirect_to users_attendances_attendance_management_url
+      else
+        flash[:danger] = "出退勤新規登録に失敗しました。"
+        redirect_to users_attendances_attendance_management_url
+      end
     else
-      flash[:danger] = "出退勤新規登録に失敗しました。"
+      flash[:danger] = "出退勤新規登録は本日以前(本日含む)での登録願います。"
       redirect_to users_attendances_attendance_management_url
     end
   end
