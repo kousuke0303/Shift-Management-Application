@@ -47,8 +47,26 @@
 }
 
 /* 出退勤登録画面 */
+.attendance-border {
+  border-left: solid 1px;
+}
+
+.positon-fix-attendance {
+  position: absolute;
+  top: 120px;
+  left: 5%;
+}
+
 .attendance-label {
   text-transform: uppercase;
+}
+
+#attendance_id {
+  width: 80px;
+}
+
+.positon-fix-password {
+  margin-left: 10px;
 }
 
 /* 出退勤管理 */
