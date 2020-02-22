@@ -1,0 +1,50 @@
+<% provide(:button_text, '更新') %>
+<% provide(:class_text, 'application-notice') %>
+
+<div class="modal-dialog modal-lg modal-dialog-center">
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">✖︎</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <%= form_with model: @attendance, url: update_attendance_management_notice_attendance_path(work_start_time: @attendance.work_start_time, work_end_time: @attendance.work_end_time, break_start_time: @attendance.break_start_time, break_end_time: @attendance.break_end_time), local: true, method: :patch do |f| %>
+        <% @title_name = Attendance.where(work_end_time: nil).where.not(user_id: current_user).group_by(&:user_id) %>
+          <% @title_name.each do |keys, values| %>
+            <h1 class="modal-title"><%= "【#{User.find(keys).name}：未押下日付一覧】" %></h1>
+              <table class="table table-bordered table-condensed table-striped">
+                <thead>
+                  <tr>
+                    <th class="attendance-management-table">年月日</th>
+                    <th class="attendance-management-table">出勤時間</th>
+                    <th class="attendance-management-table">退勤時間</th>
+                    <th class="attendance-management-table">休憩開始時間</th>
+                    <th class="attendance-management-table">休憩終了時間</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% values.each do |value| %>
+                    <%= f.fields_for "attendances[]", value do |af| %>
+                      <tr>
+                        <td class="text-center"><%= l(value.day.to_date, format: :long) %></td>
+                        <td class="text-center"><%= af.time_field :work_start_time, readonly: true, class: 'form-control' %></td>
+                        <td class="text-center"><%= af.time_field :work_end_time, class: 'form-control' %></td>
+                        <td class="text-center"><%= af.time_field :break_start_time, readonly: true, class: 'form-control' %></td>
+                        <td class="text-center"><%= af.time_field :break_end_time, readonly: true, class: 'form-control' %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                </tbody>
+              </table>
+          <% end %>
+          <div class="center">
+            <%= f.submit yield(:button_text), class: "btn btn-primary btn-#{yield(:class_text)}" %>
+            <button type="button" class="btn btn-default btn-<%= yield(:class_text) %>" data-dismiss="modal">キャンセル</button>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

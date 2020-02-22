@@ -16,6 +16,7 @@ gem 'turbolinks',   '~> 5'
 gem 'jbuilder',     '~> 2.5'
 gem 'bootsnap'
 gem 'rounding'
+gem 'pry-rails'
 
 group :development, :test do
   gem 'sqlite3'

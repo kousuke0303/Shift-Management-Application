@@ -22,11 +22,19 @@ class ShiftsController < ApplicationController
   # 承認済シフト編集モーダルのアップデートアクション
   def update
     if params[:remove] && params[:remove].present?
-      @shift.update_attributes(start_time: "", end_time: "") ?
+      @shift.update_attributes(start_time: "", end_time: "", from_admin_msg: "") ?
       flash[:success] = "シフトを外しました。" : flash[:danger] = "シフトの編集に失敗しました。"
     else
-      @shift.update_attributes(shift_params) ?
-      flash[:success] = "シフトを編集しました。" : flash[:danger] = "シフトの編集に失敗しました。"
+      before_start_time = @shift.start_time
+      before_end_time = @shift.end_time
+      before_from_admin_msg = @shift.from_admin_msg
+      if @shift.update_attributes(shift_params)
+        unless before_start_time == @shift.start_time && before_end_time == @shift.end_time && before_from_admin_msg == @shift.from_admin_msg
+          flash[:success] = "シフトを編集しました。"
+        end
+      else
+        flash[:danger] = "シフトの編集に失敗しました。"
+      end
     end
     if params[:current]
       redirect_to shifts_current_shifts_user_path(current_user)
@@ -48,10 +56,17 @@ class ShiftsController < ApplicationController
     ActiveRecord::Base.transaction do
       shifts_params.each do |id, item|
         shift = Shift.find(id)
+        before_start_time = shift.request_start_time
+        before_end_time = shift.request_end_time
+        before_from_staff_msg = shift.from_staff_msg
         shift.update_attributes!(item)
+        unless before_start_time == shift.request_start_time && before_end_time == shift.request_end_time &&
+               shift.from_staff_msg == before_from_staff_msg
+          @total_change_count = @total_change_count.to_i + 1
+        end
       end
     end
-    flash[:success] = "次回のシフトを申請しました。"
+    flash[:success] = "次回のシフトを申請しました。" if @total_change_count.to_i > 0
     redirect_to shifts_apply_next_shifts_user_path(@user)
   rescue ActiveRecord::RecordInvalid
     flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
@@ -103,8 +118,11 @@ class ShiftsController < ApplicationController
   
   # シフト追加アクション
   def add_update
-    @shift.update_attributes(shift_params) ?
-    flash[:success] = "シフトを追加しました。" : flash[:danger] = "シフトの追加に失敗しました。"
+    if @shift.update_attributes(shift_params)
+      flash[:success] = "シフトを追加しました。" if @shift.start_time.present?
+    else
+      flash[:danger] = "シフトの追加に失敗しました。"
+    end
     redirect_to shifts_current_shifts_user_path(current_user)
   end
   
@@ -198,7 +216,7 @@ class ShiftsController < ApplicationController
   private
     def shifts_params
       params.require(:user).permit(shifts: [:request_start_time, :request_end_time, :from_staff_msg, :apply_day,
-                                            :start_time, :end_time])[:shifts]
+                                            :start_time, :end_time, :from_admin_msg])[:shifts]
     end
     
     def shift_params

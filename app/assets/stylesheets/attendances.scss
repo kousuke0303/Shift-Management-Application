@@ -6,12 +6,55 @@
   display: inline-block;
 }
 
+/* 給与管理 */
+.salary-management-table {
+  background-color: #ffd700;
+  text-align: center;
+}
+
+.staff-select-field {
+  display: inline-flex;
+}
+
+.year-month-select-field {
+  display: inline-flex;
+}
+
+.year-month-day-label {
+  display: inline-flex;
+  transform:translateX(120%);
+}
+
+.day-label {
+  display: inline-flex;
+  padding-left: 5px;
+}
+
+.indicate-btn-1 {
+  padding-bottom: 130px;
+  padding-left: 290px;
+}
+
+.indicate-btn-2 {
+  padding-bottom: 50px;
+  padding-left: 180px;
+}
+
+.indicate-csv-btn {
+  margin-top: 15px; 
+  margin-bottom: 15px; 
+  padding-left: 63px;
+}
+
 /* 出退勤登録画面 */
+.attendance-border {
+  border-left: solid 1px;
+}
 
 .positon-fix-attendance {
   position: absolute;
   top: 120px;
-  left: 10%;
+  left: 5%;
 }
 
 .attendance-label {
@@ -26,7 +69,46 @@
   margin-left: 10px;
 }
 
-/* 出勤中スタッフ表示テーブル */
+/* 出退勤管理 */
+.attendance-management-table {
+  background-color: #ffd700;
+  text-align: center;
+}
+
+// /* 本日の出退勤人数/出勤予定人数 */
+// .today-attendance-and-scheduled-attendance {
+//   margin-top: -105px;
+//   margin-left: 550px;
+// }
+
+/* 出勤ボタン押下していないユーザーへの注意喚起 */
+.notification {
+  display: inline;
+  color: red;
+  font-weight: bold;
+}
+
+.notice {
+  color: red;
+}
+
+// /* 退勤ボタン未押下あり */
+// .departure {
+//   margin-top: -135px;
+//   margin-left: 590px;
+// }
+
+/* 退勤ボタン未押下なし */
+.non-departure {
+  margin-top: -5px; 
+  margin-left: -230px;
+}
+
+/* 「出退勤データはありません」の表示 */
+.non-attendance-display {
+  margin-right: 100px; 
+  margin-left: 15px;
+}
 
 #workind-staffs-table {
   th {
