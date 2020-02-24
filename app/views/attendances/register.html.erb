@@ -1,54 +1,49 @@
 <div class="row">
   <div class="col-xs-6">
-    <h2 id="RealDateArea"></h2>
-    <h1 id="RealtimeClockArea"></h1>
+    <div class="date-and-time">
+      <h1><%= Date.current.strftime("%Y年%m月%d日") %></h1>
+      <h1 id="RealtimeClockArea"></h1>
+    </div>
     <%= form_with url: users_attendances_register_path(current_user), method: :get, local: true do |f| %>
-      <div class="positon-fix-attendance">
-        <div class="form-inline">
-          <div class="form-group">
-            <%= f.label "ID：", class: "attendance-label" %>
-            <!-- 0はid入力時にマイナスの値が入らないようにする意味 -->
-            <%= f.number_field :input_id, value: params[:input_id], class: "form-control", id: "attendance_id", min: "0" %>
-          </div>
-          <div class="form-group positon-fix-password">
-            <%= f.label "パスワード：" %>
-            <%= f.password_field :input_password, value: params[:input_password], size: "15", class: 'form-control' %>
-          </div>
-          <div class="form-group">
-            <%= f.submit "勤務時間を登録する", class: "btn btn-md btn-primary" %>
-          </div>
+      <div class="form-inline search-staff-area">
+        <div class="form-group id-form">
+          <%= f.label "ID：", class: "attendance-label" %>
+          <!-- 0はid入力時にマイナスの値が入らないようにする意味 -->
+          <%= f.number_field :input_id, value: params[:input_id], class: "form-control", id: "attendance_id", min: "0" %>
         </div>
-      <% end %>
+        <div class="form-group password-form">
+          <%= f.label "パスワード：" %>
+          <%= f.password_field :input_password, value: params[:input_password], size: "15", class: 'form-control' %>
+        </div>
+        <div class="form-group">
+          <%= f.submit "勤務時間を登録する", class: "btn btn-md btn-primary" %>
+        </div>
+      </div>
+    <% end %>
+    <div class="register-attendance-area">
       <!--「勤務時間を登録する」押下後-->
       <% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") %>
         <% if @attendances %>
           <!--「出勤ボタン押下前の場合」-->
           <% if @attendances[0].nil? || @attendances[0].work_end_time %>
-            <div class="center">
-              <h1><%= User.find(params[:input_id]).name %></h1>
-              <%= link_to "出勤", user_attendances_path(params[:input_id]), method: :post, class: "btn btn-primary btn-block" %>
-            </div>
+            <h1><%= User.find(params[:input_id]).name %></h1>
+            <%= link_to "出勤", user_attendances_path(params[:input_id]), method: :post, class: "btn btn-primary btn-block" %>
           <% elsif @attendances && @attendances[0].break_start_time.nil? && @attendances[0].break_end_time.nil? %>
-            <div class="center">
-              <h1><%= User.find(params[:input_id]).name %></h1>
-              <%= link_to "休憩開始", users_attendances_breakstart_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
-              <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block btn-danger" %>
-            </div>
+            <h1><%= User.find(params[:input_id]).name %></h1>
+            <%= link_to "休憩開始", users_attendances_breakstart_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
+            <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block btn-danger" %>
           <% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time.nil? %>
-            <div class="center">
-              <h1><%= User.find(params[:input_id]).name %></h1>
-              <%= link_to "休憩終了", users_attendances_breakend_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
-            </div>
+            <h1><%= User.find(params[:input_id]).name %></h1>
+            <%= link_to "休憩終了", users_attendances_breakend_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
           <% elsif @attendances && @attendances[0].break_start_time && @attendances[0].break_end_time %>
-            <div class="center">
-              <h1><%= User.find(params[:input_id]).name %></h1>
-              <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
-            </div>
+            <h1><%= User.find(params[:input_id]).name %></h1>
+            <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
           <% end %>
         <% end %>
       <% end %>
     </div>
   </div>
+  
   <div class="col-xs-6 attendance-border">
     <h1>出勤中従業員一覧</h1>
     <% if @attendance_staff_lists.count > 0 %>

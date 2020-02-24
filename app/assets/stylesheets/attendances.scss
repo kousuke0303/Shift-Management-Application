@@ -47,14 +47,28 @@
 }
 
 /* 出退勤登録画面 */
-.attendance-border {
-  border-left: solid 1px;
+
+.date-and-time {
+  height: 150px;
 }
 
-.positon-fix-attendance {
-  position: absolute;
-  top: 120px;
-  left: 5%;
+.search-staff-area {
+  height: 50px;
+  .id-form {
+    margin-left: 10px;
+  }
+  .password-form {
+    margin-left: 10px;
+  }
+}
+
+.register-attendance-area {
+  height: 150px;
+}
+
+.attendance-border {
+  border-left: solid 1px;
+  height: 390px;
 }
 
 .attendance-label {
