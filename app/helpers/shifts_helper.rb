@@ -109,4 +109,9 @@ module ShiftsHelper
     current_first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
     return true unless @first_day == current_first_day
   end
+  
+  # 現在がシフト提出期限内かか確認
+  def within_submission_deadline?
+    Date.current.day == [1..8] || Date.current.day == [16..23] ? true : false
+  end
 end
