@@ -112,6 +112,6 @@ module ShiftsHelper
   
   # 現在がシフト提出期限内かか確認
   def within_submission_deadline?
-    Date.current.day == [1..8] || Date.current.day == [16..23] ? true : false
+    Date.current.day.between?(1, 2) || Date.current.day.between?(16, 23) ? true : false
   end
 end
