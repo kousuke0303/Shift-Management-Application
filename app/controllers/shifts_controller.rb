@@ -64,11 +64,6 @@ class ShiftsController < ApplicationController
                shift.from_staff_msg == before_from_staff_msg
           @total_change_count = @total_change_count.to_i + 1
         end
-        # シフト提出期限外は、シフト追加申請のみ可・提出済シフトの変更は不可
-        if !within_submission_deadline? && before_start_time.present?
-          raise ActiveRecord::RecordInvalid unless before_start_time == shift.request_start_time && before_end_time == shift.request_end_time &&
-                              shift.from_staff_msg == before_from_staff_msg
-        end
       end
     end
     flash[:success] = "次回のシフトを申請しました。" if @total_change_count.to_i > 0
