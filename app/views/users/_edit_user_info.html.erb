@@ -40,7 +40,7 @@
             </div>
 　　　　　  <div>
               <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
-              <%= f.text_field :hourly_wage, class: "form-control" %>
+              <%= f.number_field :hourly_wage, class: "form-control", min: 0 %>
             </div>
 
             <div class="center">
