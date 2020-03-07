@@ -21,11 +21,11 @@ class Attendance < ApplicationRecord
   
   #休憩時間のエラー
   def break_time_errors
-    errors.add(:work_end_time, "は、休憩入以降で登録してください(ただし退勤時間が0:00〜1:30の場合はこの限りではありません)。") if work_end_time.present? && break_start_time.present? && break_start_time > work_end_time && work_end_time.hour >= 2 && work_end_time.hour <= 24
-    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if work_end_time.present? && break_end_time.present? && break_end_time > work_end_time
+    errors.add(:work_end_time, "は、休憩入以降で登録してください。") if work_end_time.present? && break_start_time.present? && break_start_time > work_end_time && break_start_time.hour >= 0 && break_start_time.hour <= 2 && work_end_time.hour >= 0 && work_end_time.hour <= 2 
+    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if work_end_time.present? && break_end_time.present? && break_end_time > work_end_time && break_end_time.hour >= 0 && break_end_time.hour <= 2 && work_end_time.hour >= 0 && work_end_time.hour <= 2 
     errors.add(:break_start_time, "を登録してください。") if !break_start_time.present? && break_end_time.present?
-    errors.add(:break_start_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_start_time.present? && break_start_time < work_start_time
-    errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_end_time.present? && break_end_time < work_start_time
+    errors.add(:break_start_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_start_time.present? && break_start_time < work_start_time && break_start_time.hour >= 10 && break_start_time.hour <= 24
+    errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_end_time.present? && break_end_time < work_start_time && break_end_time.hour >= 10 && break_end_time.hour <= 24
     errors.add(:break_end_time, "を登録してください。") if work_end_time.present? && break_start_time.present? && !break_end_time.present?
     errors.add(:work_start_time, "を登録してください") if !work_start_time.present? && break_start_time.present?
     errors.add(:break_end_time, "は休憩入以降で登録してください") if break_start_time.present? && break_end_time.present? && break_end_time < break_start_time 

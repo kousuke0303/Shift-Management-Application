@@ -138,11 +138,11 @@ class ShiftsController < ApplicationController
 
   # 申請を求めるシフトの、日付を定義
   def set_next_shifts_date
-    if Date.current.day <= 15
-      @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
+    if Date.current.yesterday.day <= 15
+      @first_day = "#{Date.current.yesterday.year}-#{Date.current.yesterday.month}-16".to_date
       @last_day = @first_day.end_of_month
     else
-      @first_day = Date.current.next_month.beginning_of_month
+      @first_day = Date.current.yesterday.next_month.beginning_of_month
       @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date
     end
     @next_shifts = [*@first_day..@last_day]
@@ -164,13 +164,13 @@ class ShiftsController < ApplicationController
   
   # シフトの募集・作成期間を定義
   def set_apply_limit
-    if Date.current.day <= 15
-      @start_apply_day = Date.current.beginning_of_month
-      @end_apply_day = Date.current.beginning_of_month.since(7.days)
+    if Date.current.yesterday.day <= 15
+      @start_apply_day = Date.current.yesterday.beginning_of_month
+      @end_apply_day = Date.current.yesterday.beginning_of_month.since(7.days)
       @start_create_day = @start_apply_day.since(8.days)
       @end_create_day = @start_apply_day.since(14.days)
     else
-      @start_apply_day = Date.current.beginning_of_month.since(15.days)
+      @start_apply_day = Date.current.yesterday.beginning_of_month.since(15.days)
       @end_apply_day = @start_apply_day.since(7.days)
       @start_create_day = @start_apply_day.since(8.days)
       @end_create_day = @start_apply_day.end_of_month
@@ -182,8 +182,8 @@ class ShiftsController < ApplicationController
     if params[:date]
       @first_day = params[:date].to_date
     else
-      Date.current.day <= 15 ?
-      @first_day = Date.current.beginning_of_month : @first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
+      Date.current.yesterday.day <= 15 ?
+      @first_day = Date.current.yesterday.beginning_of_month : @first_day = "#{Date.current.yesterday.year}-#{Date.current.yesterday.month}-16".to_date
     end
     @first_day.day <= 15 ?
     @last_day = "#{@first_day.year}-#{@first_day.month}-15".to_date : @last_day = @first_day.end_of_month
