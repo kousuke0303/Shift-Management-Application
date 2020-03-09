@@ -29,7 +29,7 @@
   </div>
   
   <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
-  <%= f.text_field :hourly_wage, class: "form-control" %>
+  <%= f.number_field :hourly_wage, class: "form-control", min: "0" %>
 
   <%= f.label :password, class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>
