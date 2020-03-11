@@ -3,9 +3,9 @@ class ShiftsController < ApplicationController
   before_action :logged_in_user
   before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, 
                                  :confirm_next_shifts, :current_shifts]
-  before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update, :add, :add_update]
+  before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update, :add, :add_update, :change_release_status]
   before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
-                                      :confirm_next_shifts, :current_shifts]
+                                      :confirm_next_shifts, :current_shifts, :next_shifts]
   before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
@@ -14,6 +14,7 @@ class ShiftsController < ApplicationController
   before_action :set_current_shifts_date, only: :current_shifts
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
   before_action :create_current_shifts, only: :current_shifts
+  before_action :create_admins_next_shift, only: [:applying_next_shifts]
   
   $work_time_breaks = {"10:00": "10:00", "10:30": "10:30","11:00": "11:00", "11:30": "11:30", "12:00": "12:00",
                        "12:30": "12:30", "13:00": "13:00", "13:30": "13:30", "14:00": "14:00", "14:30": "14:30",
@@ -114,9 +115,17 @@ class ShiftsController < ApplicationController
     redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
   end
   
+  # 管理者の、次回シフト公開状態切り替えアクション
+  def change_release_status
+  end
+  
   # 現在のシフト確認ページ
   def current_shifts
     @shifts = @user.shifts.where(worked_on: @first_day..@last_day).where("start_time LIKE ?", "%:%").order(:worked_on)
+  end
+  
+  # 従業員の、次回シフト確認ページ
+  def next_shifts
   end
   
   # 新規シフト追加モーダル(シフト希望無い場合)
@@ -218,6 +227,16 @@ class ShiftsController < ApplicationController
     @hole_staffs = User.where(admin: false, kitchen: false, hole: true)
     @wash_staffs = User.where(admin: false, kitchen: false, hole: false, wash: true)
     @newcomer_staffs = User.where(admin: false, kitchen: false, hole: false, wash: false)
+  end
+  
+  def create_admins_next_shift
+    unless @admins_shift = Shift.find_by(user_id: @user.id, worked_on: @first_day)
+      unless Shift.create(user_id: @user.id, worked_on: @first_day)
+        flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
+        redirect_to root_url
+      end
+    end
+    @admins_shift = Shift.find_by(user_id: @user.id, worked_on: @first_day)
   end
   
   private
