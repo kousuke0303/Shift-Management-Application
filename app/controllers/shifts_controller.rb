@@ -2,11 +2,11 @@ class ShiftsController < ApplicationController
   
   before_action :logged_in_user
   before_action :set_user, only:[:apply_next_shifts, :update_next_shifts, :applying_next_shifts, 
-                                 :confirm_next_shifts, :current_shifts]
+                                 :confirm_next_shifts, :current_shifts, :change_release_status, :next_shifts]
   before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update, :add, :add_update, :change_release_status]
   before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
                                       :confirm_next_shifts, :current_shifts, :next_shifts]
-  before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts]
+  before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts, :change_release_status]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :set_staff, only: [:edit, :add]
@@ -14,7 +14,7 @@ class ShiftsController < ApplicationController
   before_action :set_current_shifts_date, only: :current_shifts
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
   before_action :create_current_shifts, only: :current_shifts
-  before_action :create_admins_next_shift, only: [:applying_next_shifts]
+  before_action :create_admins_next_shift, only: [:applying_next_shifts, :change_release_status]
   
   $work_time_breaks = {"10:00": "10:00", "10:30": "10:30","11:00": "11:00", "11:30": "11:30", "12:00": "12:00",
                        "12:30": "12:30", "13:00": "13:00", "13:30": "13:30", "14:00": "14:00", "14:30": "14:30",
@@ -31,7 +31,7 @@ class ShiftsController < ApplicationController
   def update
     if params[:remove] && params[:remove].present?
       @shift.update_attributes(start_time: "", end_time: "", from_admin_msg: "") ?
-      flash[:success] = "シフトを外しました。" : flash[:danger] = "シフトの編集に失敗しました。"
+      flash[:success] = "シフトを外しました" : flash[:danger] = "シフトの編集に失敗しました"
     else
       before_start_time = @shift.start_time
       before_end_time = @shift.end_time
@@ -41,17 +41,17 @@ class ShiftsController < ApplicationController
           flash[:success] = "シフトを編集しました。"
         end
       else
-        flash[:danger] = "シフトの編集に失敗しました。"
+        flash[:danger] = "シフトの編集に失敗しました"
       end
     end
     if params[:current]
-      redirect_to shifts_current_shifts_user_path(current_user)
+      redirect_to shifts_current_shifts_user_url(current_user)
     elsif params[:date]
-      redirect_to shifts_applying_next_shifts_user_path(current_user, date: params[:date])
+      redirect_to shifts_applying_next_shifts_user_url(current_user, date: params[:date])
     elsif params[:staff]
-      redirect_to shifts_applying_next_shifts_user_path(current_user, staff: params[:staff])
+      redirect_to shifts_applying_next_shifts_user_url(current_user, staff: params[:staff])
     else
-      redirect_to shifts_applying_next_shifts_user_path(current_user)
+      redirect_to shifts_applying_next_shifts_user_url(current_user)
     end
   end
   
@@ -74,11 +74,11 @@ class ShiftsController < ApplicationController
         end
       end
     end
-    flash[:success] = "次回のシフトを申請しました。" if @total_change_count.to_i > 0
-    redirect_to shifts_apply_next_shifts_user_path(@user)
+    flash[:success] = "次回のシフトを申請しました" if @total_change_count.to_i > 0
+    redirect_to shifts_apply_next_shifts_user_url(@user)
   rescue ActiveRecord::RecordInvalid
-    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
-    redirect_to shifts_apply_next_shifts_user_path(@user)
+    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました"
+    redirect_to shifts_apply_next_shifts_user_url(@user)
   end
   
   # 管理者側の、希望シフトの承認ページ
@@ -106,17 +106,23 @@ class ShiftsController < ApplicationController
         end
       end
     end
-    flash[:success] = "シフトに反映しました。" if @total_change_count.to_i > 0
-    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date]) if params[:date]
-    redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
+    flash[:success] = "シフトに反映しました" if @total_change_count.to_i > 0
+    redirect_to shifts_applying_next_shifts_user_url(@user, date: params[:date]) if params[:date]
+    redirect_to shifts_applying_next_shifts_user_url(@user, staff: params[:staff]) if params[:staff]
   rescue ActiveRecord::RecordInvalid
-    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました。"
-    redirect_to shifts_applying_next_shifts_user_path(@user, date: params[:date]) if params[:date]
-    redirect_to shifts_applying_next_shifts_user_path(@user, staff: params[:staff]) if params[:staff]
+    flash[:danger] = "無効な入力データがあった為、申請をキャンセルしました"
+    redirect_to shifts_applying_next_shifts_user_url(@user, date: params[:date]) if params[:date]
+    redirect_to shifts_applying_next_shifts_user_url(@user, staff: params[:staff]) if params[:staff]
   end
   
   # 管理者の、次回シフト公開状態切り替えアクション
   def change_release_status
+    if @admins_shift.release == true
+      @admins_shift.update_attributes(release: false) ? flash[:success] = "シフトを非公開にしました" : flash[:danger] = "シフトを非公開に出来ませんでした"
+    else
+      @admins_shift.update_attributes(release: true) ? flash[:success] = "シフトを公開しました" : flash[:danger] = "シフトを公開出来ませんでした"
+    end
+    redirect_to shifts_applying_next_shifts_user_url(@user)
   end
   
   # 現在のシフト確認ページ
@@ -135,11 +141,11 @@ class ShiftsController < ApplicationController
   # シフト追加アクション
   def add_update
     if @shift.update_attributes(shift_params)
-      flash[:success] = "シフトを追加しました。" if @shift.start_time.present?
+      flash[:success] = "シフトを追加しました" if @shift.start_time.present?
     else
-      flash[:danger] = "シフトの追加に失敗しました。"
+      flash[:danger] = "シフトの追加に失敗しました"
     end
-    redirect_to shifts_current_shifts_user_path(current_user)
+    redirect_to shifts_current_shifts_user_url(current_user)
   end
   
   # beforeフィルター
@@ -174,7 +180,7 @@ class ShiftsController < ApplicationController
       @shifts = @user.shifts.where(worked_on: @first_day..@last_day).order(:worked_on)
     end
   rescue ActiveRecord::RecordInvalid 
-    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
+    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください"
     redirect_to root_url
   end
   
@@ -216,7 +222,7 @@ class ShiftsController < ApplicationController
       end
     end
   rescue ActiveRecord::RecordInvalid 
-    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
+    flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください"
     redirect_to root_url
   end
   
@@ -231,8 +237,8 @@ class ShiftsController < ApplicationController
   
   def create_admins_next_shift
     unless @admins_shift = Shift.find_by(user_id: @user.id, worked_on: @first_day)
-      unless Shift.create(user_id: @user.id, worked_on: @first_day)
-        flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください。"
+      unless Shift.create(user_id: @user.id, worked_on: @first_day, release: false)
+        flash[:danger] = "ページ情報の取得に失敗しました、再アクセスしてください"
         redirect_to root_url
       end
     end

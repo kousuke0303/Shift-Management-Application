@@ -14,7 +14,11 @@
   <span class="create-limit">
     作成期間：<%= @start_create_day.strftime('%-m/%-d') %>～<%= @end_create_day.strftime('%-m/%-d') %>
   </span>
-  <%= link_to "公開する", shifts_change_release_status_user_path(@user), class: "btn btn-lg btn-primary btn-switch-release" %>
+  <% if @admins_shift.release == false %>
+    <%= link_to "公開する", shifts_change_release_status_user_path(@user), method: :patch, class: "btn btn-lg btn-primary btn-switch-release" %>
+  <% else %>
+    <%= link_to "非公開にする", shifts_change_release_status_user_path(@user), method: :patch, class: "btn btn-lg btn-primary btn-switch-release" %>
+  <% end %>
 </div>
 
 <table class="table table-bordered table-condensed" id="next-shifts-table">
