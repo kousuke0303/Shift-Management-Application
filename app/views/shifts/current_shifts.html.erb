@@ -4,6 +4,8 @@
   <div class="btn-switch-shifts">
     <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
   </div>
+<% elsif @admins_shift && @admins_shift.release == true %>
+  <%= link_to "次回のシフト", "#", class: "btn btn-lg btn-primary" %>
 <% end %>
 
 <div class="current_shifts-title">
