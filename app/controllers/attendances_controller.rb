@@ -2,46 +2,17 @@ class AttendancesController < ApplicationController
   include AttendancesHelper
 
   before_action :logged_in_user
+  before_action :attendance_staff_day_search, only:[:salary_management, :attendance_management]
   before_action :set_attendance, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info, :attendance_management_notice, :update_attendance_management_notice] 
   before_action :set_attendance_user_id, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info, :attendance_management_notice, :update_attendance_management_notice]
   before_action :set_staff, only:[:salary_management, :attendance_management, :new_attendance_management_info]
 
   #給与管理
   def salary_management
-    @attendance = Attendance.find_by(params[:user_id])
-    #月が10月以降の時と、10月以前で年月日検索を条件分岐
-    if @attendance.present? && @attendance.day.to_date.month >= 10
-      @attendances = Attendance
-                     .where(user_id: params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
-    else
-      @attendances = Attendance
-                     .where(user_id: params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
-    end
   end
   
   #出退勤管理
   def attendance_management
-    @attendance = Attendance.find_by(params[:user_id])
-    #月が10月以降の時と、10月以前で年月日検索を条件分岐
-    if @attendance.present? && @attendance.day.to_date.month >= 10
-      @attendances = Attendance
-                     .where(user_id: params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
-    else
-      @attendances = Attendance
-                     .where(user_id: params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
-    end
   end
   
   #出退勤管理出退勤編集モーダル
