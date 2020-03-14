@@ -211,7 +211,14 @@ class AttendancesController < ApplicationController
   
   def breakstart
     # 休憩開始ボタン押下時、その日のレコードのbreak_start_timeに現在時刻を挿入する
-    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    # 24時以降に休憩開始を押す場合、朝6時まで休憩開始を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour)
+      # 1は前日の日付を指定する為。朝6時より前の時間に休憩開始を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current - 1)
+    else
+      # 24時より前に休憩開始を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    end
     # 休憩開始時間が未登録であることを判定
     if @attendances[0].break_start_time.nil?
       if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0))
@@ -225,7 +232,14 @@ class AttendancesController < ApplicationController
   
   def breakend
     # 休憩終了ボタン押下時、その日のレコードのbreak_end_timeに現在時刻を挿入する
-    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    # 24時以降に休憩終了を押す場合、朝6時まで休憩終了を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour)
+      # 1は前日の日付を指定する為。朝6時より前の時間に休憩終了を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current - 1)
+    else
+      # 24時より前に休憩終了を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    end
     # 休憩開始時間が未登録であることを判定します。
     if @attendances[0].break_end_time.nil?
       if @attendances[0].update_attributes(break_end_time: Time.current.change(sec: 0))
