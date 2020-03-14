@@ -146,7 +146,7 @@ class AttendancesController < ApplicationController
             @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
           else
             # 検索で従業員情報が合致しない場合のメッセージ
-            flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
+            flash.now[:danger] = 'IDとパスワードの組み合わせが不正です。'
           end
         else
           # 検索で従業員情報が合致しない場合のメッセージ

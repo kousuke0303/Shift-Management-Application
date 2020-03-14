@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   include UsersHelper
 
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_user_info, :update_user_info, :new_password_reset,  :update_password_reset]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_user_info, :update_user_info, :new_password_reset, :update_password_reset]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :edit_user_info, :update_user_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_user_info, :update_user_info]
