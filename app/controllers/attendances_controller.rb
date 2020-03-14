@@ -191,7 +191,7 @@ class AttendancesController < ApplicationController
   def update
     # 退勤ボタン押下時、その日のレコードのwork_end_timeをupdateする
     # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
-    if Time.current < (Time.current.beginning_of_day + 6.hour)
+    if Time.current < (Time.current.beginning_of_day + 6.hour) + 10
       # 1は前日の日付を指定する為。朝6時より前の時間に退勤を押す場合
       @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current - 1)
     else
