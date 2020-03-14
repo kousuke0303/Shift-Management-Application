@@ -24,6 +24,25 @@ class ApplicationController < ActionController::Base
     @user = User.find(params[:id])
   end
   
+  # 年月検索・年月日検索・スタッフ検索するときに必要となる処理
+  def attendance_staff_day_search
+    @attendance = Attendance.find_by(params[:user_id])
+    #月が10月以降の時と、10月以前で年月日検索を条件分岐
+    if @attendance.present? && @attendance.day.to_date.month >= 10
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+                     .order("day")
+    else
+      @attendances = Attendance
+                     .where(user_id: params[:user_id])
+                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
+                     .or(Attendance.where(day: params[:day]))
+                     .order("day")
+    end
+  end
+  
   def set_attendance_user_id
     @user = User.find(@attendance.user_id)
   end

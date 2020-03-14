@@ -11,7 +11,7 @@
             <% if logged_in? %>
             <li class="dropdown">
               <a href="#" class="btn-sm dropdown-toggle" data-toggle="dropdown">
-                <span class="small">ID:<%= current_user.id %>&nbsp;<%= current_user.name %></span> <b class="caret"></b>
+                <span style="font-size: small;">ID:<%= current_user.id %>&nbsp;<%= current_user.name %></span> <b class="caret"></b>
               </a>
               <ul class="dropdown-menu dropdown-assemble">
                 <li><%= link_to "チュートリアル", "#" %></li>
