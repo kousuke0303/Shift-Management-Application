@@ -32,9 +32,11 @@
             </div>
           <% elsif @attendances && @attendances[0].break_start_time.nil? && @attendances[0].break_end_time.nil? %>
             <h1><%= User.find(params[:input_id]).name %></h1>
-            <div class="register-btn-area">
-              <%= link_to "休憩開始", users_attendances_breakstart_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
-            </div>
+            <% if Time.current >= (Time.current.beginning_of_day + 6.hour) %>
+              <div class="register-btn-area">
+                <%= link_to "休憩開始", users_attendances_breakstart_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block" %>
+              </div>
+            <% end %>
             <div class="register-btn-area">
               <%= link_to "退勤", user_attendance_path(params[:input_id]), method: :patch, class: "btn btn-primary btn-block btn-danger" %>
             </div>

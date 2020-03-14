@@ -143,7 +143,14 @@ class AttendancesController < ApplicationController
           @attendance_staff = @attendance_exist.authenticate(params[:input_password])
           if @attendance_staff
             # 検索で合致した従業員の勤怠情報を取得
-            @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+            # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
+            if Time.current < (Time.current.beginning_of_day + 6.hour)
+              # 1は前日の日付を指定する為
+              @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+            else
+              # 24時より前に退勤を押す場合
+              @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+            end
           else
             # 検索で従業員情報が合致しない場合のメッセージ
             flash.now[:danger] = 'IDとパスワードの組み合わせが不正です。'
@@ -183,8 +190,15 @@ class AttendancesController < ApplicationController
   
   def update
     # 退勤ボタン押下時、その日のレコードのwork_end_timeをupdateする
-    @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
-    # 出勤時間が未登録であることを判定します。
+    # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour)
+      # 1は前日の日付を指定する為。朝6時より前の時間に退勤を押す場合
+      @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current - 1)
+    else
+      # 24時より前に退勤を押す場合
+      @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
+    end
+    # 退勤時間が未登録であることを判定します。
     if @attendances[0].work_end_time.nil?
       if @attendances[0].update_attributes(work_end_time: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした！"
