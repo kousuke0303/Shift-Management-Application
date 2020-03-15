@@ -10,6 +10,7 @@ class CreateShifts < ActiveRecord::Migration[5.1]
       t.string :from_staff_msg
       t.string :start_time
       t.string :end_time
+      t.boolean :release, default: false
       t.references :user, foreign_key: true
 
       t.timestamps

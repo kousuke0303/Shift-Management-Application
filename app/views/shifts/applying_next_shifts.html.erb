@@ -1,19 +1,30 @@
 <% provide(:title, "Confirm Shifts") %>
 
-<div class="btn-switch-shifts">
-  <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
-</div>
-
-<div class="next_shifts-title">
-  <% if Date.current.day <= 15 %>
-    <%= @first_day.month %>月後半のシフト作成
-  <% else %>
-    <%= @first_day.month %>月前半のシフト作成
-  <% end %>
-  <br>申請受付期間：<%= @start_apply_day.strftime('%-m/%-d') %>～<%= @end_apply_day.strftime('%-m/%-d') %>
-  <span class="create-limit">
-    作成期間：<%= @start_create_day.strftime('%-m/%-d') %>～<%= @end_create_day.strftime('%-m/%-d') %>
-  </span>
+<div class="row">
+  <div class="col-xs-12 col-md-2 btn-switch-shifts">
+    <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
+  </div>
+  
+  <div class="col-xs-12 col-md-8 next-shifts-title">
+    <% if Date.current.day <= 15 %>
+      <%= @first_day.month %>月後半のシフト作成
+    <% else %>
+      <%= @first_day.month %>月前半のシフト作成
+    <% end %>
+    <br>申請受付期間：<%= @start_apply_day.strftime('%-m/%-d') %>～<%= @end_apply_day.strftime('%-m/%-d') %>
+    <span class="create-limit">
+      作成期間：<%= @start_create_day.strftime('%-m/%-d') %>～<%= @end_create_day.strftime('%-m/%-d') %>
+    </span>
+  </div>
+  <div class="col-xs-12 col-md-2 release-shifts-btn-area">
+    <% if !within_submission_deadline? && @admins_shift.release == false %>
+      <%= link_to "公開する", shifts_change_release_status_user_path(@user), method: :patch, class: "btn btn-lg btn-primary" %>
+    <% elsif !within_submission_deadline? && @admins_shift.release == true %>
+      <%= link_to "非公開にする", shifts_change_release_status_user_path(@user), method: :patch, class: "btn btn-lg btn-primary" %>
+    <% else %>
+      <%= link_to "公開する", "#", disabled: true, class: "btn btn-default btn-lg" %>
+    <% end %>
+  </div>
 </div>
 
 <table class="table table-bordered table-condensed" id="next-shifts-table">

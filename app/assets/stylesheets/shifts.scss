@@ -40,7 +40,7 @@
 
 /* シフト承認ページタイトル */
 
-.next_shifts-title {
+.next-shifts-title {
   font-size: 1.8em;
   font-weight: bold;
   margin-bottom: 15px;
@@ -52,8 +52,12 @@
 }
 
 .btn-switch-shifts {
-  float: left;
   padding-top: 10px;
+}
+
+.release-shifts-btn-area {
+  padding-top: 8px;
+  text-align: right;
 }
 
 /* 次回のシフトテーブル */
@@ -195,11 +199,7 @@
 
 /* 現在のシフトページタイトル */
 
-.btn-switch-shifts {
-  position: absolute;
-}
-
-.current_shifts-title {
+.current-shifts-title {
   font-size: 1.8em;
   font-weight: bold;
   margin-bottom: 15px;
@@ -208,7 +208,7 @@
 
 /* 現在のシフトテーブル */
 
-div.current-shifts-table-flame {
+.current-shifts-table-flame {
   overflow-x: scroll;
 }
 
@@ -282,4 +282,35 @@ div.current-shifts-table-flame {
 
 .add-shift-btn-area {
   text-align: center;
+}
+
+/* 従業員用次回シフト確認ページ */
+
+.staffs-next-shifts-table-flame {
+  overflow-x: scroll;
+}
+
+#staffs-next-shifts-table {
+  th {
+    background: gold;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  th.blue {
+    color: blue;
+  }
+  th.red {
+    color: red;
+  }
+  td {
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+}
+
+.switch-shifts-btn-area {
+  margin-bottom: 10px;
 }

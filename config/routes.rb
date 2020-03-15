@@ -24,6 +24,8 @@ Rails.application.routes.draw do
       get 'edit_user_info'
       patch 'update_user_info'
       get 'shifts/current_shifts'
+      get 'shifts/next_shifts'
+      patch 'shifts/change_release_status'
       get 'new_password_reset'
       patch 'update_password_reset'
     end
