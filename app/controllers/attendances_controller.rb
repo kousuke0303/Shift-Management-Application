@@ -69,17 +69,12 @@ class AttendancesController < ApplicationController
   
   ##出退勤管理未打刻一覧モーダル内更新処理
   def update_attendance_management_notice
-    if params[:work_start_time].present? && params[:work_end_time].present? || params[:break_start_time].present? || params[:break_end_time].present?
-      update_work_end_time_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes(work_end_time: item[:work_end_time])
-      end
-      flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間が15分以内、出勤時間よりも退勤時間の方が早い場合は登録できていません(0時以降の退勤はこの限りではありません。)"
-      redirect_back(fallback_location: attendance_management)
-    else
-      flash[:danger] = "退勤時間の登録に失敗しました。"
-      redirect_back(fallback_location: attendance_management)
+    update_work_end_time_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(work_end_time: item[:work_end_time])
     end
+    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間より退勤時間の方が早い場合は登録できていません。)"
+    redirect_back(fallback_location: attendance_management)
   end
   
   #出退勤管理新規作成モーダル
