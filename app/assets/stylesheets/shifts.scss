@@ -55,9 +55,9 @@
   padding-top: 10px;
 }
 
-.btn-switch-release {
-  float: right;
-  margin-top: -27px;
+.release-shifts-btn-area {
+  padding-top: 8px;
+  text-align: right;
 }
 
 /* 次回のシフトテーブル */
@@ -198,10 +198,6 @@
 }
 
 /* 現在のシフトページタイトル */
-
-.btn-switch-shifts {
-  position: absolute;
-}
 
 .current-shifts-title {
   font-size: 1.8em;
