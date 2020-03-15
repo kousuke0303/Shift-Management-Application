@@ -69,7 +69,7 @@ class AttendancesController < ApplicationController
   
   ##出退勤管理未打刻一覧モーダル内更新処理
   def update_attendance_management_notice
-    if params[:work_start_time].present? && params[:work_end_time].present? && params[:break_start_time].present? && params[:break_end_time].present?
+    if params[:work_start_time].present? && params[:work_end_time].present? || params[:break_start_time].present? || params[:break_end_time].present?
       update_work_end_time_params.each do |id, item|
         attendance = Attendance.find(id)
         attendance.update_attributes(work_end_time: item[:work_end_time])
