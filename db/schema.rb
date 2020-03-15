@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 2019_12_24_163948) do
     t.string "from_staff_msg"
     t.string "start_time"
     t.string "end_time"
+    t.boolean "release", default: false
     t.integer "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

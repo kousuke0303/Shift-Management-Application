@@ -1,0 +1,120 @@
+<% provide(:title, "Next Shifts") %>
+
+<div class="row">
+  <div class="col-xs-12 col-md-2 switch-shifts-btn-area">
+    <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
+  </div>
+  
+  <div class="col-xs-12 col-md-10 next-shifts-title">
+    <% if @first_day.day <= 15 %>
+      <%= @first_day.month %>月前半のシフト
+    <% else %>
+      <%= @first_day.month %>月後半のシフト
+    <% end %>
+    <br><%= @first_day.strftime('%-m/%-d') %>～<%= @last_day.strftime('%-m/%-d') %>
+  </div>
+</div>
+
+<div class="staffs-next-shifts-table-flame">
+  <table class="table table-bordered table-condensed" id="staffs-next-shifts-table">
+    <tr>
+      <th width=8%>ポジション</th>
+      <th>スタッフ名</th>
+      <% @next_shifts.each do |day| %>
+        <% if day.wday == 6 %>
+          <th width=5% class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% elsif day.wday == 0 %>
+          <th width=5% class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% else %>
+          <th width=5%><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% end %>
+      <% end %>
+    </tr>
+    
+    <% @kitchen_staffs.each do |staff| %>
+      <tr>
+        <td>キッチン</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @hole_staffs.each do |staff| %>
+      <tr>
+        <td>ホール</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @wash_staffs.each do |staff| %>
+      <tr>
+        <td>洗い場</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @newcomer_staffs.each do |staff| %>
+      <tr>
+        <td>キッチン</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>
+
+<% if @shifts.count > 0 %>
+  <div class="personal-shifts-title"><%= @user.name %>のシフト</div>
+  <table class="table table-bordered table-condensed" id="personal-current-shifts-table">
+    <tr>
+      <th width=8%>日付</th>
+      <th width=9%>希望出勤時間</th>
+      <th width=9%>希望退勤時間</th>
+      <th width=28%>従業員コメント</th>
+      <th width=9%>出勤時間</th>
+      <th width=9%>退勤時間</th>
+      <th width=28%>管理者コメント</th>
+    </tr>
+    <% @shifts.each do |shift| %>
+      <tr>
+        <td><%= shift.worked_on.strftime('%-m/%-d') %> (<%= $days_of_the_week[shift.worked_on.wday] %>)</td>
+        <td>
+          <% if shift.request_start_time.present? %>
+            <%= shift.request_start_time %>
+          <% else %>
+          --
+          <% end %>
+        </td>
+        <td>
+          <% if shift.request_end_time.present? %>
+            <%= shift.request_end_time %>
+          <% else %>
+          --
+          <% end %>
+        </td>
+        <td><%= shift.from_staff_msg %></td>
+        <td><%= shift.start_time %></td>
+        <td><%= shift.end_time %></td>
+        <td><%= shift.from_admin_msg %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
