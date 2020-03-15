@@ -110,7 +110,7 @@ module ShiftsHelper
     return true unless @first_day == current_first_day
   end
   
-  # 現在がシフト提出期���内かか確認
+  # 現在がシフト提出期限内か確認
   def within_submission_deadline?
     Date.current.day.between?(1, 8) || Date.current.day.between?(16, 23) ? true : false
   end
