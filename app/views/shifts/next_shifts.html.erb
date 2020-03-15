@@ -1,0 +1,75 @@
+<% provide(:title, "Next Shifts") %>
+
+<div class="next-shifts-title">
+  <% if @first_day.day <= 15 %>
+    <%= @first_day.month %>月前半のシフト
+  <% else %>
+    <%= @first_day.month %>月後半のシフト
+  <% end %>
+</div>
+
+<div class="staffs-next-shifts-table-flame">
+  <table class="table table-bordered table-condensed" id="staffs-next-shifts-table">
+    <tr>
+      <th width=8%>ポジション</th>
+      <th>スタッフ名</th>
+      <% @next_shifts.each do |day| %>
+        <% if day.wday == 6 %>
+          <th width=5% class="blue"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% elsif day.wday == 0 %>
+          <th width=5% class="red"><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% else %>
+          <th width=5%><%= day.strftime('%-m/%-d') %><br>(<%= $days_of_the_week[day.wday] %>)</th>
+        <% end %>
+      <% end %>
+    </tr>
+    
+    <% @kitchen_staffs.each do |staff| %>
+      <tr>
+        <td>キッチン</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @hole_staffs.each do |staff| %>
+      <tr>
+        <td>ホール</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @wash_staffs.each do |staff| %>
+      <tr>
+        <td>洗い場</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    
+    <% @newcomer_staffs.each do |staff| %>
+      <tr>
+        <td>キッチン</td>
+        <td><%= staff.name %></td>
+        <% @next_shifts.each do |day| %>
+          <td>
+            <%= start_and_end_time_of_shift(staff, day) %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>

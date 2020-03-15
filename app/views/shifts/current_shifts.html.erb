@@ -5,10 +5,10 @@
     <%= link_to "次回のシフト作成", shifts_applying_next_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
   </div>
 <% elsif @admins_shift && @admins_shift.release == true %>
-  <%= link_to "次回のシフト", "#", class: "btn btn-lg btn-primary" %>
+  <%= link_to "次回のシフト", shifts_next_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
 <% end %>
 
-<div class="current_shifts-title">
+<div class="current-shifts-title">
   <% if @user.admin? && @first_day != Date.current.prev_month.prev_month.beginning_of_month %>
     <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), class: "btn btn-md btn-primary" %>
   <% elsif @user.admin? %>

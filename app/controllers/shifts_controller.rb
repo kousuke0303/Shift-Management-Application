@@ -6,13 +6,13 @@ class ShiftsController < ApplicationController
   before_action :admin_user, only: [:applying_next_shifts, :confirm_next_shifts, :edit, :update, :add, :add_update, :change_release_status]
   before_action :correct_user, only: [:apply_next_shifts, :update_next_shifts, :applying_next_shifts,
                                       :confirm_next_shifts, :current_shifts, :next_shifts]
-  before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts, :change_release_status]
+  before_action :set_next_shifts_date, only:[:apply_next_shifts, :applying_next_shifts, :change_release_status, :next_shifts]
   before_action :create_next_shifts, only: :apply_next_shifts
   before_action :set_apply_limit, only:[:apply_next_shifts, :applying_next_shifts]
   before_action :set_staff, only: [:edit, :add]
   before_action :set_shift, only: [:edit, :update, :add, :add_update]
   before_action :set_current_shifts_date, only: :current_shifts
-  before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts]
+  before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts, :next_shifts]
   before_action :create_current_shifts, only: :current_shifts
   before_action :create_admins_next_shift, only: [:applying_next_shifts, :change_release_status]
   
