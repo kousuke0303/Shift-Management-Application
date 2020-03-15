@@ -1,36 +1,49 @@
 <% provide(:title, "All Users") %>
-<h1>ユーザー一覧</h1>
+<h1>スタッフ一覧</h1>
 
 <div class="row">
+  <div class="col-md-3 col-md-offset-8">
+    <%= form_with(model: @user, method: :get, local: true) do |f| %>
+      <%= f.label :search, "スタッフ名検索" %>
+      <div style="display: inline-flex">
+        <%= f.text_field :name, class: "form-control", placeholder: "キーワードを入力" %>
+        <%= f.submit "検索", class: "btn btn-md btn-primary btn-name-search" %>
+      </div>
+    <% end %>
+  </div>
   <div class="col-md-10 col-md-offset-1">
     <%= will_paginate %>
-    <table class="table table-bordered table-condensed table-hover" id="table-users">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>名前</th>
-          <th>メールアドレス</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @users.each do |user| %>
+    <% if @users.count > 0 %>
+      <table class="table table-bordered table-condensed table-hover" id="table-users">
+        <thead>
           <tr>
-            <td><%= user.id %></td>
-            <td><%= link_to user.name, user %></td>
-            <td><%= user.email %></td>
-            <td>
-              <% if current_user.admin? && !current_user?(user) %>
-                <%= link_to "スタッフ情報編集", edit_user_info_user_path(user), remote: true, class: "btn btn-primary" %>
-                <%= link_to "削除", user, method: :delete,
-                    data: { confirm: "削除してよろしいですか？" },
-                    class: "btn btn-danger" %>
-              <% end %>
-            </td>
+            <th>ID</th>
+            <th>名前</th>
+            <th>メールアドレス</th>
+            <th></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @users.each do |user| %>
+            <tr>
+              <td><%= user.id %></td>
+              <td><%= link_to user.name, user %></td>
+              <td><%= user.email %></td>
+              <td>
+                <% if current_user.admin? && !current_user?(user) %>
+                  <%= link_to "スタッフ情報編集", edit_user_info_user_path(user), remote: true, class: "btn btn-primary" %>
+                  <%= link_to "削除", user, method: :delete,
+                      data: { confirm: "削除してよろしいですか？" },
+                      class: "btn btn-danger" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+     <h3 class="center">スタッフが存在しません</h3>
+    <% end %>
     <%= will_paginate %>
   </div>
 </div>

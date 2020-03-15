@@ -1,13 +1,16 @@
 class UsersController < ApplicationController
   include UsersHelper
 
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_user_info, :update_user_info]
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_user_info, :update_user_info, :new_password_reset,  :update_password_reset]
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :edit_user_info, :update_user_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_user_info, :update_user_info]
   
   def index
     @users = User.where(admin: false).paginate(page: params[:page])
+    if params[:name].present?
+      @users = @users.get_by_name params[:name]
+    end
   end
     
   def show
@@ -59,8 +62,29 @@ class UsersController < ApplicationController
     end
     redirect_to users_url
   end
+  
+  def new_password_reset_index
+    @users = User.all
+    if params[:email].present?
+      @users = @users.get_by_email params[:email]
+    end
+  end
+  
+  def new_password_reset
+  end
+  
+  def update_password_reset
+    @user.update_attributes(reset_password_params) ? 
+    flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません。)" 
+    : flash[:danger] = "パスワードが６文字以内、もしくはパスワードとパスワード再入力が一致していません。"
+    redirect_to login_url
+  end
 
   private
+    
+    def reset_password_params
+      params.require(:user).permit(:password, :password_confirmation)
+    end
 
     def user_params
       params.require(:user).permit(:name, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, :hourly_wage)
