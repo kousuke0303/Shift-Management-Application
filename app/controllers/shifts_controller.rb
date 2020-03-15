@@ -15,6 +15,7 @@ class ShiftsController < ApplicationController
   before_action :separate_staffs_by_position, only: [:applying_next_shifts, :current_shifts, :next_shifts]
   before_action :create_current_shifts, only: :current_shifts
   before_action :create_admins_next_shift, only: [:applying_next_shifts, :change_release_status]
+  before_action :set_perspnal_shifts, only: [:current_shifts, :next_shifts]
   
   $work_time_breaks = {"10:00": "10:00", "10:30": "10:30","11:00": "11:00", "11:30": "11:30", "12:00": "12:00",
                        "12:30": "12:30", "13:00": "13:00", "13:30": "13:30", "14:00": "14:00", "14:30": "14:30",
@@ -127,7 +128,6 @@ class ShiftsController < ApplicationController
   
   # 現在のシフト確認ページ
   def current_shifts
-    @shifts = @user.shifts.where(worked_on: @first_day..@last_day).where("start_time LIKE ?", "%:%").order(:worked_on)
     if Date.current.day <= 15
       @next_first_day = "#{Date.current.year}-#{Date.current.month}-16".to_date
     else
@@ -249,6 +249,11 @@ class ShiftsController < ApplicationController
       end
     end
     @admins_shift = Shift.find_by(user_id: @user.id, worked_on: @first_day)
+  end
+  
+  # 個人の反映済シフト取得
+  def set_perspnal_shifts
+    @shifts = @user.shifts.where(worked_on: @first_day..@last_day).where("start_time LIKE ?", "%:%").order(:worked_on)
   end
   
   private
