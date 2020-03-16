@@ -18,8 +18,7 @@ class UsersController < ApplicationController
   end
 
   def new
-    @user = User.new 
-    # @user.attendances.build
+    @user = User.new
   end
 
   def create
@@ -27,7 +26,11 @@ class UsersController < ApplicationController
     if @user.save
       log_in @user
       flash[:success] = "新規作成に成功しました。"
-      redirect_to @user
+      if @user.admin = true
+        redirect_to users_attendances_register_url(@user)
+      else
+        redirect_to shifts_current_shifts_user_url(@user)
+      end
     else
       render :new
     end
@@ -58,7 +61,7 @@ class UsersController < ApplicationController
     if @user.update_attributes(update_user_info_params)
       flash[:success] = "#{@user.name}の基本情報を更新しました。"
     else
-      flash[:danger] = "#{@user.name}の更新は失敗しました。<br>" + @user.errors.full_messages.join("<br>")
+      flash[:danger] = "#{@user.name}の更新は失敗しました。" + @user.errors.full_messages.join("<br>")
     end
     redirect_to users_url
   end
@@ -74,10 +77,19 @@ class UsersController < ApplicationController
   end
   
   def update_password_reset
-    @user.update_attributes(reset_password_params) ? 
-    flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません。)" 
-    : flash[:danger] = "パスワードが６文字以内、もしくはパスワードとパスワード再入力が一致していません。"
-    redirect_to login_url
+    if @user.update_attributes(reset_password_params)
+      flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません。)" 
+      if @user.admin = true
+        log_in @user
+        redirect_to users_attendances_register_url(@user)
+      else
+        log_in @user
+        redirect_to shifts_current_shifts_user_url(@user)
+      end
+    else 
+      flash[:danger] = "パスワードが６文字以内、もしくはパスワードとパスワード再入力が一致していません。"
+      redirect_to login_url
+    end
   end
 
   private
