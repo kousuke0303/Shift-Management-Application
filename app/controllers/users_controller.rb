@@ -24,11 +24,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
-      log_in @user
       flash[:success] = "新規作成に成功しました。"
       if @user.admin = true
+        log_in @user
         redirect_to users_attendances_register_url(@user)
       else
+        log_in @user
         redirect_to shifts_current_shifts_user_url(@user)
       end
     else
