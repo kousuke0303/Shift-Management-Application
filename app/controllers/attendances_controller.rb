@@ -73,7 +73,7 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       attendance.update_attributes(work_end_time: item[:work_end_time])
     end
-    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間よりの方が早い場合は登録できていません。)"
+    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間より退勤時間の方が早い場合は登録できていません。)"
     redirect_back(fallback_location: attendance_management)
   end
   
