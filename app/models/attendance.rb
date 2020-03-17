@@ -3,6 +3,7 @@ class Attendance < ApplicationRecord
   include AttendancesHelper
 
   before_save :calculate_salary_per_day
+  before_save :delete_calculate_salary_per_day
   validate :work_start_time_errors
   validate :work_start_time_and_work_end_time_errors
   validate :break_time_errors
@@ -84,8 +85,14 @@ class Attendance < ApplicationRecord
       if (self.work_start_time.hour >= 0 && self.work_start_time.hour <= 9) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) 
         day_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f) * self.user.hourly_wage.to_f * 1.25 
         self.salary = day_hourly_wage.to_i 
-      end 
-    end 
+      end
+    end
+  end
+  
+  def delete_calculate_salary_per_day
+    if self.work_start_time.present? && self.work_end_time.blank?
+      self.salary = nil
+    end
   end
 
   # 日給の計算を行う

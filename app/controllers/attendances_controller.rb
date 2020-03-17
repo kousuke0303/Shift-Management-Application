@@ -73,7 +73,7 @@ class AttendancesController < ApplicationController
       attendance = Attendance.find(id)
       attendance.update_attributes(work_end_time: item[:work_end_time])
     end
-    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間より退勤時間の方が早い場合は登録できていません。)"
+    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間よりの方が早い場合は登録できていません。)"
     redirect_back(fallback_location: attendance_management)
   end
   
@@ -135,19 +135,26 @@ class AttendancesController < ApplicationController
         if @attendance_exist
           # 検索で合致した従業員情報を取得
           @attendance_staff = @attendance_exist.authenticate(params[:input_password])
-          if @attendance_staff
-            # 検索で合致した従業員の勤怠情報を取得
-            # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
-            if Time.current < (Time.current.beginning_of_day + 6.hour)
-              # 1は前日の日付を指定する為
-              @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+          if !@attendance_exist.admin
+            if @attendance_staff
+              # 検索で合致した従業員の勤怠情報を取得
+              # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
+              if Time.current < (Time.current.beginning_of_day + 6.hour)
+                # 1は前日の日付を指定する為
+                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+              else
+                # 24時より前に退勤を押す場合
+                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+              end
             else
-              # 24時より前に退勤を押す場合
-              @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+              # 検索で従業員情報が合致しない場合のメッセージ
+              flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
+              redirect_to users_attendances_register_url
             end
           else
             # 検索で従業員情報が合致しない場合のメッセージ
-            flash.now[:danger] = 'IDとパスワードの組み合わせが不正です。'
+            flash[:danger] = '管理者は登録できません。'
+            redirect_to users_attendances_register_url
           end
         else
           # 検索で従業員情報が合致しない場合のメッセージ

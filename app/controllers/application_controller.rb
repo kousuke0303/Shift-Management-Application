@@ -48,7 +48,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_attendance
-    @attendance = Attendance.find_by(params[:user_id])
+    @attendance = Attendance.find(params[:id])
   end
   
   def set_staff
