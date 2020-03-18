@@ -69,18 +69,12 @@ class AttendancesController < ApplicationController
   
   ##出退勤管理未打刻一覧モーダル内更新処理
   def update_attendance_management_notice
-    #退勤時間が0:00〜2:00までは登録できるようにする
-    if params[:work_start_time].present? && params[:work_end_time].present? || params[:break_start_time].present? || params[:break_end_time].present? || params[:work_end_time].to_time.hour >= 0 && params[:work_end_time].to_time.hour <= 2 
-      update_work_end_time_params.each do |id, item|
-        attendance = Attendance.find(id)
-        attendance.update_attributes(work_end_time: item[:work_end_time])
-      end
-      flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間が15分以内、出勤時間よりも退勤時間の方が早い場合は登録できていません(0時以降の退勤はこの限りではありません。)"
-      redirect_back(fallback_location: attendance_management)
-    else
-      flash[:danger] = "退勤時間の登録に失敗しました。"
-      redirect_back(fallback_location: attendance_management)
+    update_work_end_time_params.each do |id, item|
+      attendance = Attendance.find(id)
+      attendance.update_attributes(work_end_time: item[:work_end_time])
     end
+    flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間より退勤時間の方が早い場合は登録できていません。)"
+    redirect_back(fallback_location: attendance_management)
   end
   
   #出退勤管理新規作成モーダル
@@ -141,12 +135,26 @@ class AttendancesController < ApplicationController
         if @attendance_exist
           # 検索で合致した従業員情報を取得
           @attendance_staff = @attendance_exist.authenticate(params[:input_password])
-          if @attendance_staff
-            # 検索で合致した従業員の勤怠情報を取得
-            @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+          if !@attendance_exist.admin
+            if @attendance_staff
+              # 検索で合致した従業員の勤怠情報を取得
+              # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
+              if Time.current < (Time.current.beginning_of_day + 6.hour)
+                # 1は前日の日付を指定する為
+                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+              else
+                # 24時より前に退勤を押す場合
+                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+              end
+            else
+              # 検索で従業員情報が合致しない場合のメッセージ
+              flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
+              redirect_to users_attendances_register_url
+            end
           else
             # 検索で従業員情報が合致しない場合のメッセージ
-            flash.now[:info] = 'IDとパスワードの組み合わせが不正です。'
+            flash[:danger] = '管理者は登録できません。'
+            redirect_to users_attendances_register_url
           end
         else
           # 検索で従業員情報が合致しない場合のメッセージ
@@ -183,8 +191,15 @@ class AttendancesController < ApplicationController
   
   def update
     # 退勤ボタン押下時、その日のレコードのwork_end_timeをupdateする
-    @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
-    # 出勤時間が未登録であることを判定します。
+    # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour) + 10
+      # 1は前日の日付を指定する為。朝6時より前の時間に退勤を押す場合
+      @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current - 1)
+    else
+      # 24時より前に退勤を押す場合
+      @attendances = Attendance.where(user_id: params[:user_id]).where(day: Date.current)
+    end
+    # 退勤時間が未登録であることを判定します。
     if @attendances[0].work_end_time.nil?
       if @attendances[0].update_attributes(work_end_time: Time.current.change(sec: 0))
         flash[:info] = "お疲れ様でした！"
@@ -197,7 +212,14 @@ class AttendancesController < ApplicationController
   
   def breakstart
     # 休憩開始ボタン押下時、その日のレコードのbreak_start_timeに現在時刻を挿入する
-    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    # 24時以降に休憩開始を押す場合、朝6時まで休憩開始を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour)
+      # 1は前日の日付を指定する為。朝6時より前の時間に休憩開始を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current - 1)
+    else
+      # 24時より前に休憩開始を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    end
     # 休憩開始時間が未登録であることを判定
     if @attendances[0].break_start_time.nil?
       if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0))
@@ -211,7 +233,14 @@ class AttendancesController < ApplicationController
   
   def breakend
     # 休憩終了ボタン押下時、その日のレコードのbreak_end_timeに現在時刻を挿入する
-    @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    # 24時以降に休憩終了を押す場合、朝6時まで休憩終了を押せるようにする
+    if Time.current < (Time.current.beginning_of_day + 6.hour)
+      # 1は前日の日付を指定する為。朝6時より前の時間に休憩終了を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current - 1)
+    else
+      # 24時より前に休憩終了を押す場合
+      @attendances = Attendance.where(user_id: params[:id]).where(day: Date.current)
+    end
     # 休憩開始時間が未登録であることを判定します。
     if @attendances[0].break_end_time.nil?
       if @attendances[0].update_attributes(break_end_time: Time.current.change(sec: 0))

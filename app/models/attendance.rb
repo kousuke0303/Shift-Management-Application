@@ -3,6 +3,7 @@ class Attendance < ApplicationRecord
   include AttendancesHelper
 
   before_save :calculate_salary_per_day
+  before_save :delete_calculate_salary_per_day
   validate :work_start_time_errors
   validate :work_start_time_and_work_end_time_errors
   validate :break_time_errors
@@ -21,8 +22,8 @@ class Attendance < ApplicationRecord
   
   #休憩時間のエラー
   def break_time_errors
-    errors.add(:work_end_time, "は、休憩入以降で登録してください。") if work_end_time.present? && break_start_time.present? && break_start_time > work_end_time && break_start_time.hour >= 0 && break_start_time.hour <= 2 && work_end_time.hour >= 0 && work_end_time.hour <= 2 
-    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if work_end_time.present? && break_end_time.present? && break_end_time > work_end_time && break_end_time.hour >= 0 && break_end_time.hour <= 2 && work_end_time.hour >= 0 && work_end_time.hour <= 2 
+    errors.add(:work_end_time, "は、休憩入以降で登録してください。") if work_end_time.present? && break_start_time.present? && break_start_time > work_end_time
+    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if work_end_time.present? && break_end_time.present? && break_end_time > work_end_time
     errors.add(:break_start_time, "を登録してください。") if !break_start_time.present? && break_end_time.present?
     errors.add(:break_start_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_start_time.present? && break_start_time < work_start_time && break_start_time.hour >= 10 && break_start_time.hour <= 24
     errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if work_start_time.present? && break_end_time.present? && break_end_time < work_start_time && break_end_time.hour >= 10 && break_end_time.hour <= 24
@@ -84,8 +85,14 @@ class Attendance < ApplicationRecord
       if (self.work_start_time.hour >= 0 && self.work_start_time.hour <= 9) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) 
         day_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f) * self.user.hourly_wage.to_f * 1.25 
         self.salary = day_hourly_wage.to_i 
-      end 
-    end 
+      end
+    end
+  end
+  
+  def delete_calculate_salary_per_day
+    if self.work_start_time.present? && self.work_end_time.blank?
+      self.salary = nil
+    end
   end
 
   # 日給の計算を行う

@@ -56,7 +56,11 @@
                     <% else %>
                       <td class="center"></td>
                     <% end %>
-                    <td class="center">¥<%= at.salary %></td>
+                    <% if at.work_start_time.present? && at.work_end_time.present? %>  
+                      <td class="center">¥<%= at.salary %></td>
+                    <% else %>
+                      <td></td>
+                    <% end %>
                   </tr>
                 </tbody>
                 <!-- 給与合計計算 -->
