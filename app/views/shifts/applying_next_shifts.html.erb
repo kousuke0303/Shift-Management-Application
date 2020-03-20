@@ -100,7 +100,7 @@
   
   <% @wash_staffs.each do |staff| %>
     <tr>
-      <td>キッチン</td>
+      <td>洗い場</td>
       <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
@@ -128,7 +128,7 @@
   
   <% @newcomer_staffs.each do |staff| %>
     <tr>
-      <td>キッチン</td>
+      <td>未登録</td>
       <td><%= link_to staff.name, staff %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
