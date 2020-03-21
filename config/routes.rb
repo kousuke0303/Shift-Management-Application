@@ -32,7 +32,7 @@ Rails.application.routes.draw do
     collection do
       get 'new_password_reset_index'
     end
-
+  
     resources :shifts, only: [:edit, :update] do
       member do
         get 'add'

@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   before_action :admin_user, only: [:destroy, :edit_user_info, :update_user_info]
   
   def index
-    @users = User.where(admin: false).paginate(page: params[:page])
+    @users = User.paginate(page: params[:page])
     if params[:name].present?
       @users = @users.get_by_name params[:name]
     end
@@ -24,6 +24,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      log_in @user
       flash[:success] = "新規作成に成功しました。"
       if @user.admin = true
         log_in @user
