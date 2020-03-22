@@ -77,9 +77,9 @@ module ShiftsHelper
     elsif user.kitchen == false && user.hole == true && user.wash == true
       return "ホール"
     elsif user.kitchen == true && user.hole == true && user.wash == false
-      return "キッチン/ホール"
+      return "キッチン"
     elsif user.kitchen == true && user.hole == true && user.wash == true
-      return "キッチン/ホール"
+      return "キッチン"
     elsif user.kitchen == false && user.hole == false && user.wash == true
       return "洗い場"
     else
