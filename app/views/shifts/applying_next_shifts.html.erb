@@ -235,9 +235,9 @@
               </td>
               <td>
                 <% if within_submission_deadline? %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control", readonly: true %>
+                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", readonly: true, placeholder: "50文字以内で入力して下さい" %>
                 <% else %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control" %>
+                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %>
                 <% end %>
               </td>
             </tr>
@@ -299,9 +299,9 @@
               </td>
               <td>
                 <% if within_submission_deadline? %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control", readonly: true %>
+                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", readonly: true, placeholder: "50文字以内で入力して下さい" %>
                 <% else %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control" %>
+                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %>
                 <% end %>
               </td>
             </tr>

@@ -65,7 +65,7 @@
               <tr>
                 <td><%= f.select :start_time, options_for_select($work_time_breaks, @shift.start_time), {}, class: "form-control" %></td>
                 <td><%= f.select :end_time, options_for_select($work_time_breaks, @shift.end_time), {}, class: "form-control" %></td>
-                <td><%= f.text_field :from_admin_msg, class: "form-control" %></td>
+                <td><%= f.text_field :from_admin_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %></td>
               </tr>
             </table>
             <div class="edit-shift-btn-area">
