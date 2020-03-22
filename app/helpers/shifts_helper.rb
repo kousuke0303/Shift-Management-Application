@@ -68,11 +68,11 @@ module ShiftsHelper
   
   # ユーザーの、可能なポジションを表示
   def put_position(user)
-    if user.kitchen = true && user.hole = false
+    if user.kitchen == true && user.hole == false
       return "キッチン"
-    elsif user.kitchen = false && user.hole = true
+    elsif user.kitchen == false && user.hole == true
       return "ホール"
-    elsif user.kitchen = true && user.hole = true
+    elsif user.kitchen == true && user.hole == true
       return "キッチン/ホール"
     else
       return "洗い場"
