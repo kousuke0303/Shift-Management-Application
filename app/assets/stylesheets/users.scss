@@ -12,11 +12,6 @@
 }
 
 /* ユーザーフォーム */
-
-.label-signup {
-  margin-top: 5px;
-}
-
 .btn-signup {
   margin-top: 10px;
 }
@@ -36,13 +31,12 @@
   text-align: center;
 }
 
-input[type=checkbox].skill-check {
-  margin-left: 10px;
-  transform: scale(1.5);
+.skill-check-kitchen {
+  margin-left: -20px;
 }
 
-.label-user--edit {
-  margin-top: 5px;
+input[type=checkbox].skill-check {
+  transform: scale(1.5);
 }
 
 .btn-user--edit {
@@ -63,10 +57,6 @@ input[type=checkbox].skill-check {
 }
 
 /* ユーザー編集ページ */
-.label-user-info {
-  margin-top: 5px;
-}
-
 .btn-user-info {
   margin-top: 10px;
 }
