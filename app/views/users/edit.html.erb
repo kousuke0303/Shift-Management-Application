@@ -17,26 +17,24 @@
       <%= f.label :email, class: "label-#{yield(:class_text)}" %>
       <%= f.email_field :email, class: "form-control" %>
       
-      <h3 class="skill-check-title">スキルチェック</h3>
-      
-      <div class="row skill-check-area">
-        <div class="col-xs-6 skill-check-item">
-          <%= f.label :admin, class: "label-#{yield(:class_text)}" %>
-          <%= f.check_box :admin, class: "skill-check" %>
+      <% if current_user.admin == false %>
+        <h3 class="skill-check-title">スキルチェック</h3>
+
+        <div class="row skill-check-area">
+          <div class="col-xs-4 skill-check-item">
+            <%= f.label :kitchen, class: "skill-check-kitchen" %>
+            <%= f.check_box :kitchen, class: "skill-check" %>
+          </div>
+          <div class="col-xs-4 skill-check-item">
+            <%= f.label :hole %>
+            <%= f.check_box :hole, class: "skill-check" %>
+          </div>
+          <div class="col-xs-4 skill-check-item">
+            <%= f.label :wash %>
+            <%= f.check_box :wash, class: "skill-check" %>
+          </div>
         </div>
-        <div class="col-xs-6 skill-check-item">
-          <%= f.label :kitchen, class: "label-#{yield(:class_text)}" %>
-          <%= f.check_box :kitchen, class: "skill-check" %>
-        </div>
-        <div class="col-xs-6 skill-check-item">
-          <%= f.label :hole, class: "label-#{yield(:class_text)}" %>
-          <%= f.check_box :hole, class: "skill-check" %>
-        </div>
-        <div class="col-xs-6 skill-check-item">
-          <%= f.label :wash, class: "label-#{yield(:class_form_withtext)}" %>&emsp;
-          <%= f.check_box :wash, class: "skill-check" %>
-        </div>
-      </div>
+      <% end %>
     
       <%= f.label :password, class: "label-#{yield(:class_text)}" %>
       <%= f.password_field :password, class: "form-control" %>
