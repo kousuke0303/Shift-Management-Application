@@ -16,6 +16,10 @@
   margin-top: 10px;
 }
 
+.label-signup {
+  margin-top: 5px;
+}
+
 .skill-check-title {
   text-align: center;
 }
@@ -43,6 +47,10 @@ input[type=checkbox].skill-check {
   margin-top: 10px;
 }
 
+.label-user--edit {
+  margin-top: 5px;
+}
+
 /* ユーザー一覧ページ */
 
 #table-users {
@@ -59,4 +67,8 @@ input[type=checkbox].skill-check {
 /* ユーザー編集ページ */
 .btn-user-info {
   margin-top: 10px;
+}
+
+.label-user-info {
+  margin-top: 5px;
 }
