@@ -7,6 +7,7 @@ ja:
         user:
           id: ID
           name: 名前
+          tel: 電話番号
           email: メールアドレス
           admin: 管理者
           kitchen: キッチン

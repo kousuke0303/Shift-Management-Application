@@ -14,6 +14,9 @@
         <div class="col-md-6 col-md-offset-3">
           <%= form_with(model: @user, url: update_user_info_user_path(@user), local: true, method: :patch) do |f| %>
             <%= render 'shared/error_messages', object: @user %>
+            
+            <%= f.label :tel, class: "label-#{yield(:class_text)}" %>
+            <%= f.text_field :tel, placeholder: "半角数字、ハイフンなし", class: "form-control" %>
 
             <%= f.label :email, class: "label-#{yield(:class_text)}" %>
             <%= f.email_field :email, class: "form-control" %>

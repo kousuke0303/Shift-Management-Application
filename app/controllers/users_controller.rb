@@ -100,11 +100,11 @@ class UsersController < ApplicationController
     end
 
     def user_params
-      params.require(:user).permit(:name, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, :hourly_wage)
+      params.require(:user).permit(:name, :tel, :email, :admin, :leader, :kitchen, :hole, :wash, :password, :password_confirmation, :hourly_wage)
     end
     
     def update_user_info_params
-      params.require(:user).permit(:email, :admin, :kitchen, :hole, :wash, :hourly_wage)
+      params.require(:user).permit(:tel, :email, :admin, :kitchen, :hole, :wash, :hourly_wage)
     end
     
     def set_user

@@ -10,6 +10,9 @@
     
       <%= f.label :name, class: "label-#{yield(:class_text)}" %>
       <%= f.text_field :name, class: "form-control" %>
+      
+      <%= f.label :tel, class: "label-#{yield(:class_text)}" %>
+      <%= f.text_field :tel, placeholder: "半角数字、ハイフンなし", class: "form-control" %>
     
       <%= f.label :email, class: "label-#{yield(:class_text)}" %>
       <%= f.email_field :email, class: "form-control" %>
