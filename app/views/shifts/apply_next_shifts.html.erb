@@ -58,9 +58,9 @@
               </td>
               <td>
                 <% if !within_submission_deadline? && day.request_start_time.present? %>
-                  <%= shift.text_field :from_staff_msg, readonly: true, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %>
+                  <%= shift.text_field :from_staff_msg, placeholder: "50文字以内", readonly: true, class: "form-control" %>
                 <% else %>
-                  <%= shift.text_field :from_staff_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %>
+                  <%= shift.text_field :from_staff_msg, placeholder: "50文字以内", class: "form-control" %>
                 <% end %>
                 <%= shift.hidden_field :apply_day, value: Date.current %>
               </td>

@@ -29,7 +29,7 @@
               <tr>
                 <td><%= f.select :start_time, options_for_select($work_time_breaks, @shift.start_time), {prompt: "時刻を選択"}, class: "form-control" %></td>
                 <td><%= f.select :end_time, options_for_select($work_time_breaks, @shift.end_time), {prompt: "時刻を選択"}, class: "form-control" %></td>
-                <td><%= f.text_field :from_admin_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %></td>
+                <td><%= f.text_field :from_admin_msg, placeholder: "50文字以内", class: "form-control" %></td>
               </tr>
             </table>
             <div class="add-shift-btn-area">
