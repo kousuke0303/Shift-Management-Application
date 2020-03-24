@@ -235,9 +235,9 @@
               </td>
               <td>
                 <% if within_submission_deadline? %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", readonly: true, placeholder: "50文字以内で入力して下さい" %>
+                  <%= shift.text_field :from_admin_msg, placeholder: "50文字以内", class: "form-control", readonly: true %>
                 <% else %>
-                  <%= shift.text_field :from_admin_msg, class: "form-control shift-placeholder", placeholder: "50文字以内で入力して下さい" %>
+                  <%= shift.text_field :from_admin_msg, placeholder: "50文字以内", class: "form-control" %>
                 <% end %>
               </td>
             </tr>
