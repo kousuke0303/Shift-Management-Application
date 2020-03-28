@@ -14,7 +14,6 @@ class UsersController < ApplicationController
   end
     
   def show
-    @attendance = @user.attendances.find_by(params[:id])
   end
 
   def new
