@@ -26,9 +26,8 @@ class ApplicationController < ActionController::Base
   
   # 年月検索・年月日検索・スタッフ検索するときに必要となる処理
   def attendance_staff_day_search
-    @attendance = Attendance.find_by(params[:user_id])
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
-    if @attendance.present? && @attendance.day.to_date.month >= 10
+    if Attendance.find_by(params[:user_id]).present? && Attendance.find_by(params[:user_id]).day.to_date.month >= 10
       @attendances = Attendance
                      .where("user_id IN (?)", params[:user_id])
                      .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
