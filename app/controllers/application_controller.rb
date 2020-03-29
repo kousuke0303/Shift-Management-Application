@@ -27,18 +27,20 @@ class ApplicationController < ActionController::Base
   # 年月検索・年月日検索・スタッフ検索するときに必要となる処理
   def attendance_staff_day_search
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
-    if Attendance.find(params[:id]).present? && Attendance.find(params[:id]).day.to_date.month >= 10
-      @attendances = Attendance
-                     .where("user_id IN (?)", params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
+    if params[:user_id].present?
+      if Attendance.find(params[:id]).present? && Attendance.find(params[:id]).day.to_date.month >= 10
+        @attendances = Attendance
+                       .where("user_id = (?)", params[:user_id])
+                       .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
+                       .order("day")
+      else
+        @attendances = Attendance
+                       .where("user_id = (?)", params[:user_id])
+                       .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
+                       .order("day")
+      end
     else
-      @attendances = Attendance
-                     .where("user_id IN (?)", params[:user_id])
-                     .where("day LIKE ?", "#{params['day(1i)']}" << "-0" + "#{params['day(2i)']}%")
-                     .or(Attendance.where(day: params[:day]))
-                     .order("day")
+      @attendances = Attendance.where(day: params[:day])    
     end
   end
   
