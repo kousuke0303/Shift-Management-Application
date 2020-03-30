@@ -22,14 +22,14 @@ class Attendance < ApplicationRecord
   
   #休憩時間のエラー
   def break_time_errors
-    errors.add(:work_end_time, "は、休憩入以降で登録してください。") if self.work_end_time.present? && self.break_start_time.present? && self.break_start_time > self.work_end_time
-    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if self.work_end_time.present? && self.break_end_time.present? && self.break_end_time > self.work_end_time
+    errors.add(:work_end_time, "は、休憩入以降で登録してください。") if self.work_end_time.present? && self.break_start_time.present? && (self.break_start_time.strftime("%H:%M") > self.work_end_time.strftime("%H:%M"))
+    errors.add(:work_end_time, "は、休憩出以降で登録してください。") if self.work_end_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") > self.work_end_time.strftime("%H:%M"))
     errors.add(:break_start_time, "を登録してください。") if !self.break_start_time.present? && self.break_end_time.present?
-    errors.add(:break_start_time, "は、出勤時間以降で登録してください。") if self.work_start_time.present? && self.break_start_time.present? && self.break_start_time < self.work_start_time && self.break_start_time.hour >= 10 && self.break_start_time.hour <= 24
-    errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if self.work_start_time.present? && self.break_end_time.present? && self.break_end_time < self.work_start_time && self.break_end_time.hour >= 10 && self.break_end_time.hour <= 24
+    errors.add(:break_start_time, "は、出勤時間以降で登録してください。") if self.work_start_time.present? && self.break_start_time.present? && (self.break_start_time.strftime("%H:%M") < self.work_start_time.strftime("%H:%M")) && self.break_start_time.hour >= 10 && self.break_start_time.hour <= 24
+    errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if self.work_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.work_start_time.strftime("%H:%M")) && self.break_end_time.hour >= 10 && self.break_end_time.hour <= 24
     errors.add(:break_end_time, "を登録してください。") if self.work_end_time.present? && self.break_start_time.present? && !self.break_end_time.present?
     errors.add(:work_start_time, "を登録してください") if !self.work_start_time.present? && self.break_start_time.present?
-    errors.add(:break_end_time, "は休憩入以降で登録してください") if self.break_start_time.present? && self.break_end_time.present? && self.break_end_time < self.break_start_time 
+    errors.add(:break_end_time, "は休憩入以降で登録してください") if self.break_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.break_start_time.strftime("%H:%M"))
   end
   
   # 日給の計算を行う

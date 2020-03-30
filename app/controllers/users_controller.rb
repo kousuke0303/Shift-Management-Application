@@ -79,7 +79,7 @@ class UsersController < ApplicationController
   
   def update_password_reset
     if @user.update_attributes(reset_password_params)
-      flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません。)" 
+      flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません)。" 
       if @user.admin = true
         log_in @user
         redirect_to users_attendances_register_url(@user)
