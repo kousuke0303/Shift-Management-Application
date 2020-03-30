@@ -58,7 +58,7 @@ module ShiftsHelper
     when "23:30"
       23.5
     when "ラスト"
-      24
+      "L"
     end
   end
   
