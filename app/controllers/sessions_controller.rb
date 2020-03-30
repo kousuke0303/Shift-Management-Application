@@ -5,14 +5,9 @@ class SessionsController < ApplicationController
   def create
     user = User.find_by(email: params[:session][:email].downcase)
     if user && user.authenticate(params[:session][:password])
+      log_in user
       params[:session][:remember_me] == "1" ? remember(user) : forget(user)
-      if user.admin
-        log_in user
-        redirect_to users_attendances_register_url(user)
-      else
-        log_in user
-        redirect_to shifts_current_shifts_user_url(user)
-      end
+      redirect_back_or user
     else
       flash[:danger] = "認証に失敗しました。"
       render :new
