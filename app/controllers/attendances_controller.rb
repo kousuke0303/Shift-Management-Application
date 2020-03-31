@@ -31,7 +31,7 @@ class AttendancesController < ApplicationController
     elsif params[:attendance][:work_start_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:work_start_time].to_time.hour == params[:attendance][:work_end_time].to_time.hour && (params[:attendance][:work_end_time].to_time.min - params[:attendance][:work_start_time].to_time.min) <= 15
       flash[:danger] = "出勤時間と退勤時間の差分で15分以内の場合は登録できません。"
       redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:break_end_time]
+    elsif params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:break_end_time] && (params[:attendance][:break_end_time].to_time.hour >= 2 && params[:attendance][:break_end_time].to_time.hour <= 23)
       flash[:danger] = "休憩開始時間より休憩終了時間の方が時間が早いです。"
       redirect_back(fallback_location: attendance_management)
     elsif params[:attendance][:break_start_time].blank? && params[:attendance][:break_end_time].present?
