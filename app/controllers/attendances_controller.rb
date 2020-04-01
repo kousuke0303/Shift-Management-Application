@@ -231,7 +231,7 @@ class AttendancesController < ApplicationController
       if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0))
         flash[:info] = "休憩を開始しました。"
       else
-        flash[:danger] = "休憩開始に失敗しました。やり直してください。"
+        flash[:danger] = "休憩開始に失敗、もしくは出勤時間との差分が15分以内のため押下不可。"
       end
     end
     redirect_to users_attendances_register_path(current_user)
