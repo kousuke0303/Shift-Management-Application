@@ -30,7 +30,7 @@ class Attendance < ApplicationRecord
     errors.add(:break_end_time, "を登録してください。") if self.work_end_time.present? && self.break_start_time.present? && !self.break_end_time.present?
     errors.add(:work_start_time, "を登録してください") if !self.work_start_time.present? && self.break_start_time.present?
     errors.add(:break_end_time, "は休憩入以降で登録してください") if self.break_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.break_start_time.strftime("%H:%M")) && self.work_end_time.hour >= 2 && self.work_end_time.hour <= 24
-    errors.add(:work_start_time, "と休憩開始時間の差分が15分以内の場合、登録できません。") if self.work_start_time.present? && self.break_start_time.present? && ((self.work_start_time.hour == self.break_start_time.hour) && (self.work_start_time.min - self.break_start_time.min <= 15)) || (!(self.work_start_time.hour == self.break_start_time.hour) && ((self.work_start_time.min - self.break_start_time.min).abs >= 45))
+    errors.add(:work_start_time, "と休憩開始時間の差分が15分以内の場合、登録できません。") if self.work_start_time.present? && self.break_start_time.present? && self.work_start_time.hour == self.break_start_time.hour && (self.break_start_time.min - self.work_start_time.min) <= 15 || (!(self.work_start_time.hour == self.break_start_time.hour) && (self.break_start_time.min - self.work_start_time.min).abs >= 45)
   end
   
   # 日給の計算を行う
