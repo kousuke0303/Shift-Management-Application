@@ -29,7 +29,7 @@ class Attendance < ApplicationRecord
     errors.add(:break_end_time, "は、出勤時間以降で登録してください。") if self.work_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.work_start_time.strftime("%H:%M")) && self.break_end_time.hour >= 10 && self.break_end_time.hour <= 24
     errors.add(:break_end_time, "を登録してください。") if self.work_end_time.present? && self.break_start_time.present? && !self.break_end_time.present?
     errors.add(:work_start_time, "を登録してください") if !self.work_start_time.present? && self.break_start_time.present?
-    errors.add(:break_end_time, "は休憩入以降で登録してください") if self.break_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.break_start_time.strftime("%H:%M")) && self.work_end_time.hour >= 2 && self.work_end_time.hour <= 24
+    errors.add(:break_end_time, "は休憩入以降で登録してください") if self.work_end_time.present? && self.break_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.break_start_time.strftime("%H:%M")) && self.work_end_time.hour >= 2 && self.work_end_time.hour <= 24
     if self.work_start_time.present? && self.break_start_time.present?
       errors.add(:work_start_time, "と休憩開始時間の差分が15分以内の場合、登録できません。") if self.work_start_time.hour == self.break_start_time.hour && (self.break_start_time.min - self.work_start_time.min) <= 15 || (!(self.work_start_time.hour == self.break_start_time.hour) && (self.break_start_time.min - self.work_start_time.min).abs >= 45)
     end
@@ -71,6 +71,11 @@ class Attendance < ApplicationRecord
         self.salary = non_overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が0時以降でかつ休憩時間が22時〜24時の場合、休憩時間は考慮せず、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 22 && self.break_start_time.hour <= 24) && (self.break_end_time.hour >= 22 && self.break_end_time.hour <= 24) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
+        non_overtime_non_breaktime = (22.0 - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25 
+        self.salary = overtime_hourly_wage.to_i + non_overtime_non_breaktime.to_i
+       #出勤時間が10時〜21時、退勤時間が0時以降でかつ休憩時間が22時〜24時の場合、休憩時間は考慮せず、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
+      elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 22 && self.break_start_time.hour <= 24) && (self.break_end_time.hour >= 0 && self.break_end_time.hour <= 9) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
         non_overtime_non_breaktime = (22.0 - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
         overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25 
         self.salary = overtime_hourly_wage.to_i + non_overtime_non_breaktime.to_i
