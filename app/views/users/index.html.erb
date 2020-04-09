@@ -20,7 +20,7 @@
             <th>ID</th>
             <th>名前</th>
             <th>メールアドレス</th>
-            <th></th>
+            <th>スタッフ情報操作</th>
           </tr>
         </thead>
         <tbody>
@@ -31,7 +31,7 @@
               <td><%= user.email %></td>
               <td>
                 <% if current_user.admin? && !current_user?(user) %>
-                  <%= link_to "スタッフ情報編集", edit_user_info_user_path(user), remote: true, class: "btn btn-primary" %>
+                  <%= link_to "編集", edit_user_info_user_path(user), remote: true, class: "btn btn-primary" %>
                   <%= link_to "削除", user, method: :delete,
                       data: { confirm: "削除してよろしいですか？" },
                       class: "btn btn-danger" %>
