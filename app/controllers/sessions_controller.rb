@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  before_action :reject_logged_in_user, only:[:new, :create]
+  
   def new
   end
   

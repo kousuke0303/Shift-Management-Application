@@ -5,6 +5,7 @@ class UsersController < ApplicationController
   before_action :logged_in_user, only: [:index, :show, :edit, :update, :edit_user_info, :update_user_info]
   before_action :correct_user, only: [:edit, :update]
   before_action :admin_user, only: [:destroy, :edit_user_info, :update_user_info]
+  before_action :only_one_account_create, only:[:new, :create]
   
   def index
     @users = User.paginate(page: params[:page])
