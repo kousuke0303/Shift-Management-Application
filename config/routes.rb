@@ -31,6 +31,7 @@ Rails.application.routes.draw do
     end
     collection do
       get 'new_password_reset_index'
+      get 'tutorial'
     end
   
     resources :shifts, only: [:edit, :update] do

@@ -14,7 +14,7 @@
                 <span style="font-size: small;">ID:<%= current_user.id %>&nbsp;<%= current_user.name %></span> <b class="caret"></b>
               </a>
               <ul class="dropdown-menu dropdown-assemble">
-                <li><%= link_to "チュートリアル", "#" %></li>
+                <li><%= link_to "チュートリアル", tutorial_users_path %></li>
                 <li class="divider"></li>
                 <li><%= link_to "設定", edit_user_path(current_user) %></li>
                 <li class="divider"></li>
