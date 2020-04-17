@@ -20,6 +20,16 @@ class ApplicationController < ActionController::Base
     redirect_to root_url unless current_user.admin?
   end
   
+  def reject_logged_in_user
+    if logged_in? && current_user.admin?
+      flash[:info] = "すでにログインしています。"
+      redirect_to root_url
+    elsif logged_in? && !current_user.admin?
+      flash[:info] = "すでにログインしています。"
+      redirect_to shifts_current_shifts_user_url(current_user)
+    end
+  end
+  
   def set_user
     @user = User.find(params[:id])
   end
