@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   
   $days_of_the_week = %w{日 月 火 水 木 金 土}
   
+  # ログイン状態でのみアクセス許可
   def logged_in_user
     unless logged_in?
       store_location
@@ -12,12 +13,33 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  # 一般ユーザーの、他のユーザーページへのアクセス制限
   def correct_user
     redirect_to(root_url) unless current_user?(@user)
   end
   
+  # 管理者のみアクセス許可
   def admin_user
     redirect_to root_url unless current_user.admin?
+  end
+  
+  # ログイン状態でのアクセス制限
+  def reject_logged_in_user
+    if logged_in? && current_user.admin?
+      flash[:info] = "すでにログインしています。"
+      redirect_to root_url
+    elsif logged_in? && !current_user.admin?
+      flash[:info] = "すでにログインしています。"
+      redirect_to shifts_current_shifts_user_url(current_user)
+    end
+  end
+  
+  # 一般ユーザーのアカウント作成数制限
+  def only_one_account_create
+    if !current_user.admin?
+      flash[:info] = "すでにアカウントを作成済です。"
+      redirect_to shifts_current_shifts_user_url(current_user)
+    end
   end
   
   def set_user
