@@ -44,7 +44,7 @@
       '', # empty body
       width: 560,
       height: 315,
-      src: "https://www.youtube.com",
+      src: "https://www.youtube.com/embed//MhrvquDNqEQ",
       frameborder: 0,
       allowfullscreen: true
     ) %>
@@ -85,6 +85,18 @@
     allowfullscreen: true
   ) %>
   <%= content_tag(:div, iframe, class: 'center youtube-container') %>
+  <br>
+  <h1><b>8.パスワード再設定</b></h1>
+  <% iframe = content_tag(
+    :iframe,
+    '', # empty body
+    width: 560,
+    height: 315,
+    src: "https://www.youtube.com/embed/A_49nyWqiiM",
+    frameborder: 0,
+    allowfullscreen: true
+  ) %>
+  <%= content_tag(:div, iframe, class: 'center youtube-container') %>
   <% else %>
    <br>
     <h1><b>1.シフト確認</b></h1>
@@ -110,5 +122,17 @@
       allowfullscreen: true
     ) %>
     <%= content_tag(:div, iframe, class: 'center youtube-container') %>
+    <br>
+  <h1><b>3.パスワード再設定</b></h1>
+  <% iframe = content_tag(
+    :iframe,
+    '', # empty body
+    width: 560,
+    height: 315,
+    src: "https://www.youtube.com/embed/A_49nyWqiiM",
+    frameborder: 0,
+    allowfullscreen: true
+  ) %>
+  <%= content_tag(:div, iframe, class: 'center youtube-container') %>
   <% end %>
 </em>

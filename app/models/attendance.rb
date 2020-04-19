@@ -31,7 +31,7 @@ class Attendance < ApplicationRecord
     errors.add(:work_start_time, "を登録してください") if !self.work_start_time.present? && self.break_start_time.present?
     errors.add(:break_end_time, "は休憩入以降で登録してください") if self.work_end_time.present? && self.break_start_time.present? && self.break_end_time.present? && (self.break_end_time.strftime("%H:%M") < self.break_start_time.strftime("%H:%M")) && self.work_end_time.hour >= 2 && self.work_end_time.hour <= 24
     if self.work_start_time.present? && self.break_start_time.present?
-      errors.add(:work_start_time, "と休憩開始時間の差分が15分以内の場合、登録できません。") if self.work_start_time.hour == self.break_start_time.hour && (self.break_start_time.min - self.work_start_time.min) <= 15 || (!(self.work_start_time.hour == self.break_start_time.hour) && (self.break_start_time.min - self.work_start_time.min) <= -45)
+      errors.add(:work_start_time, "と休憩開始時間の差分が15分以内の場合、登録できません。") if self.work_start_time.hour == self.break_start_time.hour && (self.break_start_time.min - self.work_start_time.min) <= 15 || !(self.work_start_time.hour == self.break_start_time.hour) && (self.break_start_time.hour - self.work_start_time.hour == 1) && (self.break_start_time.min - self.work_start_time.min <= -45)
     end
   end
   
@@ -46,39 +46,80 @@ class Attendance < ApplicationRecord
         self.salary = non_overtime.to_i + overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が22〜24時以降でかつ休憩時間が10時〜21時の場合、休憩時間を考慮した22時までは通常の日給計算し、22時以降は深夜手当の時間で計算する(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 22 && self.work_end_time.hour <= 24) && (self.break_start_time.hour >= 10 && self.break_start_time.hour <= 21) && (self.break_end_time.hour == 22) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = non_overtime.to_i + overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が22〜24時以降でかつ休憩時間が22時〜24時の場合、休憩時間は考慮せず、退社時間が0時以降は22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 22 && self.work_end_time.hour <= 24) && (self.break_start_time.hour >= 22 && self.break_start_time.hour <= 24) && (self.break_end_time.hour >= 22 && self.break_end_time.hour <= 24) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        # 例:出勤時間が21:46(切り上げで22:00になる)、退勤時間が22:20(切り下げで22:15)の時、矛盾がないようにする
-        non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = overtime_hourly_wage.to_i + non_overtime.to_i
       #出勤時間が10時〜21時、退勤時間が０時以降でかつ休憩時間が10時〜22時の場合、休憩時間を考慮した22時までは通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 10 && self.break_start_time.hour <= 21) && (self.break_end_time.hour >= 10 && self.break_end_time.hour <= 21)  && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        tomorrow_overtime_hourly_wage = (self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * self.user.hourly_wage.to_f * 1.25 
-        self.salary = non_overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i
+        tomorrow_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        self.salary = overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が０時以降でかつ休憩時間が10時〜22時の場合、休憩時間を考慮した22時までは通常の日給計算し、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 10 && self.break_start_time.hour <= 21) && (self.break_end_time.hour == 22) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        tomorrow_overtime_hourly_wage = (self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0) - 22.0 + 24.0).to_f * self.user.hourly_wage.to_f * 1.25 
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          tomorrow_overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0).to_f - 22.0 + 24.0) - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          tomorrow_overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          tomorrow_overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = non_overtime_hourly_wage.to_i + tomorrow_overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が0時以降でかつ休憩時間が22時〜24時の場合、休憩時間は考慮せず、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 22 && self.break_start_time.hour <= 24) && (self.break_end_time.hour >= 22 && self.break_end_time.hour <= 24) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25 
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0).to_f - 22.0 + 24.0) - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = overtime_hourly_wage.to_i + non_overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が0時以降でかつ休憩時間が22時〜24時の場合、休憩時間は考慮せず、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 22 && self.break_start_time.hour <= 24) && (self.break_end_time.hour >= 0 && self.break_end_time.hour <= 9) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime_hourly_wage = (22.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25 
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime_hourly_wage = (22.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime_hourly_wage = (22.0 - ((self.break_end_time.hour + 24.0) + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = overtime_hourly_wage.to_i + non_overtime_hourly_wage.to_i
       #出勤時間が10時〜21時、退勤時間が0時以降でかつ休憩時間が0時以降の場合、休憩時間は考慮せず、退社時間が0時以降は、22時を引いてから24時間分足して計算(1.25倍含む)
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 0 && self.work_end_time.hour <= 9) && (self.break_start_time.hour >= 0 && self.break_start_time.hour <= 9) && (self.break_end_time.hour >= 0 && self.break_end_time.hour <= 9) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))
-        non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f 
-        overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25 
+        if self.work_start_time.hour == 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          overtime_hourly_wage = (((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0)))) * self.user.hourly_wage.to_f * 1.25
+        elsif self.work_start_time.hour != 21 && self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - ((self.work_start_time.hour + 1) + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        else
+          non_overtime_hourly_wage = (22.0 - (self.break_end_time.hour + (self.break_end_time.min / 60.0) - (self.break_start_time.hour + (self.break_start_time.min / 60.0))) - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f * self.user.hourly_wage.to_f
+          overtime_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - 22.0 + 24.0) * self.user.hourly_wage.to_f * 1.25
+        end
         self.salary = overtime_hourly_wage.to_i + non_overtime_hourly_wage.to_i
       #出勤時間・退勤時間ともに10時〜21時でかつ休憩がある場合、通常の日給計算
       elsif (self.work_start_time.hour >= 10 && self.work_start_time.hour <= 21) && (self.work_end_time.hour >= 10 && self.work_end_time.hour <= 21) && !(self.work_start_time.strftime("%H:%M") == self.work_end_time.strftime("%H:%M"))

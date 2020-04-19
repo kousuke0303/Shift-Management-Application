@@ -34,7 +34,7 @@ class AttendancesController < ApplicationController
     elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_start_time].present? && params[:attendance][:work_start_time].to_time.hour == params[:attendance][:break_start_time].to_time.hour && (params[:attendance][:break_start_time].to_time.min - params[:attendance][:work_start_time].to_time.min) <= 15
       flash[:danger] = "出勤時間と休憩開始時間の差分で15分以内の場合は登録できません。"
       redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_start_time].present? && !(params[:attendance][:work_start_time].to_time.hour == params[:attendance][:break_start_time].to_time.hour) && (params[:attendance][:break_start_time].to_time.min - params[:attendance][:work_start_time].to_time.min) <= -45
+    elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_start_time].present? && !(params[:attendance][:work_start_time].to_time.hour == params[:attendance][:break_start_time].to_time.hour) && ((params[:attendance][:break_start_time].to_time.hour - params[:attendance][:work_start_time].to_time.hour == 1) && (params[:attendance][:break_start_time].to_time.min - params[:attendance][:work_start_time].to_time.min <= -45))
       flash[:danger] = "出勤時間と休憩開始時間の差分で15分以内の場合は登録できません。"
       redirect_back(fallback_location: attendance_management)
     elsif params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:break_end_time] && (params[:attendance][:break_end_time].to_time.hour >= 2 && params[:attendance][:break_end_time].to_time.hour <= 23)
@@ -59,7 +59,7 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間よりも休憩終了時間の方が遅いです。"
       redirect_back(fallback_location: attendance_management)
     else
-      @attendance.update_attributes(update_work_time_params)
+      @attendance.update_attributes!(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end
