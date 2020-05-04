@@ -1,4 +1,4 @@
-<% provide(:title, "Current Shifts") %>
+<% provide(:title, "シフト確認") %>
 
 <div class="row">
   <div class="col-xs-12 col-md-2 switch-shifts-btn-area">
@@ -13,7 +13,7 @@
     <% if @user.admin? && @first_day != Date.current.prev_month.prev_month.beginning_of_month %>
       <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), class: "btn btn-md btn-primary" %>
     <% elsif @user.admin? %>
-    <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), disabled: false, class: "btn btn-md btn-default disabled" %>
+      <%= link_to "＜", shifts_current_shifts_user_path(@user, date: prev_first_day), disabled: false, class: "btn btn-md btn-default disabled" %>
     <% end %>
     <% if @first_day.day <= 15 %>
       <%= @first_day.month %>月前半のシフト

@@ -31,7 +31,13 @@ class AttendancesController < ApplicationController
     elsif params[:attendance][:work_start_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:work_start_time].to_time.hour == params[:attendance][:work_end_time].to_time.hour && (params[:attendance][:work_end_time].to_time.min - params[:attendance][:work_start_time].to_time.min) <= 15
       flash[:danger] = "出勤時間と退勤時間の差分で15分以内の場合は登録できません。"
       redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:break_end_time]
+    elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_start_time].present? && params[:attendance][:work_start_time].to_time.hour == params[:attendance][:break_start_time].to_time.hour && (params[:attendance][:break_start_time].to_time.min - params[:attendance][:work_start_time].to_time.min) <= 15
+      flash[:danger] = "出勤時間と休憩開始時間の差分で15分以内の場合は登録できません。"
+      redirect_back(fallback_location: attendance_management)
+    elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_start_time].present? && !(params[:attendance][:work_start_time].to_time.hour == params[:attendance][:break_start_time].to_time.hour) && ((params[:attendance][:break_start_time].to_time.hour - params[:attendance][:work_start_time].to_time.hour == 1) && (params[:attendance][:break_start_time].to_time.min - params[:attendance][:work_start_time].to_time.min <= -45))
+      flash[:danger] = "出勤時間と休憩開始時間の差分で15分以内の場合は登録できません。"
+      redirect_back(fallback_location: attendance_management)
+    elsif params[:attendance][:break_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:break_end_time] && (params[:attendance][:break_end_time].to_time.hour >= 2 && params[:attendance][:break_end_time].to_time.hour <= 23)
       flash[:danger] = "休憩開始時間より休憩終了時間の方が時間が早いです。"
       redirect_back(fallback_location: attendance_management)
     elsif params[:attendance][:break_start_time].blank? && params[:attendance][:break_end_time].present?
@@ -43,14 +49,17 @@ class AttendancesController < ApplicationController
     elsif params[:attendance][:work_start_time].present? && params[:attendance][:break_end_time].present? && params[:attendance][:break_end_time] < params[:attendance][:work_start_time] && (params[:attendance][:break_end_time].to_time.hour >= 2 && params[:attendance][:break_end_time].to_time.hour <= 23)
       flash[:danger] = "休憩終了時間よりも出勤時間の方が遅いです。"
       redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance][:break_start_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:work_end_time]
+    elsif params[:attendance][:break_start_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:break_start_time] > params[:attendance][:work_end_time] && (params[:attendance][:work_end_time].to_time.hour >= 2 && params[:attendance][:work_end_time].to_time.hour <= 23)
       flash[:danger] = "退勤時間よりも休憩開始時間の方が遅いです。"
       redirect_back(fallback_location: attendance_management)
-    elsif params[:attendance][:break_end_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:break_end_time] > params[:attendance][:work_end_time]
+    elsif params[:attendance][:break_end_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:break_end_time] > params[:attendance][:work_end_time] && (params[:attendance][:work_end_time].to_time.hour >= 2 && params[:attendance][:work_end_time].to_time.hour <= 23)
+      flash[:danger] = "退勤時間よりも休憩終了時間の方が遅いです。"
+      redirect_back(fallback_location: attendance_management)
+    elsif params[:attendance][:break_end_time].present? && params[:attendance][:work_end_time].present? && params[:attendance][:break_end_time] > params[:attendance][:work_end_time] && (params[:attendance][:break_end_time].to_time.hour >= 0 && params[:attendance][:break_end_time].to_time.hour <= 3) && (params[:attendance][:work_end_time].to_time.hour >= 0 && params[:attendance][:work_end_time].to_time.hour <= 3)
       flash[:danger] = "退勤時間よりも休憩終了時間の方が遅いです。"
       redirect_back(fallback_location: attendance_management)
     else
-      @attendance.update_attributes(update_work_time_params)
+      @attendance.update_attributes!(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end
@@ -70,7 +79,7 @@ class AttendancesController < ApplicationController
   ##出退勤管理未打刻一覧モーダル内更新処理
   def update_attendance_management_notice
     update_work_end_time_params.each do |id, item|
-      attendance = Attendance.find(id)
+      attendance = Attendance.find(id) 
       attendance.update_attributes(work_end_time: item[:work_end_time])
     end
     flash[:success] = "退勤時間の登録に成功しました(退勤時間未入力、出退勤時間の差分が15分以内、出勤時間より退勤時間の方が早い、休憩時間より退勤時間の方が早い場合は登録できていません。)"
@@ -225,7 +234,7 @@ class AttendancesController < ApplicationController
       if @attendances[0].update_attributes(break_start_time: Time.current.change(sec: 0))
         flash[:info] = "休憩を開始しました。"
       else
-        flash[:danger] = "休憩開始に失敗しました。やり直してください。"
+        flash[:danger] = "休憩開始に失敗、もしくは出勤時間との差分が15分以内のため押下不可。"
       end
     end
     redirect_to users_attendances_register_path(current_user)

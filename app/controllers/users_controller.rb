@@ -8,14 +8,13 @@ class UsersController < ApplicationController
   before_action :only_one_account_create, only:[:new, :create]
   
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.paginate(page: params[:page]).order(:id)
     if params[:name].present?
       @users = @users.get_by_name params[:name]
     end
   end
     
   def show
-    @attendance = @user.attendances.find_by(params[:id])
   end
 
   def new
@@ -81,7 +80,7 @@ class UsersController < ApplicationController
   
   def update_password_reset
     if @user.update_attributes(reset_password_params)
-      flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません。)" 
+      flash[:success] = "パスワードがリセットされました(何も入力していない場合は変更されていません)。" 
       if @user.admin = true
         log_in @user
         redirect_to users_attendances_register_url(@user)

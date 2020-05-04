@@ -1,8 +1,8 @@
-<% provide(:title, "Confirm Shifts") %>
+<% provide(:title, "シフト管理") %>
 
 <div class="row">
   <div class="col-xs-12 col-md-2 btn-switch-shifts">
-    <%= link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
+    <%== link_to "現在のシフト", shifts_current_shifts_user_path(@user), class: "btn btn-lg btn-primary" %>
   </div>
   
   <div class="col-xs-12 col-md-8 next-shifts-title">
@@ -45,7 +45,7 @@
   <% @kitchen_staffs.each do |staff| %>
     <tr>
       <td>キッチン</td>
-      <td><%= link_to staff.name, staff %></td>
+      <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -73,7 +73,7 @@
   <% @hole_staffs.each do |staff| %>
     <tr>
       <td>ホール</td>
-      <td><%= link_to staff.name, staff %></td>
+      <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -101,7 +101,7 @@
   <% @wash_staffs.each do |staff| %>
     <tr>
       <td>洗い場</td>
-      <td><%= link_to staff.name, staff %></td>
+      <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
@@ -129,7 +129,7 @@
   <% @newcomer_staffs.each do |staff| %>
     <tr>
       <td>未登録</td>
-      <td><%= link_to staff.name, staff %></td>
+      <td><%= staff.name %></td>
       <% @next_shifts.each do |day| %>
         <% if start_and_end_time_of_shift(staff, day) %>
           <td>
