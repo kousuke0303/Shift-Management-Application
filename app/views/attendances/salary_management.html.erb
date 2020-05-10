@@ -69,20 +69,36 @@
                   <!--通常勤務時間の算出-->
                   <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がない場合、勤務開始時間、勤務終了時間を使用して算出-->
                   <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% no_overtime_no_breaktime = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f %>
+                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% no_overtime_no_breaktime = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - ((at.work_start_time.hour + 1.0) + (at.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f %>
+                    <% else %>
+                      <% no_overtime_no_breaktime = (at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f %>
+                    <% end %>
                   <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がない場合、勤務開始時間、勤務終了時間を使用して算出-->
                   <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && !(at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% overtime_no_breaktime = (22.0 - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% overtime_no_breaktime = (22.0 - ((at.work_start_time.hour + 1)+ (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% else %>
+                      <% overtime_no_breaktime = (22.0 - ((at.work_start_time.hour)+ (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
                   <!-- 出社時間、退社時間ともに22時を過ぎていないかつ休憩がある場合、勤務開始時間、休憩開始時間、休憩終了時間、勤務終了時間を使用して算出-->
                   <% elsif ((at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 10 && at.work_end_time.hour <= 21)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) %>
-                    <% no_overtime_existing_breaktime = total_time(at.work_start_time.ceil_to(15.minutes), at.break_start_time, at.break_end_time, at.work_end_time.floor_to(15.minutes)).to_f %>
+                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% no_overtime_existing_breaktime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1.00) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% else %>
+                      <% no_overtime_existing_breaktime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
                   <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩が22時以前の場合、22時までの通常時間に休憩時間も加味して計算-->
                   <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
-                    <% overtime_existing_no_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% overtime_existing_no_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1.0) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% else %>
+                      <% overtime_existing_no_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% end %>
                   <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩があり、さらに退勤時間が22時の場合、22時までの通常時間を計算-->
                   <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && ((at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) || (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3)) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour == 22) %>
-                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0  %>
-                      <% overtime_existing_no_overtime_breaktime_break_end_time_equal_22hours = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                    <% if at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% overtime_existing_no_overtime_breaktime_break_end_time_equal_22hours = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1.0) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% else %>
                       <% overtime_existing_no_overtime_breaktime_break_end_time_equal_22hours = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% end %>
@@ -91,18 +107,18 @@
                     <% if at.work_start_time.ceil_to(15.minutes).min != 0 %>
                       <% overtime_existing_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% elsif at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
-                      <% overtime_existing_overtime_breaktime = (22.0 - ((at.work_start_time.hour + 1.00) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                      <% overtime_existing_overtime_breaktime = (22.0 - ((at.work_start_time.hour + 1.0) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% elsif at.work_start_time.hour == 21 && at.work_start_time.min == 0 %>
                       <% overtime_existing_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% else %>
-                      <% overtime_existing_overtime_breaktime = (22.0 - (((at.break_end_time.hour + 1.00) + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                      <% overtime_existing_overtime_breaktime = (22.0 - (((at.break_end_time.hour + 1.0) + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% end %>
                   <!-- 出社時間が22時を過ぎておらず勤務終了時間が22時を超えており、休憩が22時を超えている場合、22時までの通常時間を計算(休憩時間は考慮に入れない)-->
                   <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 3) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.present? && at.break_end_time.present?) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 0 && at.break_end_time.hour <= 3) %>
                     <% if at.work_start_time.ceil_to(15.minutes).min != 0 %>
-                      <% overtime_existing_overtime_breaktime = (22.0- (((at.break_end_time.hour + 24.0) + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                      <% overtime_existing_overtime_breaktime = (22.0 - (((at.break_end_time.hour + 24.0) + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% elsif at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
-                      <% overtime_existing_overtime_breaktime = (22.0  - ((at.work_start_time.hour + 1.00) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                      <% overtime_existing_overtime_breaktime = (22.0 - ((at.work_start_time.hour + 1.00) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% elsif at.work_start_time.hour == 21 && at.work_start_time.min == 0 %>
                       <% overtime_existing_overtime_breaktime = (22.0 - (((at.break_end_time.hour + 24.0) + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% else %>
@@ -117,50 +133,60 @@
                     <% elsif at.work_start_time.hour == 21 && at.work_start_time.min == 0 %>
                       <% overtime_existing_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - (at.work_start_time.hour + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% else %>
-                      <% overtime_existing_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1.00) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
+                      <% overtime_existing_overtime_breaktime = (22.0 - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)) - (at.break_start_time.hour + (at.break_start_time.min / 60.0))) - ((at.work_start_time.hour + 1.0) + (at.work_start_time.ceil_to(15.minutes).min / 60.0))).to_f %>
                     <% end %>
                   <% end %>
                   <% @total_non_overtime = @total_non_overtime.to_f + no_overtime_no_breaktime.to_f + overtime_no_breaktime.to_f + no_overtime_existing_breaktime.to_f + overtime_existing_no_overtime_breaktime.to_f + overtime_existing_no_overtime_breaktime_break_end_time_equal_22hours.to_f + overtime_existing_overtime_breaktime.to_f %>
                   <!--深夜残業時間の算出-->
                   <!-- 退社時間が22時以降の場合、22時以降の在社時間を算出-->
-                  <% if (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                  <% if at.break_start_time.blank? && at.break_end_time.blank? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                    <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
+                  <% elsif at.break_start_time.blank? && at.break_end_time.blank? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
+                    <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
                     <% end %>
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
                     <% end %>
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && at.break_end_time.hour == 22 %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && at.break_end_time.hour == 22 %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
                     <% end %>
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && at.break_end_time.hour == 22 %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 22 && at.break_end_time.hour <= 24) %>
+                    <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
+                    <% else %>
+                      <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
+                    <% end %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && at.break_end_time.hour == 22 %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
                     <% end %>
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 22 && at.break_end_time.hour <= 24) %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 22 && at.break_end_time.hour <= 24) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %>
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
                     <% end %>
                   <!-- 退社時間が0時以降の場合、0時以降の在社時間を算出-->
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 0 && at.break_end_time.hour <= 3) %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 22 && at.break_start_time.hour <= 24) && (at.break_end_time.hour >= 0 && at.break_end_time.hour <= 3) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %> 
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
                     <% end %>
-                  <% elsif (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 0 && at.break_start_time.hour <= 3) && (at.break_end_time.hour >= 0 && at.break_end_time.hour <= 3) %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 0 && at.break_start_time.hour <= 3) && (at.break_end_time.hour >= 0 && at.break_end_time.hour <= 3) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% tomorrow_overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
                     <% else %> 
