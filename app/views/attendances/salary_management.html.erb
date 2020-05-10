@@ -143,6 +143,12 @@
                     <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
                   <% elsif at.break_start_time.blank? && at.break_end_time.blank? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) %>
                     <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f %>
+                  <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 22 && at.work_end_time.hour <= 24) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
+                    <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
+                      <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>
+                    <% else %>
+                      <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0).to_f %>
+                    <% end %>
                   <% elsif at.break_start_time.present? && at.break_end_time.present? && (at.work_start_time.hour >= 10 && at.work_start_time.hour <= 21) && (at.work_end_time.hour >= 0 && at.work_end_time.hour <= 9) && !(at.work_start_time.strftime("%H:%M") == at.work_end_time.strftime("%H:%M")) && (at.break_start_time.hour >= 10 && at.break_start_time.hour <= 21) && (at.break_end_time.hour >= 10 && at.break_end_time.hour <= 21) %>
                     <% if at.work_start_time.hour == 21 && at.work_start_time.min != 0 && at.work_start_time.ceil_to(15.minutes).min == 0 %>
                       <% overtime = ((at.work_end_time.hour + (at.work_end_time.floor_to(15.minutes).min / 60.0)) - 22.0 + 24.0).to_f - ((at.break_end_time.hour + (at.break_end_time.min / 60.0)).to_f - (at.break_start_time.hour + (at.break_start_time.min / 60.0)).to_f) %>

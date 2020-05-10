@@ -183,7 +183,7 @@ class Attendance < ApplicationRecord
         else
           day_hourly_wage = ((self.work_end_time.hour + (self.work_end_time.floor_to(15.minutes).min / 60.0)).to_f - (self.work_start_time.hour + (self.work_start_time.ceil_to(15.minutes).min / 60.0)).to_f + 24.0) * self.user.hourly_wage.to_f * 1.25 
         end
-        self.salary = day_hourly_wage.to_i 
+        self.salary = day_hourly_wage.to_i
       #出勤時間が22時〜24時で、退勤時間が22時〜24時の場合、残業手当を考慮に入れた計算をする
       elsif (self.work_start_time.hour >= 22 && self.work_start_time.hour <= 24) && (self.work_end_time.hour >= 22 && self.work_end_time.hour <= 24)
         if self.work_start_time.min != 0 && self.work_start_time.ceil_to(15.minutes).min == 0 
