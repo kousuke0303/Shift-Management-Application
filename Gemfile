@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails',        '~> 5.2.0'
+gem 'rails',        '~> 5.1.6'
 gem 'rails-i18n'
 gem 'bcrypt'
 gem 'faker'
@@ -14,12 +14,9 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jquery-rails'
 gem 'turbolinks',   '~> 5'
 gem 'jbuilder',     '~> 2.5'
-gem 'bootsnap'
-gem 'rounding'
-gem 'pry-rails'
 
 group :development, :test do
-  gem 'sqlite3'
+  gem 'sqlite3', '1.3.13'
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 end
 
