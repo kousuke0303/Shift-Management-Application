@@ -12,7 +12,7 @@ class User < ApplicationRecord
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
   VALID_TEL_REGEX = /\A\d{10,11}\z/
   
-  validates :hourly_wage, presence: true
+  # validates :hourly_wage, presence: true
   validates :tel, presence: true, format: { with: VALID_TEL_REGEX }, length: { maximum: 11 }
   validates :name, presence: true, length: { maximum: 50 }
   validates :email, presence: true, length: { maximum: 100 }, format: { with: VALID_EMAIL_REGEX },

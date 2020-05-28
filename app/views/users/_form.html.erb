@@ -1,27 +1,31 @@
 <%= form_with(model: @user, local: true) do |f| %>
   <%= render 'shared/error_messages', object: @user %>
 
-  <%= f.label :name, class: "label-#{yield(:class_text)}" %>
+  <%= f.label '名前※', class: "label-#{yield(:class_text)}" %>
   <%= f.text_field :name, class: "form-control" %>
   
-  <%= f.label :tel, class: "label-#{yield(:class_text)}" %>
+  <%= f.label '電話番号※', class: "label-#{yield(:class_text)}" %>
   <%= f.text_field :tel, placeholder: "半角数字、ハイフンなし", class: "form-control" %>
 
-  <%= f.label :email, class: "label-#{yield(:class_text)}" %>
+  <%= f.label 'メールアドレス※', class: "label-#{yield(:class_text)}" %>
   <%= f.email_field :email, class: "form-control" %>
   
   <h3 class="skill-check-title">スキルチェック</h3>
   
   <div class="row skill-check-area">
-    <div class="col-xs-4 skill-check-item">
+    <div class="col-xs-3 skill-check-item">
+      <%= f.label :admin, class: "skill-check-kitchen" %>
+      <%= f.check_box :admin, class: "skill-check" %>
+    </div>
+    <div class="col-xs-3 skill-check-item">
       <%= f.label :kitchen, class: "skill-check-kitchen" %>
       <%= f.check_box :kitchen, class: "skill-check" %>
     </div>
-    <div class="col-xs-4 skill-check-item">
+    <div class="col-xs-3 skill-check-item">
       <%= f.label :hole %>
       <%= f.check_box :hole, class: "skill-check" %>
     </div>
-    <div class="col-xs-4 skill-check-item">
+    <div class="col-xs-3 skill-check-item">
       <%= f.label :wash %>
       <%= f.check_box :wash, class: "skill-check" %>
     </div>
@@ -30,10 +34,10 @@
   <%= f.label :hourly_wage, class: "label-#{yield(:class_text)}" %>
   <%= f.number_field :hourly_wage, class: "form-control", min: "0" %>
 
-  <%= f.label :password, class: "label-#{yield(:class_text)}" %>
+  <%= f.label 'パスワード※', class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password, class: "form-control" %>
 
-  <%= f.label :password_confirmation, class: "label-#{yield(:class_text)}" %>
+  <%= f.label 'パスワード再入力※', class: "label-#{yield(:class_text)}" %>
   <%= f.password_field :password_confirmation, class: "form-control" %>
 
   <%= f.submit yield(:button_text), class: "btn btn-primary btn-block btn-#{yield(:class_text)}" %>

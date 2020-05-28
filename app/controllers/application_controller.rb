@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
   
   # 一般ユーザーのアカウント作成数制限
   def only_one_account_create
-    if !current_user.admin?
+    if @user.present? && !current_user.admin?
       flash[:info] = "すでにアカウントを作成済です。"
       redirect_to shifts_current_shifts_user_url(current_user)
     end
@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
   def attendance_staff_day_search
     #月が10月以降の時と、10月以前で年月日検索を条件分岐
     if params[:user_id].present?
-      if Attendance.find(params[:id]).present? && Attendance.find(params[:id]).day.to_date.month >= 10
+      if @attendance.present? && Attendances.find(params[:id]).day.to_date.month >= 10
         @attendances = Attendance
                        .where("user_id = (?)", params[:user_id])
                        .where("day LIKE ?", "#{params['day(1i)']}" << "-" + "#{params['day(2i)']}%")
