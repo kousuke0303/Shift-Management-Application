@@ -71,6 +71,10 @@ class ApplicationController < ActionController::Base
   end
   
   def set_attendance
+    @attendance = Attendance.find(params[:id])
+  end
+  
+  def set_attendance_notice
     @attendance = Attendance.find_by(params[:day])
   end
   

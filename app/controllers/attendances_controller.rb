@@ -3,10 +3,11 @@ class AttendancesController < ApplicationController
 
   before_action :logged_in_user
   before_action :attendance_staff_day_search, only:[:salary_management, :attendance_management]
-  before_action :set_attendance, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info, :attendance_management_notice, :update_attendance_management_notice] 
-  before_action :set_attendance_user_id, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info, :attendance_management_notice, :update_attendance_management_notice]
+  before_action :set_attendance, only: [:salary_management_info, :update_salary_management_info, :destroy, :attendance_management_info, :update_attendance_management_info] 
+  before_action :set_attendance_user_id, only: [:salary_management_info, :update_salary_management_info, :destroy, :update_attendance_management_info]
   before_action :set_staff, only:[:salary_management, :attendance_management, :new_attendance_management_info]
-
+  before_action :set_attendance_notice, only:[:attendance_management_notice, :update_attendance_management_notice]
+  
   #給与管理
   def salary_management
   end
@@ -59,7 +60,7 @@ class AttendancesController < ApplicationController
       flash[:danger] = "退勤時間よりも休憩終了時間の方が遅いです。"
       redirect_back(fallback_location: attendance_management)
     else
-      @attendance.update_attributes!(update_work_time_params)
+      @attendance.update_attributes(update_work_time_params)
       flash[:success] = "#{@user.name}の#{l(@attendance.day.to_date, format: :long)}の出退勤情報の編集が完了しました。"
       redirect_back(fallback_location: attendance_management)
     end
