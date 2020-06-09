@@ -55,7 +55,10 @@
 .search-staff-area {
   height: 50px;
   .id-form {
-    margin-left: 10px;
+    // 20200609_出退勤画面からパスワード入力を省略edit_start
+    // margin-left: 10px;
+    margin-left: 120px;
+    // 20200609_出退勤画面からパスワード入力を省略edit_end
   }
   .password-form {
     margin-left: 10px;

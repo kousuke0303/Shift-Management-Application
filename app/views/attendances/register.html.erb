@@ -10,10 +10,12 @@
           <%= f.label "ID：", class: "attendance-label" %>
           <%= f.number_field :input_id, value: params[:input_id], class: "form-control", id: "attendance_id", min: "1" %>
         </div>
-        <div class="form-group password-form">
-          <%= f.label "パスワード：" %>
-          <%= f.password_field :input_password, value: params[:input_password], size: "15", class: 'form-control' %>
-        </div>
+        <!--20200609_出退勤画面からパスワード入力を省略delete_start-->
+        <!--<div class="form-group password-form">-->
+          <%#<%= f.label "パスワード：" %>
+          <%#<%= f.password_field :input_password, value: params[:input_password], size: "15", class: 'form-control' %>
+        <!--</div>-->
+        <!--20200609_出退勤画面からパスワード入力を省略delete_end-->
         <div class="form-group">
           <%= f.submit "勤務時間を登録する", class: "btn btn-md btn-primary" %>
         </div>
@@ -21,7 +23,10 @@
     <% end %>
     <div class="register-attendance-area">
       <!--「勤務時間を登録する」押下後-->
-      <% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") %>
+      <!--20200609_出退勤画面からパスワード入力を省略edit_start-->
+      <%#<% if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "") %>
+      <% if (params[:input_id].present?) && (params[:input_id] != "") %>
+      <!--20200609_出退勤画面からパスワード入力を省略edit_end-->
         <% if @attendances %>
           <!--「出勤ボタン押下前の場合」-->
           <% if @attendances[0].nil? || @attendances[0].work_end_time %>
