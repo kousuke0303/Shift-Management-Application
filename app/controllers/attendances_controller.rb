@@ -139,28 +139,47 @@ class AttendancesController < ApplicationController
         @attendance_staff_lists = Attendance.where(day: Date.current).paginate(page: params[:page])
       end
       # 検索があった場合
-      if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
+      #20200609_出退勤画面からパスワード入力を省略edit_start
+      # if (params[:input_id].present?) && (params[:input_id] != "") && (params[:input_password].present?) && (params[:input_password] != "")
+      if (params[:input_id].present?) && (params[:input_id] != "")
+      #20200609_出退勤画面からパスワード入力を省略edit_end
         # IDがusersテーブルに実際に存在するかどうか確認
+
         @attendance_exist = User.find_by_id(params[:input_id])
         if @attendance_exist
           # 検索で合致した従業員情報を取得
-          @attendance_staff = @attendance_exist.authenticate(params[:input_password])
+          #20200609_出退勤画面からパスワード入力を省略delete_start
+          # @attendance_staff = @attendance_exist.authenticate(params[:input_password])
+          #20200609_出退勤画面からパスワード入力を省略delete_end
           if !@attendance_exist.admin
-            if @attendance_staff
+            #20200609_出退勤画面からパスワード入力を省略delete_start
+            # if @attendance_staff
+            #20200609_出退勤画面からパスワード入力を省略delete_end
               # 検索で合致した従業員の勤怠情報を取得
               # 24時以降に退勤を押す場合、朝6時まで退勤を押せるようにする
               if Time.current < (Time.current.beginning_of_day + 6.hour)
                 # 1は前日の日付を指定する為
-                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+                #20200609_出退勤画面からパスワード入力を省略edit_start
+                # @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current - 1)
+                @attendances = Attendance.where(user_id: @attendance_exist.id).where(day: Date.current - 1)
+                #20200609_出退勤画面からパスワード入力を省略edit_end
               else
                 # 24時より前に退勤を押す場合
-                @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+                #20200609_出退勤画面からパスワード入力を省略edit_start
+                # @attendances = Attendance.where(user_id: @attendance_staff.id).where(day: Date.current)
+                @attendances = Attendance.where(user_id: @attendance_exist.id).where(day: Date.current)
+                #20200609_出退勤画面からパスワード入力を省略edit_end
               end
-            else
-              # 検索で従業員情報が合致しない場合のメッセージ
-              flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
-              redirect_to users_attendances_register_url
-            end
+            #20200609_出退勤画面からパスワード入力を省略delete_start
+            # else
+            #   # 検索で従業員情報が合致しない場合のメッセージ
+            #   #20200609_出退勤画面からパスワード入力を省略edit_start
+            #   # flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
+            #   flash[:danger] = 'IDが不正です。'
+            #   #20200609_出退勤画面からパスワード入力を省略edit_end
+            #   redirect_to users_attendances_register_url
+            # end
+            #20200609_出退勤画面からパスワード入力を省略delete_end
           else
             # 検索で従業員情報が合致しない場合のメッセージ
             flash[:danger] = '管理者は登録できません。'
@@ -168,12 +187,21 @@ class AttendancesController < ApplicationController
           end
         else
           # 検索で従業員情報が合致しない場合のメッセージ
-          flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
+          #20200609_出退勤画面からパスワード入力を省略edit_start
+          # flash[:danger] = 'IDとパスワードの組み合わせが不正です。'
+          flash[:danger] = 'IDが不正です。'
+          #20200609_出退勤画面からパスワード入力を省略edit_end
           redirect_to users_attendances_register_url
         end
-      elsif ((params[:input_id].present?) && (params[:input_id] != "")) || ((params[:input_password].present?) && (params[:input_password] != ""))
+      #20200609_出退勤画面からパスワード入力を省略edit_start
+      # elsif ((params[:input_id].present?) && (params[:input_id] != "")) || ((params[:input_password].present?) && (params[:input_password] != ""))
+      elsif (params[:input_id].present?) && (params[:input_id] != "")
+      #20200609_出退勤画面からパスワード入力を省略edit_end
         # 検索で片方のみフォームに入力していた場合のメッセージ
-        flash[:danger] = 'IDとパスワード両方入力して下さい。'
+        #20200609_出退勤画面からパスワード入力を省略edit_start
+        # flash[:danger] = 'IDとパスワード両方入力して下さい。'
+        flash[:danger] = 'IDを入力して下さい。'
+        #20200609_出退勤画面からパスワード入力を省略edit_end
         redirect_to users_attendances_register_url
       end
     else
