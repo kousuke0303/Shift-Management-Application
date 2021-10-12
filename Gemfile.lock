@@ -110,7 +110,8 @@ GEM
     pry-stack_explorer (0.5.1)
       binding_of_caller (~> 0.7)
       pry (~> 0.13)
-    puma (3.12.6)
+    puma (4.3.9)
+      nio4r (~> 2.0)
     rack (2.2.2)
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -215,7 +216,7 @@ DEPENDENCIES
   pry-doc
   pry-rails
   pry-stack_explorer
-  puma (~> 3.7)
+  puma (~> 4.3)
   rails (~> 5.1.6)
   rails-i18n
   roo
